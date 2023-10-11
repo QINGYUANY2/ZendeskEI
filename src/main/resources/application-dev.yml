@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27001/zendesk
+zendesk:
+  # zendesk 源站域名
+  source:
+    domain: https://pdi-jinmuinfo.zendesk.com
+    username: user1@yzm.de
+    password: 1qaz@WSX
+  # zendesk 目标站域名
+  target:
+    domain:
+    username:
+    password:
