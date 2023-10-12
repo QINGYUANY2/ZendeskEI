@@ -1,13 +1,13 @@
-package com.whaleal.zendesk.service;
+package com.whaleal.zendesk.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 
@@ -31,7 +31,16 @@ public abstract class BaseExportService {
     @Resource
     public MongoTemplate mongoTemplate;
 
-    private OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client ;
+
+
+    private String basic;
+
+    @PostConstruct
+    private void init() {
+        this.client = new OkHttpClient();
+        basic =  Credentials.basic(username,password);
+    }
 
     public  JSONObject doGet(String url, Map<String,String> param){
         //拼接源端域名与接口路径
@@ -50,7 +59,7 @@ public abstract class BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic(username,password))
+                .addHeader("Authorization", basic)
                 .build();
 
         Response response ;
