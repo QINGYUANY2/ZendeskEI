@@ -1,13 +1,13 @@
-package com.whaleal.zendesk.service.impl;
+package com.whaleal.zendesk.service;
 
 import com.alibaba.fastjson.JSONObject;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 
@@ -28,8 +28,8 @@ public abstract class BaseExportService {
     @Value("${zendesk.source.password}")
     private String password;
 
-    @Autowired
-    MongoTemplate mongoTemplate;
+    @Resource
+    public MongoTemplate mongoTemplate;
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -58,7 +58,6 @@ public abstract class BaseExportService {
         try {
             response = client.newCall(request).execute();
             string = response.body().string();
-            System.out.println(string);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

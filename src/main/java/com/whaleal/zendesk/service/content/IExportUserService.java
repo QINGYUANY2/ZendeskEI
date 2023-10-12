@@ -1,4 +1,6 @@
-package com.whaleal.zendesk.service;
+package com.whaleal.zendesk.service.content;
+
+import org.springframework.stereotype.Service;
 
 /**
  * @author lyz
@@ -8,4 +10,10 @@ package com.whaleal.zendesk.service;
 public interface IExportUserService {
 
     void exportUserInfo();
+
+    void importUserInfo();
+
+
+
+
 }

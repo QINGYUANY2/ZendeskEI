@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27001/zendesk
+      uri: mongodb://192.168.12.200:24578/zendesk
 zendesk:
   # zendesk 源站域名
   source:
