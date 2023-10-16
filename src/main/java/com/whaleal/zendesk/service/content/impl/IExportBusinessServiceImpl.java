@@ -34,7 +34,21 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
 
     @Override
     public void exportMacroInfo() {
-
+        //todo  参数
+        // .addQueryParameter("access", "personal")
+        // .addQueryParameter("active", "true")
+        // .addQueryParameter("category", "25")
+        // .addQueryParameter("group_id", "25")
+        // .addQueryParameter("include", "usage_7d")
+        // .addQueryParameter("only_viewable", "false")
+        // .addQueryParameter("sort_by", "alphabetical")
+        // .addQueryParameter("sort_order", "asc")
+        JSONObject request = this.doGet("/api/v2/macros",new HashMap<>());
+        System.out.println("=====================");
+        System.out.println(request);
+        System.out.println("=====================");
+        JSONArray array = request.getJSONArray("macros");
+        mongoTemplate.insert(array,"macro_info");
     }
 
     @Override
