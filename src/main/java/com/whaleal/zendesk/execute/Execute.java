@@ -44,17 +44,56 @@ public class Execute {
     private IExportPhoneService iExportPhoneService;
 
 
+//    @PostConstruct
+//    void init(){
+////        iExportUserService.exportUserInfo();
+//        iExportUserService.importUserInfo();
+////        iExportBusinessService.exportViewInfo();
+////        iExportBusinessService.exportMacroInfo();
+////        iExportFieldService.exportFieldInfo();
+////        iExportGroupService.exportGroupInfo();
+////        iExportGroupService.exportMembershipInfo();
+////        iExportItemService.exportItemInfo();
+////        iExportItemService.exportDynamicContent();
+////        iExportSysService.exportBrandInfo();
+////        iExportTicketService.exportTicketInfo();
+////        iExportTicketService.exportSatisfactionRatingInfo();
+////        iExportContentService.exportExternalContentRecordInfo();
+////        iExportGatherService.exportTopicInfo();
+////        iExportGatherService.exportUserSegmentInfo();
+////        iExportGuideService.exportThemeInfo();
+////        iExportGuideService.exportArticleInfo();
+////        iExportGuideService.exportPermissionGroupInfo();
+////        iExportPhoneService.exportPhoneNumberInfo();
+////        iExportPhoneService.exportGreetingCategoriesInfo();
+////        iExportPhoneService.exportIVRsInfo();
+//
+//    }
+//
+
     @PostConstruct
     void init(){
-        System.out.println("====================");
 //        iExportUserService.exportUserInfo();
-        iExportBusinessService.exportViewInfo();
-
-
-
-
-
-        System.out.println("====================");
+        iExportUserService.importUserInfo();
+//        iExportBusinessService.exportViewInfo();
+//        iExportBusinessService.exportMacroInfo();
+//        iExportFieldService.exportFieldInfo();
+//        iExportGroupService.exportGroupInfo();
+//        iExportGroupService.exportMembershipInfo();
+//        iExportItemService.exportItemInfo();
+//        iExportItemService.exportDynamicContent();
+//        iExportSysService.exportBrandInfo();
+//        iExportTicketService.exportTicketInfo();
+//        iExportTicketService.exportSatisfactionRatingInfo();
+//        iExportContentService.exportExternalContentRecordInfo();
+//        iExportGatherService.exportTopicInfo();
+//        iExportGatherService.exportUserSegmentInfo();
+//        iExportGuideService.exportThemeInfo();
+//        iExportGuideService.exportArticleInfo();
+//        iExportGuideService.exportPermissionGroupInfo();
+//        iExportPhoneService.exportPhoneNumberInfo();
+//        iExportPhoneService.exportGreetingCategoriesInfo();
+//        iExportPhoneService.exportIVRsInfo();
 
     }
 
