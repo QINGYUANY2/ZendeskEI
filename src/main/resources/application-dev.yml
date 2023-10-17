@@ -10,6 +10,6 @@ zendesk:
     password: 1qaz@WSX
   # zendesk 目标站域名
   target:
-    domain:
-    username:
-    password:
+    domain: https://jinmu1442.zendesk.com
+    username: 1102361302@qq.com
+    password: 123456

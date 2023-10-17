@@ -1,8 +1,10 @@
 package com.whaleal.zendesk.service.content.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportTicketService;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -14,16 +16,23 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         //todo 参数
         // .addQueryParameter("external_id", "")
         JSONObject request = this.doGet("/api/v2/tickets",new HashMap<>());
-        System.out.println("=====================");
-        System.out.println(request);
-        System.out.println("=====================");
-//        JSONArray array = request.getJSONArray("tickets");
-//        mongoTemplate.insert(array,"ticket_info");
+        // todo 所有的Ticket都在tickets中，获取时可能会内存溢出， 后期可分成每个ticket一条记录与账户绑定
+        mongoTemplate.save(request,"ticket_info");
     }
 
     @Override
     public void importTicketInfo() {
+        JSONObject info = mongoTemplate.findOne(new Query(), JSONObject.class, "ticket_info");
 
+//        JSONObject requestParam = new JSONObject();
+//        requestParam.put("users", info.getJSONArray("users"));
+
+        JSONObject request = this.doPost("/api/v2/tickets/create_many",info);
+        System.out.println("=========================");
+//        System.out.println(info);
+        System.out.println("=========================");
+        System.out.println(request);
+        System.out.println("=========================");
     }
 
     @Override

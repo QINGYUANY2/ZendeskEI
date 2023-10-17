@@ -13,7 +13,12 @@ public interface IExportUserService {
 
     void importUserInfo();
 
+    void exportRoleInfo();
 
+    void importRoleInfo();
 
+    void exportUserField();
+
+    void importUserField();
 
 }

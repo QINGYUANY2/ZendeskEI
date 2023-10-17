@@ -84,13 +84,11 @@ public abstract class BaseExportService {
 
     public JSONObject doPost(String url, JSONObject param) {
 
-        JSONObject requestParam = new JSONObject();
-        requestParam.put("item", param);
         //拼接源端域名与接口路径
         String realPath = targetDomain + url;
         HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
                 .newBuilder();
-        RequestBody creatBody = RequestBody.create(MediaType.parse("application/json"), requestParam.toString());
+        RequestBody creatBody = RequestBody.create(MediaType.parse("application/json"), param.toString());
         Request creatRequest = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", creatBody)
@@ -101,7 +99,10 @@ public abstract class BaseExportService {
         String string = null;
         try {
             creatResponse = targetClient.newCall(creatRequest).execute();
-            string=creatResponse.body().string();
+            string = creatResponse.body().string();
+            System.out.println("++++++++++++++++++++++++");
+            System.out.println(creatResponse);
+            System.out.println("++++++++++++++++++++++++");
         } catch (IOException e) {
             e.printStackTrace();
         }
