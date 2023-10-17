@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportTicketService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-
+@Slf4j
 @Service
 public class IExportTicketServiceImpl extends BaseExportService implements IExportTicketService {
     @Override
@@ -23,16 +24,10 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
     @Override
     public void importTicketInfo() {
         JSONObject info = mongoTemplate.findOne(new Query(), JSONObject.class, "ticket_info");
-
-//        JSONObject requestParam = new JSONObject();
-//        requestParam.put("users", info.getJSONArray("users"));
-
-        JSONObject request = this.doPost("/api/v2/tickets/create_many",info);
-        System.out.println("=========================");
-//        System.out.println(info);
-        System.out.println("=========================");
-        System.out.println(request);
-        System.out.println("=========================");
+        JSONObject requestParam = new JSONObject();
+        requestParam.put("tickets", info.getJSONArray("tickets"));
+        JSONObject request = this.doPost("/api/v2/tickets/create_many",requestParam);
+        log.info("请求结果{}",request);
     }
 
     @Override

@@ -47,8 +47,8 @@ public class Execute {
     @PostConstruct
     void init(){
 
-        iExportOrgService.exportOrgMembershipInfo();
-        iExportOrgService.importOrgMembershipInfo();
+//        iExportOrgService.exportOrgMembershipInfo();
+//        iExportOrgService.importOrgMembershipInfo();
 
 //        iExportOrgService.exportOrgSubscriptionsInfo();
 //        iExportOrgService.importOrgSubscriptionsInfo();
@@ -67,7 +67,7 @@ public class Execute {
 
         //ok
 //        iExportUserService.exportUserInfo();
-//        iExportUserService.importUserInfo();
+        iExportUserService.importUserInfo();
 
 //        iExportBusinessService.exportViewInfo();
 
@@ -86,8 +86,10 @@ public class Execute {
 
 //        iExportItemService.exportDynamicContent();
 //        iExportSysService.exportBrandInfo();
+
 //        iExportTicketService.exportTicketInfo();
 //        iExportTicketService.importTicketInfo();
+
 //        iExportTicketService.exportSatisfactionRatingInfo();
 //        iExportContentService.exportExternalContentRecordInfo();
 //        iExportGatherService.exportTopicInfo();

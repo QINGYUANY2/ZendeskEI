@@ -6,7 +6,9 @@ import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportUserService;
 import com.whaleal.zendesk.util.StringSub;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -27,28 +29,32 @@ import java.util.regex.Pattern;
 @Service
 public class IExportUserServiceImpl extends BaseExportService implements IExportUserService {
 
-    @Value("${zendesk.source.domain}")
-    private String sourceDomain;
+
 
     @Override
     public void exportUserInfo() {
         JSONObject request = this.doGet("/api/v2/users", new HashMap<>());
-//        JSONArray users = request.getJSONArray("users");
-//        String domain = StringSub.getDomain(sourceDomain);
-//        users.forEach(obj -> {
-//            JSONObject jsonObject = (JSONObject) obj;
-//            jsonObject.put("domain", domain);
-//        });
+        request.put("domain",this.sourceDomain);
         mongoTemplate.insert(request, "user_info");
-
     }
 
     @Override
     public void importUserInfo() {
         // todo  后期添加分页 以防过大
-        JSONObject info = mongoTemplate.findOne(new Query(), JSONObject.class, "user_info");
+        Document document = mongoTemplate.findOne(new Query(new Criteria("domain").is(this.sourceDomain)), Document.class, "user_info");
+
+//        List<Document> organizations = orgDoc.getList("organizations",Document.class);
+        List<Document> documentList = document.getList("users", Document.class);
+        for (Document users : documentList ) {
+            if (users.get("organization_id") != null){
+                Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
+                users.put("organization_id",orgDoc.get("newId"));
+            }
+        }
+        JSONObject jsonObject = JSONObject.parseObject(document.toJson());
         JSONObject requestParam = new JSONObject();
-        requestParam.put("users", info.getJSONArray("users"));
+        requestParam.put("users", jsonObject.getJSONArray("users"));
+        System.out.println(requestParam);
         JSONObject request = this.doPost("/api/v2/users/create_many",requestParam);
         log.info("请求结果{}",request);
     }

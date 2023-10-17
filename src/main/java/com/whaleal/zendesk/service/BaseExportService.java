@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,14 +23,14 @@ public abstract class BaseExportService {
     @Resource
     public MongoTemplate mongoTemplate;
     @Value("${zendesk.source.domain}")
-    private String sourceDomain;
+    public String sourceDomain;
     @Value("${zendesk.source.username}")
     private String sourceUsername;
     @Value("${zendesk.source.password}")
     private String sourcePassword;
 
     @Value("${zendesk.target.domain}")
-    private String targetDomain;
+    public String targetDomain;
     @Value("${zendesk.target.username}")
     private String targetUsername;
     @Value("${zendesk.target.password}")
@@ -51,9 +52,39 @@ public abstract class BaseExportService {
     }
 
     public JSONObject doGet(String url, Map<String, String> param) {
-        //拼接源端域名与接口路径
-        String realPath = sourceDomain + url;
+//        //拼接源端域名与接口路径
+//        String realPath = sourceDomain + url;
+//        HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
+//                .newBuilder();
+//        //如果携带参数了 就拼接参数
+//        if (!param.isEmpty()) {
+//            param.entrySet().forEach(item -> {
+//                urlBuilder.addQueryParameter(item.getKey(), item.getValue());
+//            });
+//        }
+//
+//        Request request = new Request.Builder()
+//                .url(urlBuilder.build())
+//                .method("GET", null)
+//                .addHeader("Content-Type", "application/json")
+//                .addHeader("Authorization", sourceBasic)
+//                .build();
+//
+//        Response response;
+//        String string;
+//        try {
+//            response = sourceClient.newCall(request).execute();
+//            string = response.body().string();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+        JSONObject jsonObject = doGet(sourceDomain, url, param);
+        return jsonObject;
+    }
 
+    public JSONObject doGet(String domain,String url, Map<String, String> param) {
+        //拼接源端域名与接口路径
+        String realPath = domain + url;
         HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
                 .newBuilder();
         //如果携带参数了 就拼接参数
@@ -100,13 +131,32 @@ public abstract class BaseExportService {
         try {
             creatResponse = targetClient.newCall(creatRequest).execute();
             string = creatResponse.body().string();
-            System.out.println("++++++++++++++++++++++++");
-            System.out.println(creatResponse);
-            System.out.println("++++++++++++++++++++++++");
+//            System.out.println("++++++++++++++++++++++++");
+//            System.out.println(creatResponse);
+//            System.out.println("++++++++++++++++++++++++");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return JSONObject.parseObject(string);
     }
+
+    public void createRelation(String url,String arrayField,String compareField,String collection) {
+        JSONObject source = doGet(sourceDomain, url , new HashMap<>());
+        JSONObject target = doGet( targetDomain,url , new HashMap<>());
+        JSONObject result = new JSONObject();
+        for (Object targetObj : target.getJSONArray(arrayField)) {
+            for (Object sourceObj : source.getJSONArray(arrayField)) {
+                JSONObject targetJson = JSONObject.parseObject(targetObj.toString());
+                JSONObject sourceJson = JSONObject.parseObject(sourceObj.toString());
+                if (targetJson.get(compareField).toString().equals(sourceJson.get(compareField).toString())){
+                    result.put("newID",targetJson.getLong("id"));
+                    result.put("oldId",sourceJson.getLong("id"));
+                    mongoTemplate.insert(result,collection);
+                    break;
+                }
+            }
+        }
+    }
+
 
 }
