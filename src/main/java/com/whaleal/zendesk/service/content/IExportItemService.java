@@ -6,8 +6,4 @@ public interface IExportItemService {
 
     void importItemInfo();
 
-    void exportDynamicContent();
-
-    void importDynamicContent();
-
 }

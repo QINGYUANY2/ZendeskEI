@@ -6,8 +6,8 @@ public interface IExportGatherService {
 
     void importTopicInfo();
 
-    void exportUserSegmentInfo();
-
-    void importUserSegmentInfo();
+//    void exportUserSegmentInfo();
+//
+//    void importUserSegmentInfo();
     
 }

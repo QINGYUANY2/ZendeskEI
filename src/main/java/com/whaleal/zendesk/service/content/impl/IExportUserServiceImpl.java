@@ -7,15 +7,12 @@ import com.whaleal.zendesk.service.content.IExportUserService;
 import com.whaleal.zendesk.util.StringSub;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 
 /**
@@ -34,38 +31,46 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
     @Override
     public void exportUserInfo() {
         JSONObject request = this.doGet("/api/v2/users", new HashMap<>());
-        request.put("domain",this.sourceDomain);
-        mongoTemplate.insert(request, "user_info");
+        JSONArray users = request.getJSONArray("users");
+        List<JSONObject> list = users.toJavaList(JSONObject.class);
+        for (JSONObject jsonObject : list) {
+            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
+            jsonObject.put("status",0);
+        }
+        mongoTemplate.insert(list, "user_info");
     }
 
     @Override
     public void importUserInfo() {
         // todo  后期添加分页 以防过大
-        Document document = mongoTemplate.findOne(new Query(new Criteria("domain").is(this.sourceDomain)), Document.class, "user_info");
-
-//        List<Document> organizations = orgDoc.getList("organizations",Document.class);
-        List<Document> documentList = document.getList("users", Document.class);
+        List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "user_info");
         for (Document users : documentList ) {
-            if (users.get("organization_id") != null){
-                Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
-                users.put("organization_id",orgDoc.get("newId"));
+            try {
+                if (users.get("organization_id") != null){
+                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
+                    users.put("organization_id",orgDoc.get("newId"));
+                }
+                JSONObject jsonObject = JSONObject.parseObject(users.toJson());
+                JSONObject requestParam = new JSONObject();
+                requestParam.put("user", jsonObject);
+                JSONObject request = this.doPost("/api/v2/users",requestParam);
+                users.put("status",1);
+                log.info("请求结果{}",request);
+            }catch (Exception e){
+                e.printStackTrace();
+                users.put("status",2);
             }
+            mongoTemplate.save(users,"user_info");
         }
-        JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-        JSONObject requestParam = new JSONObject();
-        requestParam.put("users", jsonObject.getJSONArray("users"));
-        System.out.println(requestParam);
-        JSONObject request = this.doPost("/api/v2/users/create_many",requestParam);
-        log.info("请求结果{}",request);
     }
+
+
+    // 没有角色
 
     @Override
     public void exportRoleInfo() {
-        JSONObject request = this.doGet("/api/v2/roles", new HashMap<>());
-
-        System.out.println("==============");
-        System.out.println(request);
-        System.out.println("==============");
+//        JSONObject request = this.doGet("/api/v2/roles", new HashMap<>());
+//        request.put("domain",this.sourceDomain);
 //        mongoTemplate.insert(request, "role_info");
 
     }
@@ -79,20 +84,32 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
     @Override
     public void exportUserField() {
         JSONObject request = this.doGet("/api/v2/user_fields", new HashMap<>());
-        mongoTemplate.insert(request, "user_field");
-
+        JSONArray array = request.getJSONArray("user_fields");
+        List<JSONObject> list = array.toJavaList(JSONObject.class);
+        for (JSONObject jsonObject : list) {
+            jsonObject.put("domain",StringSub.getDomain(this.sourceDomain));
+            jsonObject.put("status",0);
+        }
+        mongoTemplate.insert(list, "user_field");
     }
 
     @Override
     public void importUserField() {
         // todo  后期添加分页 以防过大
-        JSONObject info = mongoTemplate.findOne(new Query(), JSONObject.class, "user_field");
-
-        for (Object groups : info.getJSONArray("user_fields")) {
-            JSONObject requestParam = new JSONObject();
-            requestParam.put("user_field", groups);
-            JSONObject request = this.doPost("/api/v2/user_fields", requestParam);
-            log.info("请求结果{}", request);
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "user_field");
+        for (Document document : list) {
+            try {
+                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                JSONObject requestParam = new JSONObject();
+                requestParam.put("user_field", jsonObject);
+                JSONObject request = this.doPost("/api/v2/user_fields", requestParam);
+                log.info("请求结果{}", request);
+                document.put("status",1);
+            }catch (Exception e){
+                e.printStackTrace();
+                document.put("status",2);
+            }
+            mongoTemplate.save(document,"user_field");
         }
     }
 

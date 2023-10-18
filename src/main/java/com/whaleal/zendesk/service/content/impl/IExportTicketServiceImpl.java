@@ -4,44 +4,76 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportTicketService;
+import com.whaleal.zendesk.util.StringSub;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+
 import java.util.HashMap;
+import java.util.List;
+
 @Slf4j
 @Service
 public class IExportTicketServiceImpl extends BaseExportService implements IExportTicketService {
+
+
+    // todo ticket 是creat or import ？？？
+
     @Override
     public void exportTicketInfo() {
         //todo 参数
         // .addQueryParameter("external_id", "")
         JSONObject request = this.doGet("/api/v2/tickets",new HashMap<>());
-        // todo 所有的Ticket都在tickets中，获取时可能会内存溢出， 后期可分成每个ticket一条记录与账户绑定
-        mongoTemplate.save(request,"ticket_info");
+        List<JSONObject> list = request.getJSONArray("tickets").toJavaList(JSONObject.class);
+        for (JSONObject jsonObject : list) {
+            jsonObject.put("status",0);
+            jsonObject.put("domain",StringSub.getDomain(this.sourceDomain));
+        }
+        mongoTemplate.insert(list,"ticket_info");
     }
 
     @Override
     public void importTicketInfo() {
-        JSONObject info = mongoTemplate.findOne(new Query(), JSONObject.class, "ticket_info");
-        JSONObject requestParam = new JSONObject();
-        requestParam.put("tickets", info.getJSONArray("tickets"));
-        JSONObject request = this.doPost("/api/v2/tickets/create_many",requestParam);
-        log.info("请求结果{}",request);
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "ticket_info");
+        for (Document document : list) {
+            try {
+                JSONObject requestParam = new JSONObject();
+                requestParam.put("ticket", document);
+                // todo  批量建 or 单个建  ？？？？
+                JSONObject request = this.doPost("/api/v2/tickets",requestParam);
+                System.out.println("====================");
+                System.out.println(requestParam);
+                System.out.println("====================");
+                //{"error":"InvalidEndpoint","description":"Not found"}
+//                JSONObject request = this.doPost("/api/v2/imports/tickets",requestParam);
+                log.info("请求结果{}",request);
+                document.put("status",1);
+            }catch (Exception e){
+                e.printStackTrace();
+                document.put("status",2);
+            }
+            mongoTemplate.save(document,"ticket_info");
+        }
     }
 
     @Override
     public void exportSatisfactionRatingInfo() {
         JSONObject request = this.doGet("/api/v2/satisfaction_ratings",new HashMap<>());
-        System.out.println("=====================");
-        System.out.println(request);
-        System.out.println("=====================");
-//        JSONArray array = request.getJSONArray("satisfaction_ratings");
-//        mongoTemplate.insert(array,"satisfaction_rating");
+        List<JSONObject> list = request.getJSONArray("satisfaction_ratings").toJavaList(JSONObject.class);
+        for (JSONObject jsonObject : list) {
+            jsonObject.put("status",0);
+            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
+        }
+        mongoTemplate.insert(list,"satisfaction_rating");
     }
 
     @Override
     public void importSatisfactionRatingInfo() {
+
+        // todo  需要绑定ticket id
 
     }
 

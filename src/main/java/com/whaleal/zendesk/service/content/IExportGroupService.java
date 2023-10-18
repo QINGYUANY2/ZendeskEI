@@ -6,9 +6,9 @@ public interface IExportGroupService {
 
     void importGroupInfo();
 
-    void exportMembershipInfo();
+    void exportGroupMembershipInfo();
 
-    void importMembershipInfo();
+    void importGroupMembershipInfo();
 
 
 }

@@ -47,9 +47,11 @@ public class Execute {
     @PostConstruct
     void init(){
 
+        //ok
 //        iExportOrgService.exportOrgMembershipInfo();
 //        iExportOrgService.importOrgMembershipInfo();
 
+        // 无数据
 //        iExportOrgService.exportOrgSubscriptionsInfo();
 //        iExportOrgService.importOrgSubscriptionsInfo();
 
@@ -57,7 +59,7 @@ public class Execute {
 //        iExportOrgService.exportOrgInfo();
 //        iExportOrgService.importOrgInfo();
 
-        //role  有点问题
+        //role  有点问题，没有role
 //        iExportUserService.exportRoleInfo();
 //        iExportUserService.importRoleInfo();
 
@@ -67,69 +69,72 @@ public class Execute {
 
         //ok
 //        iExportUserService.exportUserInfo();
-        iExportUserService.importUserInfo();
+//        iExportUserService.importUserInfo();
 
+        //ok
 //        iExportBusinessService.exportViewInfo();
+//        iExportBusinessService.importViewInfo();
 
+        //ok
 //        iExportBusinessService.exportMacroInfo();
+//        iExportBusinessService.importMacroInfo();
 
+        //ok
 //        iExportFieldService.exportFieldInfo();
+//        iExportFieldService.importFieldInfo();
 
         //ok
 //        iExportGroupService.exportGroupInfo();
 //        iExportGroupService.importGroupInfo();
 
-//        iExportGroupService.exportMembershipInfo();
-//        iExportGroupService.importMembershipInfo();
+        //ok
+//        iExportGroupService.exportGroupMembershipInfo();
+//        iExportGroupService.importGroupMembershipInfo();
 
+        //ok
 //        iExportItemService.exportItemInfo();
+//        iExportItemService.importItemInfo();
 
-//        iExportItemService.exportDynamicContent();
+        //ok
 //        iExportSysService.exportBrandInfo();
+//        iExportSysService.importBrandInfo();
 
+        // 关联太多
 //        iExportTicketService.exportTicketInfo();
 //        iExportTicketService.importTicketInfo();
-
 //        iExportTicketService.exportSatisfactionRatingInfo();
+
+        //无数据
 //        iExportContentService.exportExternalContentRecordInfo();
+//        iExportContentService.importExternalContentRecordInfo();
+
+        //ok
 //        iExportGatherService.exportTopicInfo();
-//        iExportGatherService.exportUserSegmentInfo();
+//        iExportGatherService.importTopicInfo();
+
+        //导入部分没有示例java代码，一招curl编写 导入时有问题
 //        iExportGuideService.exportThemeInfo();
+//        iExportGuideService.importThemeInfo();
+
+        //无数据
 //        iExportGuideService.exportArticleInfo();
+//        iExportGuideService.exportArticleInfo();
+
+        //ok
 //        iExportGuideService.exportPermissionGroupInfo();
+//        iExportGuideService.importPermissionGroupInfo();
+
+        //导入有问题
 //        iExportPhoneService.exportPhoneNumberInfo();
+//        iExportPhoneService.importPhoneNumberInfo();
+
+        //导出的数据用作参数时缺少Category
 //        iExportPhoneService.exportGreetingCategoriesInfo();
+//        iExportPhoneService.importGreetingCategoriesInfo();
+
+        // 导入时会有权限问题
 //        iExportPhoneService.exportIVRsInfo();
+//        iExportPhoneService.importIVRsInfo();
 
     }
-
-//
-//    @PostConstruct
-//    void init(){
-////        iExportUserService.exportUserInfo();
-////        iExportUserService.importUserInfo();
-////        iExportBusinessService.exportViewInfo();
-////        iExportBusinessService.exportMacroInfo();
-////        iExportFieldService.exportFieldInfo();
-////        iExportGroupService.exportGroupInfo();
-////        iExportGroupService.exportMembershipInfo();
-////        iExportItemService.exportItemInfo();
-////        iExportItemService.exportDynamicContent();
-////        iExportSysService.exportBrandInfo();
-////        iExportTicketService.exportTicketInfo();
-////        iExportTicketService.exportSatisfactionRatingInfo();
-////        iExportContentService.exportExternalContentRecordInfo();
-////        iExportGatherService.exportTopicInfo();
-////        iExportGatherService.exportUserSegmentInfo();
-////        iExportGuideService.exportThemeInfo();
-////        iExportGuideService.exportArticleInfo();
-////        iExportGuideService.exportPermissionGroupInfo();
-////        iExportPhoneService.exportPhoneNumberInfo();
-////        iExportPhoneService.exportGreetingCategoriesInfo();
-////        iExportPhoneService.exportIVRsInfo();
-//
-//    }
-//
-
-
 }
