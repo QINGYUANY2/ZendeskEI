@@ -42,26 +42,28 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 
     @Override
     public void importUserInfo() {
-        // todo  后期添加分页 以防过大
-        List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "user_info");
-        for (Document users : documentList ) {
-            try {
-                if (users.get("organization_id") != null){
-                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
-                    users.put("organization_id",orgDoc.get("newId"));
-                }
-                JSONObject jsonObject = JSONObject.parseObject(users.toJson());
-                JSONObject requestParam = new JSONObject();
-                requestParam.put("user", jsonObject);
-                JSONObject request = this.doPost("/api/v2/users",requestParam);
-                users.put("status",1);
-                log.info("请求结果{}",request);
-            }catch (Exception e){
-                e.printStackTrace();
-                users.put("status",2);
-            }
-            mongoTemplate.save(users,"user_info");
-        }
+
+//        List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "user_info");
+//        for (Document users : documentList ) {
+//            try {
+//                if (users.get("organization_id") != null){
+//                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
+//                    users.put("organization_id",orgDoc.get("newId"));
+//                }
+//                JSONObject jsonObject = JSONObject.parseObject(users.toJson());
+//                JSONObject requestParam = new JSONObject();
+//                requestParam.put("user", jsonObject);
+//                JSONObject request = this.doPost("/api/v2/users",requestParam);
+//                users.put("status",1);
+//                log.info("请求结果{}",request);
+//            }catch (Exception e){
+//                e.printStackTrace();
+//                users.put("status",2);
+//            }
+//            mongoTemplate.save(users,"user_info");
+//        }
+        doImport("user","/api/v2/users","org_info");
+
     }
 
 
