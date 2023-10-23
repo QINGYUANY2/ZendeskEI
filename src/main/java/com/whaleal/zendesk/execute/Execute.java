@@ -101,7 +101,8 @@ public class Execute {
 
         // 关联太多
 //        iExportTicketService.exportTicketInfo();
-//        iExportTicketService.importTicketInfo();
+        iExportTicketService.importTicketInfo();
+
 //        iExportTicketService.exportSatisfactionRatingInfo();
 
         //无数据

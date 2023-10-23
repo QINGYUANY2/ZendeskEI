@@ -37,24 +37,32 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
     @Override
     public void importTicketInfo() {
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "ticket_info");
+
+        Criteria criteria = new Criteria();
+        criteria.and("domain").is(StringSub.getDomain(this.sourceDomain));
+        criteria.and("brand_id").is("8427041409433");
+
+        List<Document> list = mongoTemplate.find(new Query(criteria), Document.class, "ticket_info");
+        JSONObject request = null;
         for (Document document : list) {
+
             try {
                 JSONObject requestParam = new JSONObject();
                 requestParam.put("ticket", document);
                 // todo  批量建 or 单个建  ？？？？
-                JSONObject request = this.doPost("/api/v2/tickets",requestParam);
+//                request = this.doPost("/api/v2/tickets",requestParam);
                 System.out.println("====================");
+                System.out.println(document);
                 System.out.println(requestParam);
                 System.out.println("====================");
-                //{"error":"InvalidEndpoint","description":"Not found"}
-//                JSONObject request = this.doPost("/api/v2/imports/tickets",requestParam);
+
                 log.info("请求结果{}",request);
                 document.put("status",1);
             }catch (Exception e){
                 e.printStackTrace();
                 document.put("status",2);
             }
+            document.put("request",request);
             mongoTemplate.save(document,"ticket_info");
         }
     }

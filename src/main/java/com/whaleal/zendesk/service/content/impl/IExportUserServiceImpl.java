@@ -42,28 +42,34 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 
     @Override
     public void importUserInfo() {
-
-//        List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "user_info");
-//        for (Document users : documentList ) {
-//            try {
-//                if (users.get("organization_id") != null){
-//                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
-//                    users.put("organization_id",orgDoc.get("newId"));
-//                }
-//                JSONObject jsonObject = JSONObject.parseObject(users.toJson());
-//                JSONObject requestParam = new JSONObject();
-//                requestParam.put("user", jsonObject);
-//                JSONObject request = this.doPost("/api/v2/users",requestParam);
-//                users.put("status",1);
-//                log.info("请求结果{}",request);
-//            }catch (Exception e){
-//                e.printStackTrace();
-//                users.put("status",2);
-//            }
-//            mongoTemplate.save(users,"user_info");
-//        }
-        doImport("user","/api/v2/users","org_info");
-
+        List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "user_info");
+        JSONObject request= null;
+        for (Document users : documentList ) {
+            // todo 版本不一致  例专业版与企业版 有custom_role与没有时 带custom_role_id 参数会报错
+            //  users.remove("custom_role_id");
+            try {
+                if (users.get("organization_id") != null){
+                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
+                    users.put("organization_id",orgDoc.get("newId"));
+                }
+                if (users.get("default_group_id") != null){
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("default_group_id"))), Document.class, "group_info");
+                    users.put("default_group_id",groupDoc.get("newId"));
+                }
+                JSONObject jsonObject = JSONObject.parseObject(users.toJson());
+                JSONObject requestParam = new JSONObject();
+                requestParam.put("user", jsonObject);
+                request = this.doPost("/api/v2/users",requestParam);
+                users.put("status",1);
+                users.put("newId",request.getJSONObject("user").get("id"));
+            }catch (Exception e){
+                e.printStackTrace();
+                users.put("status",2);
+                users.put("error",request.get("description"));
+            }
+            log.info("请求结果{}",request);
+            mongoTemplate.save(users,"user_info");
+        }
     }
 
 

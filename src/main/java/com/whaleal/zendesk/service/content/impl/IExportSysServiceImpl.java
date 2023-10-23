@@ -39,6 +39,7 @@ public class IExportSysServiceImpl extends BaseExportService implements IExportS
                 JSONObject request = this.doPost("/api/v2/brands", requestParam);
                 log.info("请求结果{}", request);
                 document.put("status",1);
+                document.put("newId",request.getJSONObject("brand").get("id"));
             }catch (Exception e){
                 e.printStackTrace();
                 document.put("status",2);

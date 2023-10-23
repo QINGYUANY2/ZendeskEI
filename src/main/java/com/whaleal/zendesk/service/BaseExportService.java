@@ -137,9 +137,9 @@ public abstract class BaseExportService {
         try {
             creatResponse = targetClient.newCall(creatRequest).execute();
             string = creatResponse.body().string();
-//            System.out.println("++++++++++++++++++++++++");
-//            System.out.println(creatResponse);
-//            System.out.println("++++++++++++++++++++++++");
+            System.out.println("===========================");
+            System.out.println(creatResponse);
+            System.out.println("===========================");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -175,6 +175,9 @@ public abstract class BaseExportService {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 JSONObject requestParam = new JSONObject();
                 requestParam.put(param, jsonObject);
+                System.out.println("+++++++++++++++++++++++++++");
+                System.out.println(requestParam);
+                System.out.println("+++++++++++++++++++++++++++");
                 JSONObject request = this.doPost(path, requestParam);
                 log.info("请求结果{}", request);
                 document.put("status", 1);

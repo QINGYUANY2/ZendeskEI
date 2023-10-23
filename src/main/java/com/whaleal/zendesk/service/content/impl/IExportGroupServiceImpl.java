@@ -34,18 +34,20 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
 
         // todo  后期添加分页 以防过大
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "group_info");
-
+        JSONObject request=null;
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 JSONObject requestParam = new JSONObject();
                 requestParam.put("group", jsonObject);
-                JSONObject request = this.doPost("/api/v2/groups", requestParam);
+                request= this.doPost("/api/v2/groups", requestParam);
                 log.info("请求结果{}", request);
                 document.put("status",1);
+                document.put("newId",request.getJSONObject("group").get("id"));
             }catch (Exception e){
                 e.printStackTrace();
                 document.put("status",2);
+                document.put("errorDetails",request.get("details"));
             }
             mongoTemplate.save(document,"group_info");
         }
