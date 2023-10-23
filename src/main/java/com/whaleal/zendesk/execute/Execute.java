@@ -100,6 +100,7 @@ public class Execute {
 //        iExportSysService.importBrandInfo();
 
         // 关联太多
+//        iExportTicketService.exportTicketRequest();
 //        iExportTicketService.exportTicketInfo();
         iExportTicketService.importTicketInfo();
 

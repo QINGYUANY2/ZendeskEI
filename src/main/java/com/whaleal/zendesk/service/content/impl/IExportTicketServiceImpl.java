@@ -20,8 +20,18 @@ import java.util.List;
 public class IExportTicketServiceImpl extends BaseExportService implements IExportTicketService {
 
 
-    // todo ticket 是creat or import ？？？
+    @Override
+    public void exportTicketRequest() {
+        JSONObject request = this.doGet("/api/v2/requests",new HashMap<>());
+        List<JSONObject> list = request.getJSONArray("requests").toJavaList(JSONObject.class);
+        for (JSONObject jsonObject : list) {
+            jsonObject.put("status",0);
+            jsonObject.put("domain",StringSub.getDomain(this.sourceDomain));
+        }
+        mongoTemplate.insert(list,"ticket_request");
+    }
 
+    // todo ticket 是creat or import ？？？
     @Override
     public void exportTicketInfo() {
         //todo 参数
@@ -29,9 +39,12 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         JSONObject request = this.doGet("/api/v2/tickets",new HashMap<>());
         List<JSONObject> list = request.getJSONArray("tickets").toJavaList(JSONObject.class);
         for (JSONObject jsonObject : list) {
+            JSONObject comment = this.doGet("/api/v2/tickets/"+jsonObject.get("id")+"/comments",new HashMap<>());
+            jsonObject.put("comments",comment.get("comments"));
             jsonObject.put("status",0);
             jsonObject.put("domain",StringSub.getDomain(this.sourceDomain));
         }
+//        System.out.println(list);
         mongoTemplate.insert(list,"ticket_info");
     }
 
@@ -40,19 +53,28 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
         Criteria criteria = new Criteria();
         criteria.and("domain").is(StringSub.getDomain(this.sourceDomain));
-        criteria.and("brand_id").is("8427041409433");
+        criteria.and("brand_id").is(10184545635097L);
+        Query query = new Query(criteria);
 
-        List<Document> list = mongoTemplate.find(new Query(criteria), Document.class, "ticket_info");
+        List<Document> list = mongoTemplate.find(query, Document.class, "ticket_info");
         JSONObject request = null;
         for (Document document : list) {
-
             try {
+                if (document.get("brand_id") != null){
+                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("brand_id"))), Document.class, "brand_info");
+                    document.put("brand_id",orgDoc.get("newId"));
+                }
+                if (document.get("group_id") != null){
+                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("group_id"))), Document.class, "group_info");
+                    document.put("group_id",orgDoc.get("newId"));
+                }
+
                 JSONObject requestParam = new JSONObject();
                 requestParam.put("ticket", document);
                 // todo  批量建 or 单个建  ？？？？
 //                request = this.doPost("/api/v2/tickets",requestParam);
+
                 System.out.println("====================");
-                System.out.println(document);
                 System.out.println(requestParam);
                 System.out.println("====================");
 
@@ -63,6 +85,8 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 document.put("status",2);
             }
             document.put("request",request);
+            document.remove("brand_id");
+            document.remove("group_id");
             mongoTemplate.save(document,"ticket_info");
         }
     }
@@ -99,4 +123,13 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
     public void importResourceCollectionInfo() {
 
     }
+
+
+
+
+
+
+
+
+
 }

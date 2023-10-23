@@ -46,7 +46,7 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
         JSONObject request= null;
         for (Document users : documentList ) {
             // todo 版本不一致  例专业版与企业版 有custom_role与没有时 带custom_role_id 参数会报错
-            //  users.remove("custom_role_id");
+              users.remove("custom_role_id");
             try {
                 if (users.get("organization_id") != null){
                     Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, "org_info");
@@ -65,9 +65,11 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
             }catch (Exception e){
                 e.printStackTrace();
                 users.put("status",2);
-                users.put("error",request.get("description"));
             }
+            users.put("request",request);
             log.info("请求结果{}",request);
+            users.remove("organization_id");
+            users.remove("default_group_id");
             mongoTemplate.save(users,"user_info");
         }
     }
