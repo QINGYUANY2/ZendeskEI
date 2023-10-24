@@ -6,17 +6,21 @@ import com.whaleal.zendesk.util.StringSub;
 import okhttp3.*;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.annotation.Resource;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 //@SpringBootTest
 class ZendeskApplicationTests extends BaseExportService {
+
+    @Resource
+    MongoTemplate mongoTemplate;
 
     @Test
     void contextLoads() {
@@ -44,19 +48,19 @@ class ZendeskApplicationTests extends BaseExportService {
         }
     }
 
-
     @Test
     void testFind() {
 
-//        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
-//        String sourceEmail = "user1@yzm.de";
-//        String sourcePassword = "1qaz@WSX";
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceEmail = "user1@yzm.de";
+        String sourcePassword = "1qaz@WSX";
 
-        String sourceUrl = "https://jinmu1442.zendesk.com";
-        String sourceEmail = "1102361302@qq.com";
-        String sourcePassword = "123456";
+//        String sourceUrl = "https://jinmu1442.zendesk.com";
+//        String sourceEmail = "1102361302@qq.com";
+//        String sourcePassword = "123456";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/users")
+//        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/tickets/72/comments")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/tickets/72")
                 .newBuilder();
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -74,7 +78,6 @@ class ZendeskApplicationTests extends BaseExportService {
             e.printStackTrace();
         }
     }
-
 
     @Test
     void test1() {
@@ -109,13 +112,11 @@ class ZendeskApplicationTests extends BaseExportService {
         }
     }
 
-    @Resource
-    MongoTemplate mongoTemplate;
     @Test
-    void test2(){
+    void test2() {
         List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("status").is(2)), Document.class, "user_info");
         JSONObject request = null;
-        for (Document users : documentList ) {
+        for (Document users : documentList) {
             System.out.println("====================");
             users.remove("custom_role_id");
             System.out.println(users);
@@ -124,32 +125,72 @@ class ZendeskApplicationTests extends BaseExportService {
                 JSONObject jsonObject = JSONObject.parseObject(users.toJson());
                 JSONObject requestParam = new JSONObject();
                 requestParam.put("user", jsonObject);
-                request = doPost("/api/v2/users",requestParam);
-                users.put("status",1);
-                users.put("newId",request.getJSONObject("user").get("id"));
+                request = doPost("/api/v2/users", requestParam);
+                users.put("status", 1);
+                users.put("newId", request.getJSONObject("user").get("id"));
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                users.put("status",2);
+                users.put("status", 2);
             }
             System.out.println("_____________________");
             System.out.println(request);
             System.out.println("_____________________");
-            mongoTemplate.save(users,"user_info");
+            mongoTemplate.save(users, "user_info");
         }
 
     }
 
 
+    @Test
+    void test33() {
+        List<Document> documentList = mongoTemplate.find(new Query(new Criteria("brand_id").is(10184545635097L)), Document.class, "ticket_info");
+//
+//        for (Document document : documentList) {
+//
+//            Document temp = new Document();
+//            temp.putAll(document);
+//            List<Document> comments = temp.getList("comments", Document.class);
+//            for (Document comment : comments) {
+//
+//            }
+//
+//        }
+
+        System.out.println("+++++++++++++++");
+        System.out.println(documentList);
+        System.out.println("+++++++++++++++");
+
+
+    }
+
+
+
+
 
     @Test
-    void test33(){
-        List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("status").is(2)), Document.class, "user_info");
-        for (Document document : documentList) {
-            System.out.println("+++++++++++++++");
-            System.out.println(document);
-            System.out.println("+++++++++++++++");
-        }
+    void test11111() {
+//        {"score": null, "satisfaction_rating.score": null}
+        Document document = new Document();
+
+        Document temp = new Document();
+
+
+        temp.put("core", 111);
+        temp.put("satisfaction_rating.score", 11111);
+        document.put("id", 1);
+        document.put("score", temp);
+
+
+        Document obj = (Document) document.get("score");
+
+        Document demo = new Document(document);
+        demo.put("id", 2);
+        System.out.println(document);
+        System.out.println(demo);
+
+//        obj.put("core",222);
+
 
     }
 

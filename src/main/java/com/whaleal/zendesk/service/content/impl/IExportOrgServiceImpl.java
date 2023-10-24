@@ -53,6 +53,7 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
             }
             mongoTemplate.save(document,"org_info");
         }
+
     }
 
     @Override

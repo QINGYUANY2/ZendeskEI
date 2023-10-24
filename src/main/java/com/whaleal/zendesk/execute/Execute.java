@@ -114,7 +114,7 @@ public class Execute {
 //        iExportGatherService.exportTopicInfo();
 //        iExportGatherService.importTopicInfo();
 
-        //导入部分没有示例java代码，一招curl编写 导入时有问题
+        //导入部分没有示例java代码，依照curl编写 导入时有问题
 //        iExportGuideService.exportThemeInfo();
 //        iExportGuideService.importThemeInfo();
 
@@ -130,7 +130,7 @@ public class Execute {
 //        iExportPhoneService.exportPhoneNumberInfo();
 //        iExportPhoneService.importPhoneNumberInfo();
 
-        //导出的数据用作参数时缺少Category
+        //导出的数据用作参数时缺少 Category
 //        iExportPhoneService.exportGreetingCategoriesInfo();
 //        iExportPhoneService.importGreetingCategoriesInfo();
 
