@@ -38,6 +38,7 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
             jsonObject.put("status",0);
         }
         mongoTemplate.insert(list, "user_info");
+        log.info("导出用户信息成功，一共导出{}条记录",list.size());
     }
 
     @Override

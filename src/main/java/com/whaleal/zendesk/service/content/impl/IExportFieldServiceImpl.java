@@ -1,6 +1,5 @@
 package com.whaleal.zendesk.service.content.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportFieldService;
