@@ -19,8 +19,6 @@ public class Execute {
     @Resource
     private IExportBusinessService iExportBusinessService;
     @Resource
-    private IExportFieldService iExportFieldService;
-    @Resource
     private IExportFormsService iExportFormsService;
     @Resource
     private IExportGroupService iExportGroupService;
@@ -99,12 +97,22 @@ public class Execute {
 //        iExportSysService.exportBrandInfo();
 //        iExportSysService.importBrandInfo();
 
-        // 关联太多
+        // 关联太多  ok
+//        iExportTicketService.exportSatisfactionRatingInfo();
+        iExportTicketService.exportTicketAudit();
 //        iExportTicketService.exportTicketRequest();
 //        iExportTicketService.exportTicketInfo();
-        iExportTicketService.importTicketInfo();
+//        iExportTicketService.importTicketInfo();
 
-//        iExportTicketService.exportSatisfactionRatingInfo();
+
+        //ok
+//        iExportTicketService.exportTicketFields();
+//        iExportTicketService.importTicketFields();
+
+        //ok
+//        iExportFormsService.exportTicketForms();
+//        iExportFormsService.importTicketForms();
+
 
         //无数据
 //        iExportContentService.exportExternalContentRecordInfo();
@@ -114,25 +122,25 @@ public class Execute {
 //        iExportGatherService.exportTopicInfo();
 //        iExportGatherService.importTopicInfo();
 
-        //导入部分没有示例java代码，依照curl编写 导入时有问题
-//        iExportGuideService.exportThemeInfo();
-//        iExportGuideService.importThemeInfo();
-
         //无数据
 //        iExportGuideService.exportArticleInfo();
 //        iExportGuideService.exportArticleInfo();
+        //导入部分没有示例java代码，依照curl编写 导入时有问题
+//        iExportGuideService.exportThemeInfo();
+//        iExportGuideService.importThemeInfo();
 
         //ok
 //        iExportGuideService.exportPermissionGroupInfo();
 //        iExportGuideService.importPermissionGroupInfo();
 
-        //导入有问题
+        //ok
+//        iExportPhoneService.exportGreetingCategoriesInfo();
+//        iExportPhoneService.exportGreetingInfo();
+//        iExportPhoneService.importGreetingInfo();
+
+        //导入有问题  开通即可
 //        iExportPhoneService.exportPhoneNumberInfo();
 //        iExportPhoneService.importPhoneNumberInfo();
-
-        //导出的数据用作参数时缺少 Category
-//        iExportPhoneService.exportGreetingCategoriesInfo();
-//        iExportPhoneService.importGreetingCategoriesInfo();
 
         // 导入时会有权限问题
 //        iExportPhoneService.exportIVRsInfo();

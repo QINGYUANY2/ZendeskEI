@@ -8,7 +8,9 @@ public interface IExportPhoneService {
 
     void exportGreetingCategoriesInfo();
 
-    void importGreetingCategoriesInfo();
+    void exportGreetingInfo();
+
+    void importGreetingInfo();
 
     void exportIVRsInfo();
 

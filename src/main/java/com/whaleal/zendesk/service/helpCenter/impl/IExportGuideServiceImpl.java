@@ -31,12 +31,16 @@ public class IExportGuideServiceImpl extends BaseExportService implements IExpor
     public void importThemeInfo() {
         // todo  后期添加分页 以防过大
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "themes_info");
+        JSONObject request = null;
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 JSONObject requestParam = new JSONObject();
                 requestParam.put("job", jsonObject);
-                JSONObject request = this.doPost("/api/v2/guide/theming/jobs/themes/imports", requestParam);
+                System.out.println("====================");
+                System.out.println(requestParam);
+                System.out.println("====================");
+//                request = this.doPost("/api/v2/guide/theming/jobs/themes/imports", requestParam);
                 log.info("请求结果{}", request);
                 document.put("status",1);
             }catch (Exception e){

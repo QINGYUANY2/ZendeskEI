@@ -60,7 +60,7 @@ class ZendeskApplicationTests extends BaseExportService {
 //        String sourcePassword = "123456";
         OkHttpClient client = new OkHttpClient();
 //        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/tickets/72/comments")
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/tickets/72")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/ticket_forms")
                 .newBuilder();
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
