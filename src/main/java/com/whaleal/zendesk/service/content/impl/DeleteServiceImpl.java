@@ -34,7 +34,7 @@ public class DeleteServiceImpl extends BaseExportService implements IDeleteServi
             }
         }else {
             mongoTemplate.remove(new Query(), table + "_info");
-            log.info("清空了导出的{}记录",ExportEnum.parse(table));
+            log.info("清空了导出的{}记录",filedName);
         }
         log.info("完成清空");
     }

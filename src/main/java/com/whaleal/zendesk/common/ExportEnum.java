@@ -53,15 +53,15 @@ public enum ExportEnum {
         this.brand = brand;
     }
 
-    public static String parse(String value){
-        ExportEnum[] values = ExportEnum.values();
-        for (ExportEnum exportEnum : values){
-            if(value.equals(exportEnum.getValue())){
-                return exportEnum.getModule();
-            }
-        }
-        return "";
-    }
+//    public static String parse(String value){
+//        ExportEnum[] values = ExportEnum.values();
+//        for (ExportEnum exportEnum : values){
+//            if(value.equals(exportEnum.getValue())){
+//                return exportEnum.getModule();
+//            }
+//        }
+//        return "";
+//    }
 
     public String getValue() {
         return value;

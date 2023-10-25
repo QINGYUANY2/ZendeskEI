@@ -44,6 +44,7 @@ public class Execute {
 
     @PostConstruct
     void init(){
+        //todo 记录导入批次 导入成功之后下次就不再对这批次进行导入
 
         //ok
 //        iExportOrgService.exportOrgMembershipInfo();
