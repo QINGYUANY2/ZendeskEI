@@ -3,6 +3,9 @@ package com.whaleal.zendesk.util;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * 实现限速 ，此项暂未投入使用
+ */
 public class TokenBucket {
     private final BlockingQueue<Object> bucket;
     private final int capacity;
