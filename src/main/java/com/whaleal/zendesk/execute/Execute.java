@@ -6,11 +6,12 @@ import com.whaleal.zendesk.service.helpCenter.IExportContentService;
 import com.whaleal.zendesk.service.helpCenter.IExportGatherService;
 import com.whaleal.zendesk.service.helpCenter.IExportGuideService;
 import com.whaleal.zendesk.service.voice.IExportPhoneService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+@Slf4j
 @Component
 public class Execute {
 
@@ -41,111 +42,127 @@ public class Execute {
     @Resource
     private IExportPhoneService iExportPhoneService;
 
+    @Resource
+    private IDeleteService deleteService;
 
-    @PostConstruct
-    void init(){
-        //todo 记录导入批次 导入成功之后下次就不再对这批次进行导入
+    /**
+     * 导出源端记录到数据库中
+     */
+    public void doExport(){
+        log.info("开始执行导出任务");
+        iExportOrgService.exportOrgMembershipInfo();
 
-        //ok
-//        iExportOrgService.exportOrgMembershipInfo();
-//        iExportOrgService.importOrgMembershipInfo();
+        iExportOrgService.exportOrgSubscriptionsInfo();
 
-        // 无数据
-//        iExportOrgService.exportOrgSubscriptionsInfo();
-//        iExportOrgService.importOrgSubscriptionsInfo();
+        iExportOrgService.exportOrgInfo();
 
-        //ok
-//        iExportOrgService.exportOrgInfo();
-//        iExportOrgService.importOrgInfo();
+        iExportUserService.exportRoleInfo();
 
-        //role  有点问题，没有role
-//        iExportUserService.exportRoleInfo();
-//        iExportUserService.importRoleInfo();
+        iExportUserService.exportUserField();
+        iExportUserService.exportUserInfo();
 
-        //ok
-//        iExportUserService.exportUserField();
-//        iExportUserService.importUserField();
+        iExportBusinessService.exportViewInfo();
 
-        //ok
-//        iExportUserService.exportUserInfo();
-//        iExportUserService.importUserInfo();
+        iExportBusinessService.exportMacroInfo();
 
-        //ok
-//        iExportBusinessService.exportViewInfo();
-//        iExportBusinessService.importViewInfo();
 
-        //ok
-//        iExportBusinessService.exportMacroInfo();
-//        iExportBusinessService.importMacroInfo();
+        iExportGroupService.exportGroupInfo();
 
-        //ok
-//        iExportFieldService.exportFieldInfo();
-//        iExportFieldService.importFieldInfo();
+        iExportGroupService.exportGroupMembershipInfo();
 
-        //ok
-//        iExportGroupService.exportGroupInfo();
-//        iExportGroupService.importGroupInfo();
+        iExportItemService.exportItemInfo();
 
-        //ok
-//        iExportGroupService.exportGroupMembershipInfo();
-//        iExportGroupService.importGroupMembershipInfo();
+        iExportSysService.exportBrandInfo();
 
-        //ok
-//        iExportItemService.exportItemInfo();
-//        iExportItemService.importItemInfo();
-
-        //ok
-//        iExportSysService.exportBrandInfo();
-//        iExportSysService.importBrandInfo();
-
-        // 关联太多  ok
-//        iExportTicketService.exportSatisfactionRatingInfo();
+        iExportTicketService.exportSatisfactionRatingInfo();
         iExportTicketService.exportTicketAudit();
-//        iExportTicketService.exportTicketRequest();
-//        iExportTicketService.exportTicketInfo();
-//        iExportTicketService.importTicketInfo();
+        iExportTicketService.exportTicketRequest();
+        iExportTicketService.exportTicketInfo();
 
 
-        //ok
-//        iExportTicketService.exportTicketFields();
-//        iExportTicketService.importTicketFields();
+        iExportTicketService.exportTicketFields();
 
-        //ok
-//        iExportFormsService.exportTicketForms();
-//        iExportFormsService.importTicketForms();
+        iExportFormsService.exportTicketForms();
 
 
-        //无数据
-//        iExportContentService.exportExternalContentRecordInfo();
-//        iExportContentService.importExternalContentRecordInfo();
+        iExportContentService.exportExternalContentRecordInfo();
 
-        //ok
-//        iExportGatherService.exportTopicInfo();
-//        iExportGatherService.importTopicInfo();
+        iExportGatherService.exportTopicInfo();
 
-        //无数据
-//        iExportGuideService.exportArticleInfo();
-//        iExportGuideService.exportArticleInfo();
-        //导入部分没有示例java代码，依照curl编写 导入时有问题
-//        iExportGuideService.exportThemeInfo();
-//        iExportGuideService.importThemeInfo();
+        iExportGuideService.exportArticleInfo();
+        iExportGuideService.exportArticleInfo();
+        iExportGuideService.exportThemeInfo();
 
-        //ok
-//        iExportGuideService.exportPermissionGroupInfo();
-//        iExportGuideService.importPermissionGroupInfo();
+        iExportGuideService.exportPermissionGroupInfo();
 
-        //ok
-//        iExportPhoneService.exportGreetingCategoriesInfo();
-//        iExportPhoneService.exportGreetingInfo();
-//        iExportPhoneService.importGreetingInfo();
+        iExportPhoneService.exportGreetingCategoriesInfo();
+        iExportPhoneService.exportGreetingInfo();
 
-        //导入有问题  开通即可
-//        iExportPhoneService.exportPhoneNumberInfo();
-//        iExportPhoneService.importPhoneNumberInfo();
+        iExportPhoneService.exportPhoneNumberInfo();
 
-        // 导入时会有权限问题
-//        iExportPhoneService.exportIVRsInfo();
-//        iExportPhoneService.importIVRsInfo();
-
+        iExportPhoneService.exportIVRsInfo();
+        log.info("执行导出完成");
     }
+
+    /**
+     * 把数据库中记录导入到目标端
+     */
+    public void doImport(){
+        log.info("执行导入任务");
+            iExportOrgService.importOrgMembershipInfo();
+
+            iExportOrgService.importOrgSubscriptionsInfo();
+
+            iExportOrgService.importOrgInfo();
+
+            iExportUserService.importRoleInfo();
+
+            iExportUserService.importUserField();
+
+            iExportUserService.importUserInfo();
+
+            iExportBusinessService.importViewInfo();
+
+            iExportBusinessService.importMacroInfo();
+
+            iExportGroupService.importGroupInfo();
+
+            iExportGroupService.importGroupMembershipInfo();
+
+            iExportItemService.importItemInfo();
+
+            iExportSysService.importBrandInfo();
+
+            iExportTicketService.importTicketInfo();
+
+            iExportTicketService.importTicketFields();
+
+            iExportFormsService.importTicketForms();
+
+            iExportContentService.importExternalContentRecordInfo();
+
+            iExportGatherService.importTopicInfo();
+
+            iExportGuideService.importThemeInfo();
+
+            iExportGuideService.importPermissionGroupInfo();
+
+            iExportPhoneService.importGreetingInfo();
+
+            iExportPhoneService.importPhoneNumberInfo();
+
+            iExportPhoneService.importIVRsInfo();
+            log.info("导入任务执行完成");
+    }
+
+    /**
+     * 删除
+     * @param fileName
+     */
+    public void doDelete(String fileName){
+        log.info("开始执行删除任务");
+        deleteService.delete(fileName);
+        log.info("删除任务执行完成");
+    }
+
 }

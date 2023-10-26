@@ -7,5 +7,9 @@ package com.whaleal.zendesk.common;
  **/
 public class Constants {
 
-//    public final static int
+    public final static String doExport = "export";
+
+    public final static String doImport = "import";
+
+    public final static String doDelete = "delete";
 }
