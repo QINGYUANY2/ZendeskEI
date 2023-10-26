@@ -72,9 +72,21 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
     }
 
     @Override
-    public void importGreetingCategoriesInfo() {
+    public void exportGreetingInfo() {
+        JSONObject request = this.doGet("/api/v2/channels/voice/greetings",new HashMap<>());
+
+        List<JSONObject> list = request.getJSONArray("greetings").toJavaList(JSONObject.class);
+        for (JSONObject jsonObject : list) {
+            jsonObject.put("status",0);
+            jsonObject.put("domain",StringSub.getDomain(this.sourceDomain));
+        }
+        mongoTemplate.insert(list,"greeting_info");
+    }
+
+    @Override
+    public void importGreetingInfo() {
         // todo  后期添加分页 以防过大
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "greeting_categories");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "greeting_info");
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
@@ -82,6 +94,7 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
                 requestParam.put("greeting", jsonObject);
                 JSONObject request = this.doPost("/api/v2/channels/voice/greetings", requestParam);
                 log.info("请求结果{}", request);
+                document.put("newId",request.get("id"));
                 document.put("status",1);
             }catch (Exception e){
                 e.printStackTrace();

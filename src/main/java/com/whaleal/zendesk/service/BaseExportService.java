@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -58,32 +59,6 @@ public abstract class BaseExportService {
     }
 
     public JSONObject doGet(String url, Map<String, String> param) {
-//        //拼接源端域名与接口路径
-//        String realPath = sourceDomain + url;
-//        HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
-//                .newBuilder();
-//        //如果携带参数了 就拼接参数
-//        if (!param.isEmpty()) {
-//            param.entrySet().forEach(item -> {
-//                urlBuilder.addQueryParameter(item.getKey(), item.getValue());
-//            });
-//        }
-//
-//        Request request = new Request.Builder()
-//                .url(urlBuilder.build())
-//                .method("GET", null)
-//                .addHeader("Content-Type", "application/json")
-//                .addHeader("Authorization", sourceBasic)
-//                .build();
-//
-//        Response response;
-//        String string;
-//        try {
-//            response = sourceClient.newCall(request).execute();
-//            string = response.body().string();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
         JSONObject jsonObject = doGet(sourceDomain, url, param);
         if(jsonObject.getInteger("code") == 429){
             try {
@@ -154,6 +129,40 @@ public abstract class BaseExportService {
         }
         return JSONObject.parseObject(string);
     }
+
+    public JSONObject doPost(String url, String type, File file) {
+
+        //拼接源端域名与接口路径
+        String realPath = targetDomain + url;
+        // 构建请求体
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("filename", file.getName())
+                .addFormDataPart("file", file.getName(),
+                        RequestBody.create(MediaType.parse(type), file))
+                .build();
+
+        // 构建请求
+        Request request = new Request.Builder()
+                .url(realPath)
+                .header("Authorization", Credentials.basic(targetUsername, targetPassword))  // 替换成实际的 base64 编码后的 email 和密码
+                .post(requestBody)
+                .build();
+
+        Response creatResponse;
+        String string = null;
+        try {
+            creatResponse = targetClient.newCall(request).execute();
+            string = creatResponse.body().string();
+            System.out.println("===========================");
+            System.out.println(creatResponse);
+            System.out.println("===========================");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return JSONObject.parseObject(string);
+    }
+
 
     public void createRelation(String url, String arrayField, String compareField, String collection) {
         JSONObject source = doGet(sourceDomain, url, new HashMap<>());
