@@ -12,7 +12,7 @@ import java.util.Date;
  * @desc  每个模块的导入导出记录
  * @create: 2023-10-25 10:31
  **/
-@Document
+@Document("task_log")
 @Data
 public class TaskInfo {
 
