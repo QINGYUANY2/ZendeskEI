@@ -85,6 +85,15 @@ public abstract class BaseExportService {
 //            throw new RuntimeException(e);
 //        }
         JSONObject jsonObject = doGet(sourceDomain, url, param);
+        if(jsonObject.getInteger("code") == 429){
+            try {
+                //API调用达到上线 就等待一下
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            jsonObject = doGet(sourceDomain, url, param);
+        }
         return jsonObject;
     }
 
