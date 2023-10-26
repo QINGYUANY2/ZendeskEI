@@ -3,9 +3,12 @@ package com.whaleal.zendesk.service.content.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.ExportEnum;
+import com.whaleal.zendesk.model.TaskInfo;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportGroupService;
 import com.whaleal.zendesk.util.StringSub;
+import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,20 +23,19 @@ import java.util.List;
 public class IExportGroupServiceImpl extends BaseExportService implements IExportGroupService {
     @Override
     public void exportGroupInfo() {
-        JSONObject request = this.doGet("/api/v2/groups", new HashMap<>());
-        List<JSONObject> list = request.getJSONArray("groups").toJavaList(JSONObject.class);
-        for (JSONObject jsonObject : list) {
-            jsonObject.put("status",0);
-            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
-        }
-        mongoTemplate.insert(list, "group_info");
+        TaskInfo exportUserInfo = saveTaskInfo("exportGroupInfo");
+        Long useTime = doExport("/api/v2/groups", "groups", ExportEnum.GROUP.getValue() + "_info");
+        exportUserInfo.setEndTime(TimeUtil.getTime());
+        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStatus(2);
+        mongoTemplate.save(exportUserInfo);
     }
 
     @Override
     public void importGroupInfo() {
 
         // todo  后期添加分页 以防过大
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "group_info");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.GROUP.getValue() + "_info");
         JSONObject request=null;
         for (Document document : list) {
             try {
@@ -49,7 +51,7 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
                 document.put("status",2);
                 document.put("errorDetails",request.get("details"));
             }
-            mongoTemplate.save(document,"group_info");
+            mongoTemplate.save(document,ExportEnum.GROUP.getValue() + "_info");
         }
     }
 

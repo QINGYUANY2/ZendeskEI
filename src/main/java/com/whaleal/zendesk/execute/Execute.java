@@ -100,10 +100,10 @@ public class Execute {
 
         // 关联太多  ok
 //        iExportTicketService.exportSatisfactionRatingInfo();
-        iExportTicketService.exportTicketAudit();
+//        iExportTicketService.exportTicketAudit();
 //        iExportTicketService.exportTicketRequest();
 //        iExportTicketService.exportTicketInfo();
-//        iExportTicketService.importTicketInfo();
+        iExportTicketService.importTicketInfo();
 
 
         //ok

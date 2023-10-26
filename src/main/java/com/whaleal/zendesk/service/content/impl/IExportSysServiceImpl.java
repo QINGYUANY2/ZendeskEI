@@ -1,9 +1,12 @@
 package com.whaleal.zendesk.service.content.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.ExportEnum;
+import com.whaleal.zendesk.model.TaskInfo;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportSysService;
 import com.whaleal.zendesk.util.StringSub;
+import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,19 +21,19 @@ import java.util.List;
 public class IExportSysServiceImpl extends BaseExportService implements IExportSysService {
     @Override
     public void exportBrandInfo() {
-        JSONObject request = this.doGet("/api/v2/brands",new HashMap<>());
-        List<JSONObject> list = request.getJSONArray("brands").toJavaList(JSONObject.class);
-        for (JSONObject jsonObject : list) {
-            jsonObject.put("status",0);
-            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
-        }
-        mongoTemplate.insert(list,"brand_info");
+
+        TaskInfo exportUserInfo = saveTaskInfo("exportBrandInfo");
+        Long useTime = doExport("/api/v2/brands", "brands", ExportEnum.BRAND.getValue() + "_info");
+        exportUserInfo.setEndTime(TimeUtil.getTime());
+        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStatus(2);
+        mongoTemplate.save(exportUserInfo);
     }
 
     @Override
     public void importBrandInfo() {
         // todo  后期添加分页 以防过大
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "brand_info");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.BRAND.getValue() + "_info");
         JSONObject request = null;
         for (Document document : list) {
             try {
@@ -50,7 +53,7 @@ public class IExportSysServiceImpl extends BaseExportService implements IExportS
                 document.put("status",2);
             }
             document.put("request",request);
-            mongoTemplate.save(document,"brand_info");
+            mongoTemplate.save(document,ExportEnum.BRAND.getValue() + "_info");
         }
     }
 }

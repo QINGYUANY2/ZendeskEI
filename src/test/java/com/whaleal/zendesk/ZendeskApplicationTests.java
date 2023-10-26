@@ -195,4 +195,18 @@ class ZendeskApplicationTests extends BaseExportService {
     }
 
 
+    @Test
+    void demo(){
+
+        for (int i = 0; i < 2; i++) {
+            try {
+                int  i1 = 1/0;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            System.out.println("内部");
+        }
+        System.out.println("外部");
+    }
+
 }

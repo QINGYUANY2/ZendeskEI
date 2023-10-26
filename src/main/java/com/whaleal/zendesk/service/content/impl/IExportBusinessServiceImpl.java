@@ -17,14 +17,17 @@ import java.util.List;
 @Slf4j
 @Service
 public class IExportBusinessServiceImpl extends BaseExportService implements IExportBusinessService {
+    /**
+     * 参数  不加可查全部
+     *                .addQueryParameter("access", "")
+     *                .addQueryParameter("active", "")
+     *                .addQueryParameter("group_id", "")
+     *                .addQueryParameter("sort_by", "")
+     *                .addQueryParameter("sort_order", "")
+     */
     @Override
     public void exportViewInfo() {
-        // todo 参数  不加可查全部
-        //                .addQueryParameter("access", "")
-        //                .addQueryParameter("active", "")
-        //                .addQueryParameter("group_id", "")
-        //                .addQueryParameter("sort_by", "")
-        //                .addQueryParameter("sort_order", "")
+
         JSONObject request = this.doGet("/api/v2/views",new HashMap<>());
         JSONArray array = request.getJSONArray("views");
         for (JSONObject jsonObject : array.toJavaList(JSONObject.class)) {
@@ -32,6 +35,7 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
             jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
         }
         mongoTemplate.insert(array,"view_info");
+
     }
 
     @Override

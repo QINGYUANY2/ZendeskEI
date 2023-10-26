@@ -1,7 +1,12 @@
 package com.whaleal.zendesk.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.ExportEnum;
+import com.whaleal.zendesk.model.ImportInfo;
+import com.whaleal.zendesk.model.TaskInfo;
 import com.whaleal.zendesk.util.StringSub;
+import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.bson.Document;
@@ -112,9 +117,6 @@ public abstract class BaseExportService {
         try {
             creatResponse = targetClient.newCall(creatRequest).execute();
             string = creatResponse.body().string();
-            System.out.println("===========================");
-            System.out.println(creatResponse);
-            System.out.println("===========================");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,14 +126,11 @@ public abstract class BaseExportService {
     public JSONObject doPost(String url, String type, File file) {
 
         //拼接源端域名与接口路径
-        String realPath = targetDomain + url;
+        String realPath = targetDomain + url+"?filename="+file.getName();
+        System.out.println("realPath:"+realPath+"   type:"+type);
         // 构建请求体
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("filename", file.getName())
-                .addFormDataPart("file", file.getName(),
-                        RequestBody.create(MediaType.parse(type), file))
-                .build();
+        RequestBody requestBody = RequestBody.create(MediaType.parse(type), file);
+
 
         // 构建请求
         Request request = new Request.Builder()
@@ -139,15 +138,10 @@ public abstract class BaseExportService {
                 .header("Authorization", Credentials.basic(targetUsername, targetPassword))  // 替换成实际的 base64 编码后的 email 和密码
                 .post(requestBody)
                 .build();
-
-        Response creatResponse;
         String string = null;
         try {
-            creatResponse = targetClient.newCall(request).execute();
+            Response creatResponse = targetClient.newCall(request).execute();
             string = creatResponse.body().string();
-            System.out.println("===========================");
-            System.out.println(creatResponse);
-            System.out.println("===========================");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -184,9 +178,6 @@ public abstract class BaseExportService {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 JSONObject requestParam = new JSONObject();
                 requestParam.put(param, jsonObject);
-                System.out.println("+++++++++++++++++++++++++++");
-                System.out.println(requestParam);
-                System.out.println("+++++++++++++++++++++++++++");
                 JSONObject request = this.doPost(path, requestParam);
                 log.info("请求结果{}", request);
                 document.put("status", 1);
@@ -196,6 +187,41 @@ public abstract class BaseExportService {
             }
             mongoTemplate.save(document, coll);
         }
+    }
+
+    public Long doExport(String url, String param, String coll) {
+        long startTime = System.currentTimeMillis();
+        try {
+            JSONObject request = this.doGet(url, new HashMap<>());
+            JSONArray users = request.getJSONArray(param);
+            List<JSONObject> list = users.toJavaList(JSONObject.class);
+            for (JSONObject jsonObject : list) {
+                jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
+            }
+            mongoTemplate.insert(list, coll);
+            log.info("导出{}成功，一共导出{}条记录",coll,list.size());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public TaskInfo saveTaskInfo(String name){
+        TaskInfo taskInfo = new TaskInfo();
+        taskInfo.setName(name);
+        taskInfo.setStartTime(TimeUtil.getTime());
+        taskInfo.setStatus(1);
+        taskInfo.setType(1);
+        return mongoTemplate.save(taskInfo, "taskInfo");
+    }
+
+    public ImportInfo saveImportInfo(String type,JSONObject request){
+        ImportInfo importInfo = new ImportInfo();
+        importInfo.setCreatTime(TimeUtil.getTime());
+        importInfo.setSubDomain(StringSub.getDomain(this.sourceDomain));
+        importInfo.setType(type);
+        importInfo.setRequest(request);
+        return mongoTemplate.save(importInfo, "importInfo");
     }
 
 

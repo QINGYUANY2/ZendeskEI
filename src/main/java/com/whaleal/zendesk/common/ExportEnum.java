@@ -23,10 +23,12 @@ public enum ExportEnum {
 
     BUSINESS_RULES("业务规则","rule",8),
 
-    TICKET_IMPORT("工单导入","ticketImport",9),
+
+    TICKET("工单","ticket",9),
 
     ASSIST_CONVERSATION("协助对话","assistConversation",10),
 
+    BRAND("品牌","brand",11),
     /**
      * 帮助中心
      */

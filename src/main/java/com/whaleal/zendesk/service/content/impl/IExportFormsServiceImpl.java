@@ -1,6 +1,7 @@
 package com.whaleal.zendesk.service.content.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.ExportEnum;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportFormsService;
 import com.whaleal.zendesk.util.StringSub;
@@ -25,13 +26,13 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
             jsonObject.put("status",0);
             jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
         }
-        mongoTemplate.insert(list,"ticket_forms");
+        mongoTemplate.insert(list,ExportEnum.TICKET.getValue()+"_forms");
     }
 
     @Override
     public void importTicketForms() {
         // todo  后期添加分页 以防过大
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "ticket_forms");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue()+"_forms");
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
@@ -45,7 +46,7 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
                 e.printStackTrace();
                 document.put("status",2);
             }
-            mongoTemplate.save(document,"ticket_forms");
+            mongoTemplate.save(document,ExportEnum.TICKET.getValue()+"_forms");
         }
     }
 

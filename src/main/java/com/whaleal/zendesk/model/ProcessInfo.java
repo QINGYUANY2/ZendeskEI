@@ -9,12 +9,12 @@ import java.util.Date;
 
 /**
  * @author lyz
- * @desc  每个模块的导入导出记录
+ * @desc  整体记录
  * @create: 2023-10-25 10:31
  **/
 @Document("module_record")
 @Data
-public class ModuleRecord {
+public class ProcessInfo {
 
     @Id
     private String id;
