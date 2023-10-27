@@ -3,7 +3,7 @@ package com.whaleal.zendesk.service.content.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.ExportEnum;
-import com.whaleal.zendesk.model.TaskInfo;
+import com.whaleal.zendesk.model.ModuleRecord;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportOrgService;
 import com.whaleal.zendesk.util.StringSub;
@@ -22,13 +22,12 @@ import java.util.List;
 public class IExportOrgServiceImpl extends BaseExportService implements IExportOrgService {
 
 
-
     @Override
     public void exportOrgInfo() {
-        TaskInfo exportUserInfo = saveTaskInfo("exportOrgInfo");
+        ModuleRecord exportUserInfo =new ModuleRecord();
         Long useTime = doExport("/api/v2/organizations", "organizations", ExportEnum.ORGANIZATIONS.getValue() + "_info");
-        exportUserInfo.setEndTime(TimeUtil.getTime());
-        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStartTime(TimeUtil.getTime());
+        exportUserInfo.setDuration(useTime);
         exportUserInfo.setStatus(2);
         mongoTemplate.save(exportUserInfo);
     }

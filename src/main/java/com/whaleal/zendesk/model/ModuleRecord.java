@@ -9,26 +9,26 @@ import java.util.Date;
 
 /**
  * @author lyz
- * @desc  整体记录
+ * @desc  模块导入导出记录
  * @create: 2023-10-25 10:31
  **/
 @Document("module_record")
 @Data
-public class ProcessInfo {
+public class ModuleRecord {
 
     @Id
     private String id;
 
     /**
-     * 导出子域名
+     * 模块名称
+     */
+    private String moduleName;
+
+    /**
+     * 子域名
      */
     @Field("sub_domain")
     private String sourceUrl;
-
-    /**
-     *  导入子域名
-     */
-    private String targetUrl;
 
     /**
      * 1: 导出
@@ -40,6 +40,11 @@ public class ProcessInfo {
 
     private Integer status;
 
-    private Date createTime;
+    /**
+     * 开始时间
+     */
+    private String startTime;
+
+    private Long duration;
 
 }

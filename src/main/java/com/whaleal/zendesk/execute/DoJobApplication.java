@@ -29,8 +29,9 @@ public class DoJobApplication implements ApplicationRunner {
         if(modes.isEmpty()){
             log.error("缺少执行模式");
         }
-
+        //获取执行模式
         String mode = modes.get(0);
+
         if(doExport.equalsIgnoreCase(mode)){
             execute.doExport();
         }else if(doImport.equalsIgnoreCase(mode)){
