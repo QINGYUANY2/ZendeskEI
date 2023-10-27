@@ -2,9 +2,11 @@ package com.whaleal.zendesk.service.content.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.ExportEnum;
+import com.whaleal.zendesk.model.TaskInfo;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportFormsService;
 import com.whaleal.zendesk.util.StringSub;
+import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,18 +22,19 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
 
     @Override
     public void exportTicketForms() {
-        JSONObject request = this.doGet("/api/v2/ticket_forms",new HashMap<>());
-        List<JSONObject> list = request.getJSONArray("ticket_forms").toJavaList(JSONObject.class);
-        for (JSONObject jsonObject : list) {
-            jsonObject.put("status",0);
-            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
-        }
-        mongoTemplate.insert(list,ExportEnum.TICKET.getValue()+"_forms");
+
+        TaskInfo exportUserInfo = saveTaskInfo("exportTicketForms");
+        Long useTime = doExport("/api/v2/ticket_forms", "ticket_forms", ExportEnum.TICKET.getValue()+"_info");
+        exportUserInfo.setEndTime(TimeUtil.getTime());
+        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStatus(2);
+        mongoTemplate.save(exportUserInfo);
     }
 
     @Override
     public void importTicketForms() {
-        // todo  后期添加分页 以防过大
+        TaskInfo saveTask = saveTaskInfo("importUserInfo");
+        long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue()+"_forms");
         for (Document document : list) {
             try {
@@ -40,13 +43,17 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
                 requestParam.put("ticket_form", jsonObject);
                 JSONObject request = this.doPost("/api/v2/ticket_forms", requestParam);
                 document.put("newId",request.getJSONObject("ticket_form").get("id"));
-                log.info("请求结果{}", request);
-                document.put("status",1);
+                log.info("importTicketForms 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+                mongoTemplate.save(document, ExportEnum.TICKET.getValue()+"_forms");
+                saveImportInfo("importTicketForms", request);
             }catch (Exception e){
                 e.printStackTrace();
-                document.put("status",2);
             }
-            mongoTemplate.save(document,ExportEnum.TICKET.getValue()+"_forms");
+            log.info("导入 TicketForms 成功，一共导出{}条记录",list.size());
+            saveTask.setEndTime(TimeUtil.getTime());
+            saveTask.setUseTime(System.currentTimeMillis() - startTime);
+            saveTask.setStatus(2);
+            mongoTemplate.save(saveTask);
         }
     }
 

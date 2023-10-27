@@ -33,6 +33,9 @@ import java.util.Map;
 @Component
 public abstract class BaseExportService {
 
+    @Value("${zendesk.filePath}")
+    public String filePath;
+
     @Resource
     public MongoTemplate mongoTemplate;
     @Value("${zendesk.source.domain}")

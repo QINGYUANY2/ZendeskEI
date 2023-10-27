@@ -199,22 +199,16 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                                 log.warn("同步ticket时,未找到 {} 对应的新 author_id", comment.get("author_id"));
                             }
                         }
-//                         附件相关
+
+                        // 附件相关
                         if (comment.get("attachments") != null){
                             List<Document> attachments = comment.getList("attachments", Document.class);
-
                             for (Document attachment : attachments) {
-
                                 String url = (String) attachment.get("mapped_content_url");
-
                                 String filename = (String) attachment.get("file_name");
-
                                 String type = (String) attachment.get("content_type");
-
                                 File file = downloadFile(url, filename);
-
                                 JSONObject jsonObject = doPost("/api/v2/uploads", type, file);
-
                                 if (!file.delete()){
                                     log.warn("临时文件：{}删除失败",file.getAbsolutePath());
                                 }
@@ -238,7 +232,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 e.printStackTrace();
             }
 
-            log.info("importUserField 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
+            log.info("importTicketInfo 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
             saveImportInfo("importTicketInfo", request);
             mongoTemplate.save(document, ExportEnum.TICKET.getValue()+"_info");
         }
@@ -250,15 +244,11 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
     }
 
-
-
     public File downloadFile(String url,String filename){
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).build();
         // todo  临时目录
-        File dir = new File("C:\\Users\\cc\\Desktop\\temp");
+        File dir = new File(filePath);
         File file = null;
         FileOutputStream fos = null;
         try {
@@ -268,7 +258,6 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 file = new File(dir, filename);
                 fos = new FileOutputStream(file);
                 fos.write(body.bytes());
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -283,29 +272,6 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         }
         return file;
     }
-//    public File downloadFile(String url,String filename){
-//        OkHttpClient client = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .build();
-//
-//        File dir = new File("C:\\Users\\cc\\Desktop\\temp");
-//        File file = new File(dir, filename);
-//
-//        try (Response response = client.newCall(request).execute();
-//             InputStream inputStream = response.body().byteStream();
-//             FileOutputStream fos = new FileOutputStream(file)) {
-//
-//            byte[] buffer = new byte[8192];
-//            int bytesRead;
-//            while ((bytesRead = inputStream.read(buffer)) != -1) {
-//                fos.write(buffer, 0, bytesRead);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return file;
-//    }
 
 
 
@@ -322,35 +288,42 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
     @Override
     public void importTicketFields() {
-
-        // todo  后期添加分页 以防过大
+        TaskInfo saveTask = saveTaskInfo("importTicketFields");
+        long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue()+"_field");
+        JSONObject requestParam = new JSONObject();
+        JSONObject request = null;
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-                JSONObject requestParam = new JSONObject();
+
                 requestParam.put("ticket_field", jsonObject);
-                JSONObject request = this.doPost("/api/v2/ticket_fields", requestParam);
-                document.put("newId",request.get("id"));
-                log.info("请求结果{}", request);
-                document.put("status",1);
+                request = this.doPost("/api/v2/ticket_fields", requestParam);
+                document.put("newId",request.getJSONObject("ticket_field").get("id"));
             }catch (Exception e){
                 e.printStackTrace();
-                document.put("status",2);
             }
+            log.info("importTicketFields 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+            saveImportInfo("importTicketFields", request);
             mongoTemplate.save(document,ExportEnum.TICKET.getValue()+"_field");
         }
+        log.info("导入 TicketFields 成功，一共导出{}条记录",list.size());
+        saveTask.setEndTime(TimeUtil.getTime());
+        saveTask.setUseTime(System.currentTimeMillis() - startTime);
+        saveTask.setStatus(2);
+        mongoTemplate.save(saveTask);
     }
 
     @Override
     public void exportSatisfactionRatingInfo() {
-        JSONObject request = this.doGet("/api/v2/satisfaction_ratings", new HashMap<>());
-        List<JSONObject> list = request.getJSONArray("satisfaction_ratings").toJavaList(JSONObject.class);
-        for (JSONObject jsonObject : list) {
-            jsonObject.put("status", 0);
-            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
-        }
-        mongoTemplate.insert(list, "satisfaction_rating");
+
+        TaskInfo exportUserInfo = saveTaskInfo("exportSatisfactionRatingInfo");
+        Long useTime = doExport("/api/v2/satisfaction_ratings", "satisfaction_ratings", ExportEnum.SATISFACTION.getValue() + "_rating");
+        exportUserInfo.setEndTime(TimeUtil.getTime());
+        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStatus(2);
+        mongoTemplate.save(exportUserInfo);
+
     }
 
     @Override
@@ -360,20 +333,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
     }
 
-    @Override
-    public void exportResourceCollectionInfo() {
-        JSONObject request = this.doGet("/api/v2/resource_collections", new HashMap<>());
-        System.out.println("=====================");
-        System.out.println(request);
-        System.out.println("=====================");
-//        JSONArray array = request.getJSONArray("resource_collections");
-//        mongoTemplate.insert(array,"resource_collection");
-    }
 
-    @Override
-    public void importResourceCollectionInfo() {
-
-    }
 
 
 }

@@ -69,11 +69,11 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            log.info("importUserInfo执行完毕,请求参数：{},执行结果{}", requestParam, request);
             mongoTemplate.save(users, "user_info");
+            log.info("importUserInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
             saveImportInfo("importUserInfo", request);
         }
-        log.info("导入user_info成功，一共导出{}条记录",documentList.size());
+        log.info("导入 user_info 成功，一共导出{}条记录",documentList.size());
         saveTask.setEndTime(TimeUtil.getTime());
         saveTask.setUseTime(System.currentTimeMillis() - startTime);
         saveTask.setStatus(2);

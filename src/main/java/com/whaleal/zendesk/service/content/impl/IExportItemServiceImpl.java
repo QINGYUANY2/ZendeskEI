@@ -1,9 +1,12 @@
 package com.whaleal.zendesk.service.content.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.ExportEnum;
+import com.whaleal.zendesk.model.TaskInfo;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportItemService;
 import com.whaleal.zendesk.util.StringSub;
+import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,32 +21,40 @@ import java.util.List;
 public class IExportItemServiceImpl extends BaseExportService implements IExportItemService {
     @Override
     public void exportItemInfo() {
-        JSONObject request = this.doGet("/api/v2/dynamic_content/items",new HashMap<>());
-        List<JSONObject> list = request.getJSONArray("items").toJavaList(JSONObject.class);
-        for (JSONObject jsonObject : list) {
-            jsonObject.put("status",0);
-            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
-        }
-        mongoTemplate.insert(list,"item_info");
+
+        TaskInfo exportUserInfo = saveTaskInfo("exportItemInfo");
+        Long useTime = doExport("/api/v2/dynamic_content/items", "items", ExportEnum.ITEM.getValue() + "_info");
+        exportUserInfo.setEndTime(TimeUtil.getTime());
+        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStatus(2);
+        mongoTemplate.save(exportUserInfo);
+
     }
 
     @Override
     public void importItemInfo() {
-        // todo  后期添加分页 以防过大
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "item_info");
+        TaskInfo saveTask = saveTaskInfo("importUserInfo");
+        long startTime = System.currentTimeMillis();
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.ITEM.getValue() + "_info");
+        JSONObject requestParam = new JSONObject();
+        JSONObject request = null;
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-                JSONObject requestParam = new JSONObject();
                 requestParam.put("item", jsonObject);
-                JSONObject request = this.doPost("/api/v2/dynamic_content/items", requestParam);
-                log.info("请求结果{}", request);
-                document.put("status",1);
+                request = this.doPost("/api/v2/dynamic_content/items", requestParam);
+                document.put("newId",request.getJSONObject("item").get("id"));
             }catch (Exception e){
                 e.printStackTrace();
-                document.put("status",2);
             }
-            mongoTemplate.save(document,"item_info");
+            log.info("importItemInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+            mongoTemplate.save(document, ExportEnum.ITEM.getValue() + "_info");
+            saveImportInfo("importItemInfo", request);
         }
+        log.info("导入 item_info 成功，一共导出{}条记录",list.size());
+        saveTask.setEndTime(TimeUtil.getTime());
+        saveTask.setUseTime(System.currentTimeMillis() - startTime);
+        saveTask.setStatus(2);
+        mongoTemplate.save(saveTask);
     }
 }

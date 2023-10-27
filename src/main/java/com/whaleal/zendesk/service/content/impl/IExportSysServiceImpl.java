@@ -34,6 +34,7 @@ public class IExportSysServiceImpl extends BaseExportService implements IExportS
     public void importBrandInfo() {
         // todo  后期添加分页 以防过大
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+        JSONObject requestParam = new JSONObject();
         JSONObject request = null;
         for (Document document : list) {
             try {
@@ -42,18 +43,15 @@ public class IExportSysServiceImpl extends BaseExportService implements IExportS
                 // todo  临时加 111 防止重复
                 document.put("subdomain",document.get("subdomain")+"111");
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-                JSONObject requestParam = new JSONObject();
                 requestParam.put("brand", jsonObject);
                 request = this.doPost("/api/v2/brands", requestParam);
-                log.info("请求结果{}", request);
-                document.put("status",1);
                 document.put("newId",request.getJSONObject("brand").get("id"));
             }catch (Exception e){
                 e.printStackTrace();
-                document.put("status",2);
             }
-            document.put("request",request);
+            log.info("importBrandInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
             mongoTemplate.save(document,ExportEnum.BRAND.getValue() + "_info");
+            saveImportInfo("importBrandInfo", request);
         }
     }
 }

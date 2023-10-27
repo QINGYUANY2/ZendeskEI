@@ -1,9 +1,12 @@
 package com.whaleal.zendesk.service.helpCenter.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.ExportEnum;
+import com.whaleal.zendesk.model.TaskInfo;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.helpCenter.IExportGuideService;
 import com.whaleal.zendesk.util.StringSub;
+import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,36 +21,33 @@ import java.util.List;
 public class IExportGuideServiceImpl extends BaseExportService implements IExportGuideService {
     @Override
     public void exportThemeInfo() {
-        JSONObject request = this.doGet("/api/v2/guide/theming/themes",new HashMap<>());
-        List<JSONObject> list = request.getJSONArray("themes").toJavaList(JSONObject.class);
-        for (JSONObject jsonObject : list) {
-            jsonObject.put("status",0);
-            jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
-        }
-        mongoTemplate.insert(list,"themes_info");
+
+        TaskInfo exportUserInfo = saveTaskInfo("exportThemeInfo");
+        Long useTime = doExport("/api/v2/guide/theming/themes", "themes", ExportEnum.THEMES.getValue() + "_info");
+        exportUserInfo.setEndTime(TimeUtil.getTime());
+        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStatus(2);
+        mongoTemplate.save(exportUserInfo);
     }
 
     @Override
     public void importThemeInfo() {
         // todo  后期添加分页 以防过大
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "themes_info");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.THEMES.getValue() + "_info");
         JSONObject request = null;
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 JSONObject requestParam = new JSONObject();
                 requestParam.put("job", jsonObject);
-                System.out.println("====================");
-                System.out.println(requestParam);
-                System.out.println("====================");
-//                request = this.doPost("/api/v2/guide/theming/jobs/themes/imports", requestParam);
-                log.info("请求结果{}", request);
-                document.put("status",1);
+                request = this.doPost("/api/v2/guide/theming/jobs/themes/imports", requestParam);
+
+                document.put("newId",request.getJSONObject("").get("id"));
             }catch (Exception e){
                 e.printStackTrace();
-                document.put("status",2);
+
             }
-            mongoTemplate.save(document,"themes_info");
+            mongoTemplate.save(document,ExportEnum.THEMES.getValue() + "_info");
         }
     }
 

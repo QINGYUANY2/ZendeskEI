@@ -29,12 +29,26 @@ public enum ExportEnum {
     ASSIST_CONVERSATION("协助对话","assistConversation",10),
 
     BRAND("品牌","brand",11),
+
+    VIEW("视图","view",12),
+
+    MACRO("宏","macro",13),
+
+    ITEM("项目","item",14),
+
+    SATISFACTION("满意度","satisfaction",15),
+
+
+
     /**
      * 帮助中心
      */
     GUIDE("知识库","guide",1),
     GATHER("社区","gather",2),
     UNION_SEARCH("联合搜索","search",3),
+    RECORD("记录","record",4),
+    TOPIC("话题","topic",5),
+    THEMES("题目","themes",6),
 
     /**
      * voice

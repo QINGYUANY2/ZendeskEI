@@ -33,53 +33,60 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
 
     @Override
     public void importGroupInfo() {
-
-        // todo  后期添加分页 以防过大
+        TaskInfo saveTask = saveTaskInfo("importGroupInfo");
+        long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+        JSONObject requestParam = new JSONObject();
         JSONObject request=null;
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-                JSONObject requestParam = new JSONObject();
                 requestParam.put("group", jsonObject);
                 request= this.doPost("/api/v2/groups", requestParam);
-                log.info("请求结果{}", request);
-                document.put("status",1);
                 document.put("newId",request.getJSONObject("group").get("id"));
             }catch (Exception e){
                 e.printStackTrace();
-                document.put("status",2);
-                document.put("errorDetails",request.get("details"));
             }
+            log.info("importGroupInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+            saveImportInfo("importGroupInfo", request);
             mongoTemplate.save(document,ExportEnum.GROUP.getValue() + "_info");
         }
+        log.info("导入 Group_info 成功，一共导出{}条记录",list.size());
+        saveTask.setEndTime(TimeUtil.getTime());
+        saveTask.setUseTime(System.currentTimeMillis() - startTime);
+        saveTask.setStatus(2);
+        mongoTemplate.save(saveTask);
     }
 
     @Override
     public void exportGroupMembershipInfo() {
-        JSONObject request = this.doGet("/api/v2/group_memberships", new HashMap<>());
-        List<JSONObject> list = request.getJSONArray("group_memberships").toJavaList(JSONObject.class);
-        for (JSONObject jsonObject : list) {
-            jsonObject.put("status",0);
-            jsonObject.put("domain",StringSub.getDomain(this.sourceDomain));
-        }
-        mongoTemplate.insert(list,"group_membership");
+
+        TaskInfo exportUserInfo = saveTaskInfo("exportGroupMembershipInfo");
+        Long useTime = doExport("/api/v2/group_memberships", "group_memberships", ExportEnum.GROUP.getValue() + "_membership");
+        exportUserInfo.setEndTime(TimeUtil.getTime());
+        exportUserInfo.setUseTime(useTime);
+        exportUserInfo.setStatus(2);
+        mongoTemplate.save(exportUserInfo);
     }
 
     @Override
     public void importGroupMembershipInfo() {
-        // todo  后期添加分页 以防过大
+
+        TaskInfo saveTask = saveTaskInfo("importUserInfo");
+        long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "group_membership");
 
         JSONArray array = JSONArray.parseArray(JSON.toJSONString(list));
         JSONObject requestParam = new JSONObject();
         requestParam.put("group_memberships", array);
-        System.out.println("===================");
-        System.out.println(requestParam);
-        System.out.println("===================");
 
         JSONObject request = this.doPost("/api/v2/group_memberships/create_many",requestParam);
-        log.info("请求结果{}",request);
+        log.info("importGroupMembershipInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+        log.info("导入 user_info 成功，一共导出{}条记录",array.size());
+        saveTask.setEndTime(TimeUtil.getTime());
+        saveTask.setUseTime(System.currentTimeMillis() - startTime);
+        saveTask.setStatus(2);
+        mongoTemplate.save(saveTask);
         // todo  单个创建有问题，状态无法更改
 
 //        for (Document document : list) {

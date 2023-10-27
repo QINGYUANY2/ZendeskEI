@@ -18,9 +18,7 @@ public interface IExportTicketService {
 
     void importSatisfactionRatingInfo();
 
-    void exportResourceCollectionInfo();
 
-    void importResourceCollectionInfo();
 
     
 }
