@@ -2,9 +2,7 @@ package com.whaleal.zendesk.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.whaleal.zendesk.common.ExportEnum;
 import com.whaleal.zendesk.model.ImportInfo;
-import com.whaleal.zendesk.model.TaskInfo;
 import com.whaleal.zendesk.util.StringSub;
 import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -218,14 +216,6 @@ public abstract class BaseExportService {
         return System.currentTimeMillis() - startTime;
     }
 
-    public TaskInfo saveTaskInfo(String name){
-        TaskInfo taskInfo = new TaskInfo();
-        taskInfo.setName(name);
-        taskInfo.setStartTime(TimeUtil.getTime());
-        taskInfo.setStatus(1);
-        taskInfo.setType(1);
-        return mongoTemplate.save(taskInfo, "taskInfo");
-    }
 
     public ImportInfo saveImportInfo(String type,JSONObject request){
         ImportInfo importInfo = new ImportInfo();
