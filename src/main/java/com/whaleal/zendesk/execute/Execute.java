@@ -109,61 +109,61 @@ public class Execute {
 
         int status = 0;
         try {
-            iExportOrgService.exportOrgMembershipInfo();
-
-            iExportOrgService.exportOrgSubscriptionsInfo();
-
-            iExportOrgService.exportOrgInfo();
-
-            iExportUserService.exportRoleInfo();
-
-            iExportUserService.exportUserField();
-
-            iExportUserService.exportUserInfo();
-
-            iExportBusinessService.exportViewInfo();
-
-            iExportBusinessService.exportMacroInfo();
-
-            iExportGroupService.exportGroupInfo();
-
-            iExportGroupService.exportGroupMembershipInfo();
-
-            iExportItemService.exportItemInfo();
-
-            iExportSysService.exportBrandInfo();
-
-            iExportTicketService.exportSatisfactionRatingInfo();
-
-            iExportTicketService.exportTicketAudit();
-
-            iExportTicketService.exportTicketRequest();
-
-            iExportTicketService.exportTicketInfo();
-
-            iExportTicketService.exportTicketFields();
-
-            iExportFormsService.exportTicketForms();
-
-            iExportContentService.exportExternalContentRecordInfo();
-
-            iExportGatherService.exportTopicInfo();
-
-            iExportGuideService.exportArticleInfo();
-
-            iExportGuideService.exportArticleInfo();
-
-            iExportGuideService.exportThemeInfo();
-
-            iExportGuideService.exportPermissionGroupInfo();
-
-            iExportPhoneService.exportGreetingCategoriesInfo();
-
-            iExportPhoneService.exportGreetingInfo();
+//            iExportOrgService.exportOrgMembershipInfo();
+//
+//            iExportOrgService.exportOrgSubscriptionsInfo();
+//
+//            iExportOrgService.exportOrgInfo();
+//
+//            iExportUserService.exportRoleInfo();
+//
+//            iExportUserService.exportUserField();
+//
+//            iExportUserService.exportUserInfo();
+//
+//            iExportBusinessService.exportViewInfo();
+//
+//            iExportBusinessService.exportMacroInfo();
+//
+//            iExportGroupService.exportGroupInfo();
+//
+//            iExportGroupService.exportGroupMembershipInfo();
+//
+//            iExportItemService.exportItemInfo();
+//
+//            iExportSysService.exportBrandInfo();
+//
+//            iExportTicketService.exportSatisfactionRatingInfo();
+//
+//            iExportTicketService.exportTicketAudit();
+//
+//            iExportTicketService.exportTicketRequest();
+//
+//            iExportTicketService.exportTicketInfo();
+//
+//            iExportTicketService.exportTicketFields();
+//
+//            iExportFormsService.exportTicketForms();
+//
+//            iExportContentService.exportExternalContentRecordInfo();
+//
+//            iExportGatherService.exportTopicInfo();
+//
+//            iExportGuideService.exportArticleInfo();
+//
+//            iExportGuideService.exportArticleInfo();
+//
+//            iExportGuideService.exportThemeInfo();
+//
+//            iExportGuideService.exportPermissionGroupInfo();
+//
+//            iExportPhoneService.exportGreetingCategoriesInfo();
+//
+//            iExportPhoneService.exportGreetingInfo();
 
             iExportPhoneService.exportPhoneNumberInfo();
 
-            iExportPhoneService.exportIVRsInfo();
+//            iExportPhoneService.exportIVRsInfo();
             log.info("执行导出完成");
             status = 2;
         }catch (Exception e){

@@ -2,11 +2,10 @@ package com.whaleal.zendesk.service.content.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.ExportEnum;
-import com.whaleal.zendesk.model.TaskInfo;
+import com.whaleal.zendesk.model.ModuleRecord;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportUserService;
 import com.whaleal.zendesk.util.StringSub;
-import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,17 +29,14 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 
     @Override
     public void exportUserInfo() {
-        TaskInfo exportUserInfo = saveTaskInfo("exportUserInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("exportUserInfo");
         Long useTime = doExport("/api/v2/users", "users", ExportEnum.USER.getValue() + "_info");
-        exportUserInfo.setEndTime(TimeUtil.getTime());
-        exportUserInfo.setUseTime(useTime);
-        exportUserInfo.setStatus(2);
-        mongoTemplate.save(exportUserInfo);
+        endModuleRecord(moduleRecord, useTime);
     }
 
     @Override
     public void importUserInfo() {
-        TaskInfo saveTask = saveTaskInfo("importUserInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("importUserInfo");
         long startTime = System.currentTimeMillis();
         Criteria criteria = new Criteria();
         criteria.and("domain").is(StringSub.getDomain(this.sourceDomain));
@@ -73,11 +69,8 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
             log.info("importUserInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
             saveImportInfo("importUserInfo", request);
         }
-        log.info("导入 user_info 成功，一共导出{}条记录",documentList.size());
-        saveTask.setEndTime(TimeUtil.getTime());
-        saveTask.setUseTime(System.currentTimeMillis() - startTime);
-        saveTask.setStatus(2);
-        mongoTemplate.save(saveTask);
+        log.info("导入 user_info 成功，一共导入{}条记录", documentList.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
 
@@ -99,21 +92,16 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 
     @Override
     public void exportUserField() {
-        TaskInfo exportUserInfo = saveTaskInfo("exportUserField");
+        ModuleRecord moduleRecord = beginModuleRecord("exportUserField");
         Long useTime = doExport("/api/v2/user_fields", "user_fields", ExportEnum.USER.getValue() + "_field");
-        exportUserInfo.setEndTime(TimeUtil.getTime());
-        exportUserInfo.setUseTime(useTime);
-        exportUserInfo.setStatus(2);
-        mongoTemplate.save(exportUserInfo);
+        endModuleRecord(moduleRecord, useTime);
     }
 
     @Override
     public void importUserField() {
-        // todo  后期添加分页 以防过大
-
-        TaskInfo saveTask = saveTaskInfo("importUserField");
+        ModuleRecord moduleRecord = beginModuleRecord("importUserField");
         long startTime = System.currentTimeMillis();
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "user_field");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.USER.getValue() + "_field");
         JSONObject request = null;
         for (Document document : list) {
             JSONObject requestParam = new JSONObject();
@@ -127,13 +115,10 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
             }
             log.info("importUserField 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
             saveImportInfo("importUserField", request);
-            mongoTemplate.save(document, "user_field");
+            mongoTemplate.save(document, ExportEnum.USER.getValue() + "_field");
         }
-        log.info("导入user_Field成功，一共导出{}条记录",list.size());
-        saveTask.setEndTime(TimeUtil.getTime());
-        saveTask.setUseTime(System.currentTimeMillis() - startTime);
-        saveTask.setStatus(2);
-        mongoTemplate.save(saveTask);
+        log.info("导入user_Field成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
 

@@ -2,11 +2,10 @@ package com.whaleal.zendesk.service.content.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.ExportEnum;
-import com.whaleal.zendesk.model.TaskInfo;
+import com.whaleal.zendesk.model.ModuleRecord;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportTicketService;
 import com.whaleal.zendesk.util.StringSub;
-import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,11 +16,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,28 +30,22 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
     @Override
     public void exportTicketRequest() {
-        TaskInfo taskInfo = saveTaskInfo("exportTicketRequest");
-        Long useTime = doExport("/api/v2/requests", "requests", ExportEnum.TICKET+"_request");
-        taskInfo.setStatus(2);
-        taskInfo.setEndTime(TimeUtil.getTime());
-        taskInfo.setUseTime(useTime);
-        mongoTemplate.save(taskInfo);
+        ModuleRecord moduleRecord = beginModuleRecord("exportTicketRequest");
+        Long useTime = doExport("/api/v2/requests", "requests", ExportEnum.TICKET + "_request");
+        endModuleRecord(moduleRecord, useTime);
     }
 
     @Override
     public void exportTicketAudit() {
-        TaskInfo taskInfo = saveTaskInfo("exportTicketAudit");
-        Long useTime = doExport("/api/v2/ticket_audits", "audits", ExportEnum.TICKET+"_audits");
-        taskInfo.setStatus(2);
-        taskInfo.setEndTime(TimeUtil.getTime());
-        taskInfo.setUseTime(useTime);
-        mongoTemplate.save(taskInfo);
+        ModuleRecord moduleRecord = beginModuleRecord("exportTicketAudit");
+        Long useTime = doExport("/api/v2/ticket_audits", "audits", ExportEnum.TICKET + "_audits");
+        endModuleRecord(moduleRecord, useTime);
     }
 
     @Deprecated
     @Override
     public void exportTicketInfo() {
-        TaskInfo taskInfo = saveTaskInfo("exportTicketInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("exportTicketInfo");
         long startTime = System.currentTimeMillis();
         JSONObject request = this.doGet("/api/v2/tickets", new HashMap<>());
         List<JSONObject> list = request.getJSONArray("tickets").toJavaList(JSONObject.class);
@@ -64,17 +55,14 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
             jsonObject.put("status", 0);
             jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
         }
-        mongoTemplate.insert(list, ExportEnum.TICKET.getValue()+"_info");
-        log.info("导出TicketInfo成功，一共导出{}条记录",list.size());
-        taskInfo.setStatus(2);
-        taskInfo.setEndTime(TimeUtil.getTime());
-        taskInfo.setUseTime(System.currentTimeMillis()-startTime);
-        mongoTemplate.save(taskInfo);
+        mongoTemplate.insert(list, ExportEnum.TICKET.getValue() + "_info");
+        log.info("导出TicketInfo成功，一共导出{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
     @Override
     public void importTicketInfo() {
-        TaskInfo saveTask = saveTaskInfo("importTicketInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("importTicketInfo");
         long startTime = System.currentTimeMillis();
 
         Criteria criteria = new Criteria();
@@ -82,14 +70,14 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 //        criteria.and("id").is(72);
         Query query = new Query(criteria);
 
-        List<Document> list = mongoTemplate.find(query, Document.class, ExportEnum.TICKET.getValue()+"_info");
+        List<Document> list = mongoTemplate.find(query, Document.class, ExportEnum.TICKET.getValue() + "_info");
         JSONObject request = null;
         for (Document document : list) {
             JSONObject requestParam = new JSONObject();
             Document param = Document.parse(document.toJson());
             try {
                 if (document.get("brand_id") != null) {
-                    Document brandDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("brand_id"))), Document.class, ExportEnum.BRAND.getValue()+"_info");
+                    Document brandDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("brand_id"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
                     if (brandDoc != null) {
                         param.put("brand_id", brandDoc.get("newId"));
                     } else {
@@ -97,7 +85,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     }
                 }
                 if (document.get("group_id") != null) {
-                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("group_id"))), Document.class, ExportEnum.GROUP.getValue()+"_info");
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("group_id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
                     if (groupDoc != null) {
                         param.put("group_id", groupDoc.get("newId"));
                     } else {
@@ -105,7 +93,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     }
                 }
                 if (document.get("assignee_id") != null) {
-                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("assignee_id"))), Document.class, ExportEnum.USER.getValue()+"_info");
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("assignee_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
                     if (groupDoc != null) {
                         param.put("assignee_id", groupDoc.get("newId"));
                     } else {
@@ -113,7 +101,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     }
                 }
                 if (document.get("requester_id") != null) {
-                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("requester_id"))), Document.class, ExportEnum.USER.getValue()+"_info");
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("requester_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
                     if (groupDoc != null) {
                         param.put("requester_id", groupDoc.get("newId"));
                     } else {
@@ -124,7 +112,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     List<Long> followerIds = param.getList("follower_ids", Long.class);
                     List<Long> longList = new ArrayList<>();
                     for (Long followerId : followerIds) {
-                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(followerId)), Document.class, ExportEnum.USER.getValue()+"_info");
+                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(followerId)), Document.class, ExportEnum.USER.getValue() + "_info");
                         if (groupDoc != null) {
                             longList.add((Long) groupDoc.get("newId"));
                         } else {
@@ -138,7 +126,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     List<Long> emailList = new ArrayList<>();
                     List<Long> emailCcIds = param.getList("email_cc_ids", Long.class);
                     for (Long emailCc : emailCcIds) {
-                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(emailCc)), Document.class, ExportEnum.USER.getValue()+"_info");
+                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(emailCc)), Document.class, ExportEnum.USER.getValue() + "_info");
                         if (groupDoc != null) {
                             emailList.add((Long) groupDoc.get("newId"));
                         } else {
@@ -151,9 +139,9 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 if (document.get("fields") != null) {
                     List<Document> fields = param.getList("fields", Document.class);
                     for (Document field : fields) {
-                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(field.get("id"))), Document.class, ExportEnum.TICKET.getValue()+"_field");
+                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(field.get("id"))), Document.class, ExportEnum.TICKET.getValue() + "_field");
                         if (groupDoc != null) {
-                            field.put("id",groupDoc.get("newId"));
+                            field.put("id", groupDoc.get("newId"));
                         } else {
                             log.warn("同步ticket时,未找到 {} 对应的新 fields", field.get("id"));
                         }
@@ -161,7 +149,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 }
 
                 if (document.get("submitter_id") != null) {
-                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("submitter_id"))), Document.class, ExportEnum.USER.getValue()+"_info");
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("submitter_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
                     if (groupDoc != null) {
                         param.put("submitter_id", groupDoc.get("newId"));
                     } else {
@@ -170,7 +158,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 }
 
                 if (document.get("organization_id") != null) {
-                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("organization_id"))), Document.class, ExportEnum.ORGANIZATIONS.getValue()+"_info");
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("organization_id"))), Document.class, ExportEnum.ORGANIZATIONS.getValue() + "_info");
                     if (groupDoc != null) {
                         param.put("organization_id", groupDoc.get("newId"));
                     } else {
@@ -178,7 +166,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     }
                 }
                 if (document.get("ticket_form_id") != null) {
-                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("ticket_form_id"))), Document.class, ExportEnum.TICKET.getValue()+"_forms");
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("ticket_form_id"))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
                     if (groupDoc != null) {
                         param.put("ticket_form_id", groupDoc.get("newId"));
                     } else {
@@ -192,7 +180,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                         List<String> tokenList = new ArrayList<>();
                         //映射新id
                         if (comment.get("author_id") != null) {
-                            Document authorDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(comment.get("author_id"))), Document.class, ExportEnum.USER.getValue()+"_info");
+                            Document authorDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(comment.get("author_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
                             if (authorDoc != null) {
                                 comment.put("author_id", authorDoc.get("newId"));
                             } else {
@@ -201,7 +189,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                         }
 
                         // 附件相关
-                        if (comment.get("attachments") != null){
+                        if (comment.get("attachments") != null) {
                             List<Document> attachments = comment.getList("attachments", Document.class);
                             for (Document attachment : attachments) {
                                 String url = (String) attachment.get("mapped_content_url");
@@ -209,12 +197,12 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                                 String type = (String) attachment.get("content_type");
                                 File file = downloadFile(url, filename);
                                 JSONObject jsonObject = doPost("/api/v2/uploads", type, file);
-                                if (!file.delete()){
-                                    log.warn("临时文件：{}删除失败",file.getAbsolutePath());
+                                if (!file.delete()) {
+                                    log.warn("临时文件：{}删除失败", file.getAbsolutePath());
                                 }
                                 tokenList.add(jsonObject.getJSONObject("upload").getString("token"));
                             }
-                            comment.put("uploads",tokenList);
+                            comment.put("uploads", tokenList);
                         }
                     }
                 }
@@ -234,17 +222,14 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
             log.info("importTicketInfo 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
             saveImportInfo("importTicketInfo", request);
-            mongoTemplate.save(document, ExportEnum.TICKET.getValue()+"_info");
+            mongoTemplate.save(document, ExportEnum.TICKET.getValue() + "_info");
         }
-        log.info("导入ticker_info成功，一共导出{}条记录",list.size());
-        saveTask.setEndTime(TimeUtil.getTime());
-        saveTask.setUseTime(System.currentTimeMillis() - startTime);
-        saveTask.setStatus(2);
-        mongoTemplate.save(saveTask);
+        log.info("导入ticker_info成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
 
     }
 
-    public File downloadFile(String url,String filename){
+    public File downloadFile(String url, String filename) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         // todo  临时目录
@@ -261,8 +246,8 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
-            if (fos != null){
+        } finally {
+            if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
@@ -274,23 +259,19 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
     }
 
 
-
     @Override
     public void exportTicketFields() {
-        TaskInfo exportUserInfo = saveTaskInfo("exportTicketFields");
+        ModuleRecord moduleRecord = beginModuleRecord("exportTicketFields");
         Long useTime = doExport("/api/v2/ticket_fields", "ticket_fields", ExportEnum.TICKET.getValue() + "_field");
-        exportUserInfo.setEndTime(TimeUtil.getTime());
-        exportUserInfo.setUseTime(useTime);
-        exportUserInfo.setStatus(2);
-        mongoTemplate.save(exportUserInfo);
+        endModuleRecord(moduleRecord, useTime);
 
     }
 
     @Override
     public void importTicketFields() {
-        TaskInfo saveTask = saveTaskInfo("importTicketFields");
+        ModuleRecord moduleRecord = beginModuleRecord("importTicketFields");
         long startTime = System.currentTimeMillis();
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue()+"_field");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue() + "_field");
         JSONObject requestParam = new JSONObject();
         JSONObject request = null;
         for (Document document : list) {
@@ -299,30 +280,24 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
                 requestParam.put("ticket_field", jsonObject);
                 request = this.doPost("/api/v2/ticket_fields", requestParam);
-                document.put("newId",request.getJSONObject("ticket_field").get("id"));
-            }catch (Exception e){
+                document.put("newId", request.getJSONObject("ticket_field").get("id"));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             log.info("importTicketFields 执行完毕,请求参数：{},执行结果{}", requestParam, request);
             saveImportInfo("importTicketFields", request);
-            mongoTemplate.save(document,ExportEnum.TICKET.getValue()+"_field");
+            mongoTemplate.save(document, ExportEnum.TICKET.getValue() + "_field");
         }
-        log.info("导入 TicketFields 成功，一共导出{}条记录",list.size());
-        saveTask.setEndTime(TimeUtil.getTime());
-        saveTask.setUseTime(System.currentTimeMillis() - startTime);
-        saveTask.setStatus(2);
-        mongoTemplate.save(saveTask);
+        log.info("导入 TicketFields 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
     @Override
     public void exportSatisfactionRatingInfo() {
 
-        TaskInfo exportUserInfo = saveTaskInfo("exportSatisfactionRatingInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("exportSatisfactionRatingInfo");
         Long useTime = doExport("/api/v2/satisfaction_ratings", "satisfaction_ratings", ExportEnum.SATISFACTION.getValue() + "_rating");
-        exportUserInfo.setEndTime(TimeUtil.getTime());
-        exportUserInfo.setUseTime(useTime);
-        exportUserInfo.setStatus(2);
-        mongoTemplate.save(exportUserInfo);
+        endModuleRecord(moduleRecord, useTime);
 
     }
 
@@ -332,8 +307,6 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         // todo  需要绑定ticket id
 
     }
-
-
 
 
 }

@@ -209,4 +209,33 @@ class ZendeskApplicationTests extends BaseExportService {
         System.out.println("外部");
     }
 
+
+    @Test
+    void demo11(){
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://www.googleapis.com/auth/cloud-platform")
+                .newBuilder();
+        RequestBody creatBody = RequestBody.create(MediaType.parse("application/json"),
+                        "");
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", creatBody)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

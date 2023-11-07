@@ -2,7 +2,10 @@ package com.whaleal.zendesk.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.TaskEnum;
 import com.whaleal.zendesk.model.ImportInfo;
+import com.whaleal.zendesk.model.ModuleRecord;
+import com.whaleal.zendesk.model.TaskRecord;
 import com.whaleal.zendesk.util.StringSub;
 import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,6 +228,24 @@ public abstract class BaseExportService {
         importInfo.setType(type);
         importInfo.setRequest(request);
         return mongoTemplate.save(importInfo, "importInfo");
+    }
+
+
+    public ModuleRecord beginModuleRecord(String name){
+        ModuleRecord moduleRecord = new ModuleRecord();
+        moduleRecord.setModuleName(name);
+        moduleRecord.setStartTime(TimeUtil.getTime());
+        moduleRecord.setStatus(1);
+        moduleRecord.setSourceUrl(sourceDomain);
+        moduleRecord.setType(TaskEnum.NOT_STARTED.getValue());
+        return mongoTemplate.save(moduleRecord);
+    }
+
+    public void endModuleRecord(ModuleRecord moduleRecord,long useTime){
+        moduleRecord.setEndTime(TimeUtil.getTime());
+        moduleRecord.setDuration(useTime);
+        moduleRecord.setStatus(TaskEnum.COMPLETED.getValue());
+        mongoTemplate.save(moduleRecord);
     }
 
 

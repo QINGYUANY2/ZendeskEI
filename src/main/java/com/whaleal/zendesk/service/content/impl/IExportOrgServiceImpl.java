@@ -6,14 +6,12 @@ import com.whaleal.zendesk.model.ModuleRecord;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportOrgService;
 import com.whaleal.zendesk.util.StringSub;
-import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -23,17 +21,14 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
 
     @Override
     public void exportOrgInfo() {
-        ModuleRecord exportUserInfo =new ModuleRecord();
+        ModuleRecord moduleRecord = beginModuleRecord("exportOrgInfo");
         Long useTime = doExport("/api/v2/organizations", "organizations", ExportEnum.ORGANIZATIONS.getValue() + "_info");
-        exportUserInfo.setStartTime(TimeUtil.getTime());
-        exportUserInfo.setDuration(useTime);
-        exportUserInfo.setStatus(2);
-        mongoTemplate.save(exportUserInfo);
+        endModuleRecord(moduleRecord, useTime);
     }
 
     @Override
     public void importOrgInfo() {
-        TaskInfo saveTask = saveTaskInfo("importOrgInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("importOrgInfo");
         long startTime = System.currentTimeMillis();
         List<Document> documentList = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.ORGANIZATIONS.getValue() + "_info");
         JSONObject requestParam = new JSONObject();
@@ -52,28 +47,20 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
             mongoTemplate.save(document, ExportEnum.ORGANIZATIONS.getValue() + "_info");
             saveImportInfo("importOrgInfo", request);
         }
-        log.info("导入 org_info 成功，一共导出{}条记录", documentList.size());
-        saveTask.setEndTime(TimeUtil.getTime());
-        saveTask.setUseTime(System.currentTimeMillis() - startTime);
-        saveTask.setStatus(2);
-        mongoTemplate.save(saveTask);
+        log.info("导入 org_info 成功，一共导入{}条记录", documentList.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
     @Override
     public void exportOrgMembershipInfo() {
-
-        TaskInfo exportUserInfo = saveTaskInfo("exportOrgMembershipInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("exportOrgMembershipInfo");
         Long useTime = doExport("/api/v2/organization_memberships", "organization_memberships", ExportEnum.ORGANIZATIONS.getValue() + "_memberships");
-        exportUserInfo.setEndTime(TimeUtil.getTime());
-        exportUserInfo.setUseTime(useTime);
-        exportUserInfo.setStatus(2);
-        mongoTemplate.save(exportUserInfo);
-
+        endModuleRecord(moduleRecord, useTime);
     }
 
     @Override
     public void importOrgMembershipInfo() {
-        TaskInfo saveTask = saveTaskInfo("importUserInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("importOrgMembershipInfo");
         long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.ORGANIZATIONS.getValue() + "_memberships");
         JSONObject requestParam = new JSONObject();
@@ -84,7 +71,7 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
 
                 requestParam.put("organization_membership", jsonObject);
                 request = this.doPost("/api/v2/organization_memberships", requestParam);
-                document.put("newId",request.getJSONObject("organization_membership").get("id"));
+                document.put("newId", request.getJSONObject("organization_membership").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -92,28 +79,21 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
             saveImportInfo("importOrgMembershipInfo", request);
             mongoTemplate.save(document, ExportEnum.ORGANIZATIONS.getValue() + "_memberships");
         }
-        log.info("导入 OrgMembershipInfo 成功，一共导出{}条记录",list.size());
-        saveTask.setEndTime(TimeUtil.getTime());
-        saveTask.setUseTime(System.currentTimeMillis() - startTime);
-        saveTask.setStatus(2);
-        mongoTemplate.save(saveTask);
+        log.info("导入 OrgMembershipInfo 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
     @Override
     public void exportOrgSubscriptionsInfo() {
 
-        TaskInfo exportUserInfo = saveTaskInfo("exportOrgSubscriptionsInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("exportOrgSubscriptionsInfo");
         Long useTime = doExport("/api/v2/organization_subscriptions", "organization_subscriptions", ExportEnum.ORGANIZATIONS.getValue() + "_subscriptions");
-        exportUserInfo.setEndTime(TimeUtil.getTime());
-        exportUserInfo.setUseTime(useTime);
-        exportUserInfo.setStatus(2);
-        mongoTemplate.save(exportUserInfo);
-
+        endModuleRecord(moduleRecord, useTime);
     }
 
     @Override
     public void importOrgSubscriptionsInfo() {
-        TaskInfo saveTask = saveTaskInfo("importUserInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("importOrgSubscriptionsInfo");
         long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.ORGANIZATIONS.getValue() + "_subscriptions");
         JSONObject requestParam = new JSONObject();
@@ -124,7 +104,7 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
 
                 requestParam.put("organization_subscription", jsonObject);
                 request = this.doPost("/api/v2/organization_subscriptions", requestParam);
-                document.put("newId",request.getJSONObject("organization_subscription").get("id"));
+                document.put("newId", request.getJSONObject("organization_subscription").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -132,10 +112,7 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
             mongoTemplate.save(document, ExportEnum.ORGANIZATIONS.getValue() + "_subscriptions");
             saveImportInfo("importOrgSubscriptionsInfo", request);
         }
-        log.info("导入 OrgSubscriptionsInfo 成功，一共导出{}条记录",list.size());
-        saveTask.setEndTime(TimeUtil.getTime());
-        saveTask.setUseTime(System.currentTimeMillis() - startTime);
-        saveTask.setStatus(2);
-        mongoTemplate.save(saveTask);
+        log.info("导入 OrgSubscriptionsInfo 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 }
