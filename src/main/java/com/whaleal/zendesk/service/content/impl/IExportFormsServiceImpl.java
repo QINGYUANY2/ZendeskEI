@@ -22,13 +22,13 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
     public void exportTicketForms() {
 
         ModuleRecord moduleRecord = beginModuleRecord("exportTicketForms");
-        Long useTime = doExport("/api/v2/ticket_forms", "ticket_forms", ExportEnum.TICKET.getValue() + "_info");
+        Long useTime = doExport("/api/v2/ticket_forms", "ticket_forms", ExportEnum.TICKET.getValue() + "_forms");
         endModuleRecord(moduleRecord, useTime);
     }
 
     @Override
     public void importTicketForms() {
-        ModuleRecord moduleRecord = beginModuleRecord("importUserInfo");
+        ModuleRecord moduleRecord = beginModuleRecord("importTicketForms");
         long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
         for (Document document : list) {

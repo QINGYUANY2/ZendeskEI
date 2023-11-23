@@ -6,6 +6,11 @@ public interface IExportGatherService {
 
     void importTopicInfo();
 
+    void exportPostsInfo();
+
+    void importPostsInfo();
+
+
 //    void exportUserSegmentInfo();
 //
 //    void importUserSegmentInfo();

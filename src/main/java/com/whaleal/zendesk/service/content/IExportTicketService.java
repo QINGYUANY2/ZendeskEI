@@ -18,7 +18,27 @@ public interface IExportTicketService {
 
     void importSatisfactionRatingInfo();
 
+    void exportCustomTicketStatus();
+
+    void importCustomTicketStatus();
+
+    void exportSharingAgreement();
+
+    void importSharingAgreement();
+
+    void exportSchedules();
+
+    void importSchedules();
+
+    void exportAccountAttributes();
+
+    void importAccountAttributes();
+
+    void exportResourceCollections();
+
+    void importResourceCollections();
 
 
-    
+
+
 }

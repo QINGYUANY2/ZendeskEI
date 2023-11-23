@@ -36,8 +36,8 @@ public class IExportGuideServiceImpl extends BaseExportService implements IExpor
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 requestParam.put("job", jsonObject);
-                request = this.doPost("/api/v2/guide/theming/jobs/themes/imports", requestParam);
-                document.put("newId", request.getJSONObject("").get("id"));
+                request = this.doPost("/api/v2/guide/theming/themes/"+document.get("id")+"/publish", requestParam);
+                document.put("newId", request.getJSONObject("job").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -75,7 +75,7 @@ public class IExportGuideServiceImpl extends BaseExportService implements IExpor
         JSONObject request = null;
         JSONObject requestParam = new JSONObject();
         long startTime = System.currentTimeMillis();
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.PERMISSION_GROUPS.getValue() + "_group");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.PERMISSION_GROUPS.getValue() + "_info");
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());

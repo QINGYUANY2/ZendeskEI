@@ -62,31 +62,39 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
 
         ModuleRecord moduleRecord = beginModuleRecord("importGroupMembershipInfo");
         long startTime = System.currentTimeMillis();
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, "group_membership");
-
-        JSONArray array = JSONArray.parseArray(JSON.toJSONString(list));
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.GROUP.getValue() + "_membership");
         JSONObject requestParam = new JSONObject();
-        requestParam.put("group_memberships", array);
+        JSONObject request = null;
 
-        JSONObject request = this.doPost("/api/v2/group_memberships/create_many", requestParam);
-        log.info("importGroupMembershipInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
-        log.info("导入 groupMembership_info 成功，一共入出{}条记录", array.size());
-        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+//        JSONArray array = JSONArray.parseArray(JSON.toJSONString(list));
+//        JSONObject requestParam = new JSONObject();
+//        requestParam.put("group_memberships", array);
+
+//        JSONObject request = this.doPost("/api/v2/group_memberships/create_many", requestParam);
+//        log.info("importGroupMembershipInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+//        log.info("导入 groupMembership_info 成功，一共入出{}条记录", array.size());
+//        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
         // todo  单个创建有问题，状态无法更改
 
-//        for (Document document : list) {
-//            try {
-//                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-//                JSONObject requestParam = new JSONObject();
-//                requestParam.put("group_membership", jsonObject);
-//                JSONObject request = this.doPost("/api/v2/group_memberships",requestParam);
-//                log.info("请求结果{}",request);
-//                document.put("status",1);
-//            }catch (Exception e){
-//                e.printStackTrace();
-//                document.put("status",2);
-//            }
-//            mongoTemplate.save(document,"group_membership");
-//        }
+        for (Document document : list) {
+            try {
+                Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(document.get("group_id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                Document userDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(document.get("user_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
+
+                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                jsonObject.put("group_id",groupDoc.get("newId"));
+                jsonObject.put("user_id",userDoc.get("newId"));
+                requestParam.put("group_membership", jsonObject);
+                request = this.doPost("/api/v2/group_memberships",requestParam);
+                document.put("newId",request.getJSONObject("group_membership").get("id"));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            log.info("importGroupMembershipInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+            saveImportInfo("importGroupMembershipInfo",request);
+            mongoTemplate.save(document,ExportEnum.GROUP.getValue() + "_membership");
+        }
+        log.info("导入 importGroupMembershipInfo 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 }

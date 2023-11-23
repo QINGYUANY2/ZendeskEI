@@ -67,8 +67,11 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
         JSONObject request = null;
         for (Document document : list) {
             try {
+                Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(document.get("organization_id"))),Document.class,ExportEnum.ORGANIZATIONS.getValue()+"_info");
+                Document userDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(document.get("user_id"))),Document.class,ExportEnum.USER.getValue()+"_info");
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-
+                jsonObject.put("organization_id",orgDoc.get("newId"));
+                jsonObject.put("user_id",userDoc.get("newId"));
                 requestParam.put("organization_membership", jsonObject);
                 request = this.doPost("/api/v2/organization_memberships", requestParam);
                 document.put("newId", request.getJSONObject("organization_membership").get("id"));

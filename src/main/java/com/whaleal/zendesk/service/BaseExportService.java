@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.TaskEnum;
 import com.whaleal.zendesk.model.ImportInfo;
 import com.whaleal.zendesk.model.ModuleRecord;
-import com.whaleal.zendesk.model.TaskRecord;
 import com.whaleal.zendesk.util.StringSub;
 import com.whaleal.zendesk.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,20 +67,23 @@ public abstract class BaseExportService {
     }
 
     public JSONObject doGet(String url, Map<String, String> param) {
-        JSONObject jsonObject = doGet(sourceDomain, url, param);
-        if(jsonObject.getInteger("code") == 429){
-            try {
+        JSONObject jsonObject = null;
+        try {
+            Response response = doGet(sourceDomain, url, param);
+            jsonObject = JSONObject.parseObject(response.body().string());
+            if (response.code() == 429) {
                 //API调用达到上线 就等待一下
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                response = doGet(sourceDomain, url, param);
+                jsonObject = JSONObject.parseObject(response.body().string());
             }
-            jsonObject = doGet(sourceDomain, url, param);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return jsonObject;
     }
 
-    public JSONObject doGet(String domain, String url, Map<String, String> param) {
+    public Response doGet(String domain, String url, Map<String, String> param) {
         //拼接源端域名与接口路径
         String realPath = domain + url;
         HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
@@ -105,18 +106,37 @@ public abstract class BaseExportService {
         String string;
         try {
             response = sourceClient.newCall(request).execute();
-            string = response.body().string();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return JSONObject.parseObject(string);
+        return response;
     }
 
 
     public JSONObject doPost(String url, JSONObject param) {
 
+        JSONObject jsonObject = null;
+        try {
+            Response response = doPost(targetDomain, url, param);
+            jsonObject = JSONObject.parseObject(response.body().string());
+            if (response.code() == 429) {
+                //API调用达到上线 就等待一下
+                Thread.sleep(1000);
+                response = doPost(targetDomain, url, param);
+                jsonObject = JSONObject.parseObject(response.body().string());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+
+    }
+
+
+    public Response doPost(String domain, String url, JSONObject param) {
+
         //拼接源端域名与接口路径
-        String realPath = targetDomain + url;
+        String realPath = domain + url;
         HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
                 .newBuilder();
         RequestBody creatBody = RequestBody.create(MediaType.parse("application/json"), param.toString());
@@ -126,22 +146,23 @@ public abstract class BaseExportService {
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Authorization", Credentials.basic(targetUsername, targetPassword))
                 .build();
-        Response creatResponse;
+        Response creatResponse = null;
         String string = null;
         try {
             creatResponse = targetClient.newCall(creatRequest).execute();
-            string = creatResponse.body().string();
+//            string = creatResponse.body().string();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return JSONObject.parseObject(string);
+        return creatResponse;
     }
+
 
     public JSONObject doPost(String url, String type, File file) {
 
         //拼接源端域名与接口路径
-        String realPath = targetDomain + url+"?filename="+file.getName();
-        System.out.println("realPath:"+realPath+"   type:"+type);
+        String realPath = targetDomain + url + "?filename=" + file.getName();
+        System.out.println("realPath:" + realPath + "   type:" + type);
         // 构建请求体
         RequestBody requestBody = RequestBody.create(MediaType.parse(type), file);
 
@@ -162,24 +183,6 @@ public abstract class BaseExportService {
         return JSONObject.parseObject(string);
     }
 
-
-    public void createRelation(String url, String arrayField, String compareField, String collection) {
-        JSONObject source = doGet(sourceDomain, url, new HashMap<>());
-        JSONObject target = doGet(targetDomain, url, new HashMap<>());
-        JSONObject result = new JSONObject();
-        for (Object targetObj : target.getJSONArray(arrayField)) {
-            for (Object sourceObj : source.getJSONArray(arrayField)) {
-                JSONObject targetJson = JSONObject.parseObject(targetObj.toString());
-                JSONObject sourceJson = JSONObject.parseObject(sourceObj.toString());
-                if (targetJson.get(compareField).toString().equals(sourceJson.get(compareField).toString())) {
-                    result.put("newID", targetJson.getLong("id"));
-                    result.put("oldId", sourceJson.getLong("id"));
-                    mongoTemplate.insert(result, collection);
-                    break;
-                }
-            }
-        }
-    }
 
     public void doImport(String param, String path, String coll) {
         // todo  后期添加分页 以防过大
@@ -213,15 +216,15 @@ public abstract class BaseExportService {
                 jsonObject.put("domain", StringSub.getDomain(this.sourceDomain));
             }
             mongoTemplate.insert(list, coll);
-            log.info("导出{}成功，一共导出{}条记录",coll,list.size());
-        }catch (Exception e){
+            log.info("导出{}成功，一共导出{}条记录", coll, list.size());
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return System.currentTimeMillis() - startTime;
     }
 
 
-    public ImportInfo saveImportInfo(String type,JSONObject request){
+    public ImportInfo saveImportInfo(String type, JSONObject request) {
         ImportInfo importInfo = new ImportInfo();
         importInfo.setCreatTime(TimeUtil.getTime());
         importInfo.setSubDomain(StringSub.getDomain(this.sourceDomain));
@@ -231,7 +234,7 @@ public abstract class BaseExportService {
     }
 
 
-    public ModuleRecord beginModuleRecord(String name){
+    public ModuleRecord beginModuleRecord(String name) {
         ModuleRecord moduleRecord = new ModuleRecord();
         moduleRecord.setModuleName(name);
         moduleRecord.setStartTime(TimeUtil.getTime());
@@ -241,7 +244,7 @@ public abstract class BaseExportService {
         return mongoTemplate.save(moduleRecord);
     }
 
-    public void endModuleRecord(ModuleRecord moduleRecord,long useTime){
+    public void endModuleRecord(ModuleRecord moduleRecord, long useTime) {
         moduleRecord.setEndTime(TimeUtil.getTime());
         moduleRecord.setDuration(useTime);
         moduleRecord.setStatus(TaskEnum.COMPLETED.getValue());

@@ -19,11 +19,8 @@ import java.util.List;
 public class IExportPhoneServiceImpl extends BaseExportService implements IExportPhoneService {
     @Override
     public void exportPhoneNumberInfo() {
-        //todo  参数设置 true 简略  false 详细，不填默认详细
-        // .addQueryParameter("minimal_mode", "false")
-
         ModuleRecord moduleRecord = beginModuleRecord("exportPhoneNumberInfo");
-        Long useTime = doExport("/api/v2/channels/voice/phone_numbers", "phone_numbers", ExportEnum.PHONE_SYSTEM.getValue() + "_field");
+        Long useTime = doExport("/api/v2/channels/voice/phone_numbers/search", "phone_numbers", ExportEnum.PHONE.getValue() + "_info");
         endModuleRecord(moduleRecord, useTime);
 
     }
@@ -34,23 +31,18 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
         long startTime = System.currentTimeMillis();
         JSONObject requestParam = new JSONObject();
         JSONObject request = null;
-        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.PHONE_SYSTEM.getValue() + "_info");
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.PHONE.getValue() + "_info");
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 requestParam.put("phone_number", jsonObject);
-                System.out.println("================");
-                System.out.println(requestParam);
-                System.out.println("================");
-                // todo https://support.zendesk.com/api/v2/channels/voice/phone_numbers
-                //  You must supply credentials to complete this request
                 request = this.doPost("/api/v2/channels/voice/phone_numbers", requestParam);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             log.info("importPhoneNumberInfo 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
-            mongoTemplate.save(document, ExportEnum.PHONE_SYSTEM.getValue() + "_info");
-            saveImportInfo("importUserField", request);
+            mongoTemplate.save(document, ExportEnum.PHONE.getValue() + "_info");
+            saveImportInfo("importPhoneNumberInfo", request);
         }
         log.info("导入phone_info成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
@@ -118,7 +110,6 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 requestParam.put("ivr", jsonObject);
-                //todo 请求报错You do not have access to this page. Please contact the account owner of this help desk for further help
                 request = this.doPost("/api/v2/channels/voice/ivr", requestParam);
             } catch (Exception e) {
                 e.printStackTrace();

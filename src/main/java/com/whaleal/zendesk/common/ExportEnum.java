@@ -42,6 +42,26 @@ public enum ExportEnum {
 
     PERMISSION_GROUPS("权限组", "permission_groups", 17),
 
+    SUPPORT_ADDRESS("支持地址", "support_address", 18),
+
+    TRIGGER("触发器", "trigger", 19),
+
+    TRIGGER_CATEGORIES("触发器类别", "trigger_categories", 20),
+
+    AUTOMATIONS("自动化", "automations", 21),
+
+    SLA_POLICIES("sla等级", "SLAPolicies", 22),
+
+    GROUP_SLA_POLICIES("sla等级组", "groupSLAPolicies", 23),
+
+    SHARING_AGREEMENT("共享协议", "sharing_agreement", 24),
+
+    SCHEDULES("时间安排表", "Schedules", 25),
+
+    ACCOUNT_ATTRIBUTES("账户属性", "account_attributes", 26),
+
+    RESOURCE_COLLECTIONS("资源集合", "resource_collections", 27),
+
 
     /**
      * 帮助中心
@@ -52,6 +72,7 @@ public enum ExportEnum {
     RECORD("记录", "record", 4),
     TOPIC("话题", "topic", 5),
     THEMES("题目", "themes", 6),
+    POSTS("文章", "posts", 7),
 
     /**
      * voice
@@ -60,7 +81,7 @@ public enum ExportEnum {
     GREETING_CATEGORIES("问候语类别", "GreetingCategories", 3),
     GREETING("问候语类别", "Greeting", 4),
     IVRS("交互式语音应答", "ivrs", 5),
-    PHONE_SYSTEM("电话配置", "phone", 2);
+    PHONE("电话配置", "phone", 2);
 
 
     private final String module;
