@@ -121,10 +121,10 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     param.put("follower_ids", longList);
                 }
                 if (document.get("custom_fields") != null) {
-                    List<Long> customFields = param.getList("custom_fields", Long.class);
+                    List<Document> customFields = param.getList("custom_fields", Document.class);
                     List<Long> longList = new ArrayList<>();
-                    for (Long customerField : customFields) {
-                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(customerField)), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                    for (Document customerField : customFields) {
+                        Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(customerField.get("id"))), Document.class, ExportEnum.TICKET.getValue() + "_field");
                         if (groupDoc != null) {
                             longList.add((Long) groupDoc.get("newId"));
                         } else {
@@ -199,7 +199,6 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                                 log.warn("同步ticket时,未找到comment中 {} 对应的新 author_id", comment.get("author_id"));
                             }
                         }
-
                         // 附件相关
                         if (comment.get("attachments") != null) {
                             List<Document> attachments = comment.getList("attachments", Document.class);
