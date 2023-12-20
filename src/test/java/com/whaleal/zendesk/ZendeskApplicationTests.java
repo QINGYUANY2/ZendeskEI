@@ -1450,10 +1450,13 @@ class ZendeskApplicationTests extends BaseExportService {
     //{"macro":{"url":"https://jinmutraining.zendesk.com/api/v2/macros/21864577399956.json","id":21864577399956,"title":"Roger Wilco","active":true,"updated_at":"2023-12-14T10:20:45Z","created_at":"2023-12-14T10:20:45Z","default":false,"position":10007,"description":null,"actions":[{"field":"status","value":"solved"}],"restriction":null,"raw_title":"Roger Wilco"}}
     //Response{protocol=h2, code=201, message=, url=https://jinmutraining.zendesk.com/api/v2/macros}
     //201
+    //{"macro":{"url":"https://pdi-jinmuinfo.zendesk.com/api/v2/macros/26631826097689.json","id":26631826097689,"title":"Roger Wilco","active":true,"updated_at":"2023-12-20T06:52:43Z","created_at":"2023-12-20T06:52:43Z","default":false,"position":10019,"description":null,"actions":[{"field":"status","value":"solved"}],"restriction":null,"raw_title":"Roger Wilco"}}
+    //Response{protocol=h2, code=201, message=, url=https://pdi-jinmuinfo.zendesk.com/api/v2/macros}
+    //201
     @Test
     void demo1831(){
         OkHttpClient client = new OkHttpClient();
-        String sourceUrl = "https://jinmutraining.zendesk.com";
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/macros")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
@@ -1473,7 +1476,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2079,7 +2082,7 @@ class ZendeskApplicationTests extends BaseExportService {
     //200
     @Test
     void list_schedule(){
-        String sourceUrl = "https://jinmutraining.zendesk.com";
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/business_hours/schedules")
                 .newBuilder();
@@ -2089,7 +2092,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2113,7 +2116,7 @@ class ZendeskApplicationTests extends BaseExportService {
     //422
     @Test
     void demo11021(){
-        String sourceUrl = "https://jinmutraining.zendesk.com";
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/business_hours/schedules")
                 .newBuilder();
@@ -2121,14 +2124,14 @@ class ZendeskApplicationTests extends BaseExportService {
                 "{\n" +
                         "   \"schedule\": {\n" +
                         "     \"name\": \"East Coast\",\n" +
-                        "     \"time_zone\": \"Eastern Time (US & Canada)\"\n" +
+                        "     \"time_zone\": \"Pacific Time (US & Canada)\"\n" +
                         "   }\n" +
                         " }");
         Request request = new Request.Builder()
                     .url(urlBuilder.build())
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2393,40 +2396,46 @@ class ZendeskApplicationTests extends BaseExportService {
     //==========================
     //
     //Process finished with exit code 0
-    //我认为是ticket_from_id有问题，需要找到ticket——id再post
+    //pdi:
+    //{
+    //  "error": {
+    //    "title": "Forbidden",
+    //    "message": "You do not have access to this page. Please contact the account owner of this help desk for further help."
+    //  }
+    //}
     @Test
 
     void demo11051(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/workspaces")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "{\n" +
-                        "  \\\"workspace\\\": {\n" +
-                        "    \\\"conditions\\\": {\n" +
-                        "      \\\"all\\\": [\n" +
+                        "  \"workspace\": {\n" +
+                        "    \"conditions\": {\n" +
+                        "      \"all\": [\n" +
                         "        {\n" +
-                        "          \\\"field\\\": \\\"ticket_form_id\\\",\n" +
-                        "          \\\"operator\\\": \\\"is\\\",\n" +
-                        "          \\\"value\\\": \\\"360000014173\\\"\n" +
+                        "          \"field\": \"status\",\n" +
+                        "          \"operator\": \"is\",\n" +
+                        "          \"value\": \"solved\"\n" +
                         "        }\n" +
                         "      ],\n" +
-                        "      \\\"any\\\": []\n" +
+                        "      \"any\": []\n" +
                         "    },\n" +
-                        "    \\\"description\\\": \\\"Test rules\\\",\n" +
-                        "    \\\"macros\\\": [\n" +
-                        "      360005374974\n" +
+                        "    \"description\": \"Test rules\",\n" +
+                        "    \"macros\": [\n" +
+                        "      26631826097689\n" +
                         "    ],\n" +
-                        "    \\\"ticket_form_id\\\": 360000014173,\n" +
-                        "    \\\"title\\\": \\\"Test Workspace 1\\\"\n" +
+                        "    \"ticket_form_id\": 8427015306521,\n" +
+                        "    \"title\": \"Test Workspace 1\"\n" +
                         "  }\n" +
                         "}");
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();

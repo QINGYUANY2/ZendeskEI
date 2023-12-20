@@ -47,9 +47,13 @@ public class ZendeskApplicationTest3 extends BaseExportService{
     //{"phone_numbers":[],"next_page":null,"previous_page":null,"count":0}
     //Response{protocol=h2, code=200, message=, url=https://pdi-jinmuinfo.zendesk.com/api/v2/channels/voice/phone_numbers/search}
     //200
+    //jingmutrainng 没权限
+    //You do not have access to this page. Please contact the account owner of this help desk for further help.
+    //Response{protocol=h2, code=403, message=, url=https://jinmutraining.zendesk.com/api/v2/channels/voice/phone_numbers/search}
+    //403
     @Test
     void list_valid(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/phone_numbers/search")
                 .newBuilder();
@@ -62,7 +66,7 @@ public class ZendeskApplicationTest3 extends BaseExportService{
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
