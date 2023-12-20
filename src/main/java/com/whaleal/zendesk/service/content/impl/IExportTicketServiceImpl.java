@@ -455,7 +455,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         JSONObject requestParam = new JSONObject();
         JSONObject request = null;
         for (Document document : list) {
-            try {
+            try{
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 requestParam.put("attribute", jsonObject);
                 request = this.doPost("/api/v2/routing/attributes", requestParam);

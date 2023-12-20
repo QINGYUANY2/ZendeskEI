@@ -14,6 +14,8 @@ public class StringSub {
         String extractedContent=null;
         if (matcher.find()) {
             extractedContent= matcher.group(1);
+        }else{
+            System.out.println("2");
         }
         return extractedContent;
     }
