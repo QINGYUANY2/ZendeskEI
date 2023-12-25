@@ -17,9 +17,9 @@ public class ZendeskApplicationTest3 extends BaseExportService{
     //200
     @Test
     void list_phone_numbers(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/phone_numbers?minimal_mode=true")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/phone_numbers")
                 .newBuilder();
                 //.addQueryParameter("minimal_mode", "");
 
@@ -27,7 +27,7 @@ public class ZendeskApplicationTest3 extends BaseExportService{
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -188,7 +188,31 @@ public class ZendeskApplicationTest3 extends BaseExportService{
         };
     }
 
+    @Test
+    void list_id(){
+        String sourceUrl = "https://jinmutraining.zendesk.com";
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/greetings")
+                .newBuilder();
 
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        };;
+
+    }
     //问候语导入  问候语导入系统中并可用
     //https://developer.zendesk.com/api-reference/voice/talk-api/greetings/#create-greeting
 
@@ -202,12 +226,7 @@ public class ZendeskApplicationTest3 extends BaseExportService{
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/greetings")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\n" +
-                        "  \"greeting\": {\n" +
-                        "    \"category_id\": 1,\n" +
-                        "    \"name\": \"Hello\"\n" +
-                        "  }\n" +
-                        "}");
+                "{\"greeting\":{\"audio_name\":\"voicemail_en.mp3\",\"ivr_ids\":[],\"pending\":false,\"active\":true,\"default\":true,\"category_id\":1,\"default_lang\":true,\"phone_number_ids\":[20300048648473,21646232175257,20283477158553,1900002007768],\"domain\":\"pdi-jinmuinfo\",\"name\":\"默认（语音留言开）\",\"has_sub_settings\":true,\"audio_url\":\"https://static.zdassets.com/voice/d923ef2973490f237e7300373fd3185289a5a364/voice/assets/default_en_voicemail_greeting-2f8e559817bdaf572b7399ba19bd077943a99102eb79421fb37c45c6c209dc42.mp3\",\"id\":\"voicemail_en\"}}");
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -227,6 +246,35 @@ public class ZendeskApplicationTest3 extends BaseExportService{
         };
     }
 
+
+
+
+
+    @Test
+    void list_addresses(){//改成pdi的
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/addresses")
+                .newBuilder();
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        };;
+
+    }
 
     //地址导入	在系统中添加企业地址并生效
     //https://developer.zendesk.com/api-reference/voice/talk-api/addresses/#create-address
@@ -307,6 +355,35 @@ public class ZendeskApplicationTest3 extends BaseExportService{
     }
 
 
+
+    //{"ivrs":[{"id":15307126410137,"name":"语言选择","menus":[{"id":15307101407513,"name":"主菜单","default":true,"greeting_id":null,"routes":[{"id":20292165897881,"keypress":"2","greeting":null,"action":"menu","options":{"menu_id":15307102269977},"option_text":"中文主菜单","overflow_options":[]}]},{"id":15307102269977,"name":"中文主菜单","default":false,"greeting_id":null,"routes":[{"id":20292192817945,"keypress":"2","greeting":null,"action":"menu","options":{"menu_id":15307102465561},"option_text":"新建 IVR 菜单级别 2","overflow_options":[]}]},{"id":15307102465561,"name":"新建 IVR 菜单级别 2","default":false,"greeting_id":null,"routes":[{"id":15307225545753,"keypress":"0","greeting":null,"action":"menu","options":{"menu_id":15307102269977},"option_text":"中文主菜单","overflow_options":[]}]},{"id":15307102749337,"name":"新建 IVR 菜单级别 3","default":false,"greeting_id":null,"routes":[]}],"phone_number_ids":[20300048648473],"phone_number_names":["+1 (484) 759-8404"]},{"id":23871028461081,"name":"New IVR Menu","menus":[{"id":23871021754265,"name":"Main menu","default":true,"greeting_id":null,"routes":[]}],"phone_number_ids":[],"phone_number_names":[]}],"next_page":null,"previous_page":null,"count":2}
+    @Test
+    void list_IVRS(){
+        OkHttpClient client = new OkHttpClient();
+        String sourceUrl = "https://jinmutraining.zendesk.com";
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/ivr")
+                .newBuilder();
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        };
+
+    }
+
+
     //{"ivrs":[{"id":21973195678484,"name":"IVR Menu","menus":[{"id":21973195678868,"name":"主菜单","default":true,"greeting_id":null,"routes":[]}],"phone_number_ids":[],"phone_number_names":[]}],"next_page":null,"previous_page":null,"count":1}
     //Response{protocol=h2, code=200, message=, url=https://jinmutraining.zendesk.com/api/v2/channels/voice/ivr}
     //200
@@ -315,7 +392,7 @@ public class ZendeskApplicationTest3 extends BaseExportService{
     void list_IVR_menus(){
         OkHttpClient client = new OkHttpClient();
         String sourceUrl = "https://jinmutraining.zendesk.com";
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/ivr")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/channels/voice/ivr/15307126410137/menus")
                 .newBuilder();
 
         Request request = new Request.Builder()

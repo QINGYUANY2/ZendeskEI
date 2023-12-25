@@ -80,6 +80,7 @@ public enum ExportEnum {
     VOICE_RELATE("线路相关", "voice", 1),
     GREETING_CATEGORIES("问候语类别", "GreetingCategories", 3),
     GREETING("问候语类别", "Greeting", 4),
+    ADDRESS("地址导入", "Address", 6),
     IVRS("交互式语音应答", "ivrs", 5),
     PHONE("电话配置", "phone", 2);
 

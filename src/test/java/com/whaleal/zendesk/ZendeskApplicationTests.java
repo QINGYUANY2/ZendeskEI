@@ -467,6 +467,39 @@ class ZendeskApplicationTests extends BaseExportService {
         }
     }
 
+
+    //get user后面使用，保存在本地文件user
+    //{"user_fields":[{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/21858734723860.json","id":21858734723860,"type":"text","key":"support_description1","title":"Support description","description":"This field describes the support plan this user has","raw_title":"Support description","raw_description":"This field describes the support plan this user has","position":0,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-12-14T02:59:04Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/21857933470100.json","id":21857933470100,"type":"text","key":"support_description","title":"Support description","description":"This field describes the support plan this user has","raw_title":"Support description","raw_description":"This field describes the support plan this user has","position":1,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-12-14T02:14:17Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062343242900.json","id":20062343242900,"type":"text","key":"edu_demo_employee_title","title":"Edu Demo-Employee Title 职称","description":"","raw_title":"Edu Demo-Employee Title 职称","raw_description":"","position":2,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:22Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062301563540.json","id":20062301563540,"type":"text","key":"edu_demo_staff_id","title":"Edu Demo-Staff ID 员工号","description":"","raw_title":"Edu Demo-Staff ID 员工号","raw_description":"","position":3,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:22Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062343276692.json","id":20062343276692,"type":"dropdown","key":"edu_demo_employment_type","title":"Edu Demo-Employment Type 员工类型","description":"","raw_title":"Edu Demo-Employment Type 员工类型","raw_description":"","position":4,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:23Z","updated_at":"2023-12-14T02:59:04Z","custom_field_options":[{"id":20062310514708,"name":"Full Time 全职","raw_name":"Full Time 全职","value":"full_time_全职"},{"id":20062310514836,"name":"Part Time 兼职","raw_name":"Part Time 兼职","value":"part_time_兼职"},{"id":20062310514964,"name":"Temporary 临时","raw_name":"Temporary 临时","value":"temporary_临时"},{"id":20062310515092,"name":"Other 其他","raw_name":"Other 其他","value":"other_其他"}]},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062301594772.json","id":20062301594772,"type":"dropdown","key":"edu_demo_department","title":"Edu Demo-Department 部门","description":"","raw_title":"Edu Demo-Department 部门","raw_description":"","position":5,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:23Z","updated_at":"2023-12-14T02:59:04Z","custom_field_options":[{"id":20062295439636,"name":"Marketing 市场","raw_name":"Marketing 市场","value":"marketing_市场"},{"id":20062295439764,"name":"Sales 销售","raw_name":"Sales 销售","value":"sales_销售"},{"id":20062295439892,"name":"Engineering 工程","raw_name":"Engineering 工程","value":"engineering_工程"},{"id":20062295440020,"name":"Facilities 设备","raw_name":"Facilities 设备","value":"facilities_设备"},{"id":20062295440148,"name":"Human Resource 人力资源","raw_name":"Human Resource 人力资源","value":"human_resource_人力资源"},{"id":20062295440276,"name":"IT 信息技术","raw_name":"IT 信息技术","value":"it_信息技术"},{"id":20062295440404,"name":"Purchasing 采购","raw_name":"Purchasing 采购","value":"purchasing_采购"}]},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062301605396.json","id":20062301605396,"type":"dropdown","key":"edu_demo_reports_to","title":"Edu Demo-Reports to 上级领导","description":"","raw_title":"Edu Demo-Reports to 上级领导","raw_description":"","position":6,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:24Z","updated_at":"2023-12-14T02:59:04Z","custom_field_options":[{"id":20062310549652,"name":"Joyce","raw_name":"Joyce","value":"joyce"},{"id":20062310549780,"name":"York","raw_name":"York","value":"york"},{"id":20062310549908,"name":"Cindy","raw_name":"Cindy","value":"cindy"},{"id":20062310550036,"name":"Wicky","raw_name":"Wicky","value":"wicky"}]},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062301620500.json","id":20062301620500,"type":"dropdown","key":"edu_demo_mobile_device","title":"Edu Demo-Mobile Device 移动设备","description":"","raw_title":"Edu Demo-Mobile Device 移动设备","raw_description":"","position":7,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:24Z","updated_at":"2023-12-14T02:59:04Z","custom_field_options":[{"id":20062310566292,"name":"Android","raw_name":"Android","value":"android"},{"id":20062310566420,"name":"iPhone","raw_name":"iPhone","value":"iphone"},{"id":20062310566548,"name":"Other","raw_name":"Other","value":"other"}]},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062301634964.json","id":20062301634964,"type":"dropdown","key":"gangwei","title":"岗位","description":"","raw_title":"岗位","raw_description":"","position":8,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:25Z","updated_at":"2023-12-14T02:59:04Z","custom_field_options":[{"id":20062295476244,"name":"普通员工","raw_name":"普通员工","value":"普通员工"},{"id":20062295476372,"name":"组长","raw_name":"组长","value":"组长"}]},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062343336980.json","id":20062343336980,"type":"textarea","key":"attachment_library","title":"Attachment Library Field","description":"Required field for Attachments Library App. Helps store data for user's attachments.","raw_title":"Attachment Library Field","raw_description":"Required field for Attachments Library App. Helps store data for user's attachments.","position":9,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:25Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062343343508.json","id":20062343343508,"type":"checkbox","key":"loyal_customer","title":"忠实用户","description":"","raw_title":"忠实用户","raw_description":"","position":10,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:26Z","updated_at":"2023-12-14T02:59:04Z","tag":"忠实用户"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/10360859057812.json","id":10360859057812,"type":"dropdown","key":"language","title":"Language","description":"","raw_title":"Language","raw_description":"","position":11,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2022-10-26T05:57:20Z","updated_at":"2023-12-14T02:59:04Z","custom_field_options":[{"id":10360859057428,"name":"English","raw_name":"English","value":"english"},{"id":10360859057556,"name":"中文","raw_name":"中文","value":"中文"},{"id":10360859057684,"name":"日本語","raw_name":"日本語","value":"日本語"}]},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/20062327443860.json","id":20062327443860,"type":"checkbox","key":"title_test","title":"{{dc.test}} ","description":"","raw_title":"{{dc.test}} ","raw_description":"","position":12,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-10-16T07:51:26Z","updated_at":"2023-12-14T02:59:04Z","tag":null},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/17588134757780.json","id":17588134757780,"type":"text","key":"name","title":"姓名 ","description":"","raw_title":"姓名 ","raw_description":"","position":13,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-07-21T02:40:58Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/17588106067732.json","id":17588106067732,"type":"text","key":"address","title":"客户地址信息 ","description":"","raw_title":"客户地址信息 ","raw_description":"","position":14,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-07-21T02:41:22Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/17588121514132.json","id":17588121514132,"type":"integer","key":"mobile_phone","title":"客户电话 ","description":"","raw_title":"客户电话 ","raw_description":"","position":15,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-07-21T02:41:53Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/17588144050580.json","id":17588144050580,"type":"dropdown","key":"sex","title":"性别 ","description":"","raw_title":"性别 ","raw_description":"","position":16,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-07-21T02:42:12Z","updated_at":"2023-12-14T02:59:04Z","custom_field_options":[{"id":17588122546708,"name":"男","raw_name":"男","value":"男_复制"},{"id":17588122546836,"name":"女","raw_name":"女","value":"女_复制"},{"id":17588122546964,"name":"保密","raw_name":"保密","value":"保密_复制"}]},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/17588124019092.json","id":17588124019092,"type":"date","key":"birthday","title":"用户生日","description":"","raw_title":"用户生日","raw_description":"","position":17,"active":true,"system":false,"regexp_for_validation":"\\A([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])\\z","created_at":"2023-07-21T02:42:38Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/17588178672020.json","id":17588178672020,"type":"integer","key":"postal_code","title":"邮政编码","description":"","raw_title":"邮政编码","raw_description":"","position":18,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-07-21T02:43:52Z","updated_at":"2023-12-14T02:59:04Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/17588387606804.json","id":17588387606804,"type":"textarea","key":"important_date","title":"重要日期（对客户）","description":"标记日期性质，如：纪恋日，生日","raw_title":"重要日期（对客户）","raw_description":"标记日期性质，如：纪恋日，生日","position":19,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-07-21T02:53:52Z","updated_at":"2023-12-14T02:59:04Z"}],"next_page":null,"previous_page":null,"count":20}
+    //Response{protocol=h2, code=200, message=, url=https://jinmutraining.zendesk.com/api/v2/user_fields}
+    //200
+    @Test
+    void list_user_field(){
+        OkHttpClient client = new OkHttpClient();
+        String sourceUrl = "https://jinmutraining.zendesk.com";
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/user_fields")
+                .newBuilder();
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"),
+                "");
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //导入用户字段  用户字段导入人员模块
     //https://developer.zendesk.com/api-reference/ticketing/users/user_fields/#create-user-field
     //201success：{"user_field":{"url":"https://jinmutraining.zendesk.com/api/v2/user_fields/21858734723860.json","id":21858734723860,"type":"text","key":"support_description1","title":"Support description","description":"This field describes the support plan this user has","raw_title":"Support description","raw_description":"This field describes the support plan this user has","position":9999,"active":true,"system":false,"regexp_for_validation":null,"created_at":"2023-12-14T02:59:04Z","updated_at":"2023-12-14T02:59:04Z"}}
@@ -1904,9 +1937,12 @@ class ZendeskApplicationTests extends BaseExportService {
     //==========================
     //
     //Process finished with exit code 0
+    //{"request":{"url":"https://jinmutraining.zendesk.com/api/v2/requests/90.json","id":90,"status":"new","priority":null,"type":null,"subject":"Help!","description":"My printer is on fire!\n\n\r\nLove your JinMu\r\nhttps://support.zendesk.com/hc/zh-cn/articles/4408886858138#topic_hmx_zzw_4v","organization_id":10332806750740,"via":{"channel":"api","source":{"from":{},"to":{},"rel":null}},"custom_fields":[{"id":10360943316500,"value":null},{"id":10361288879380,"value":null}],"requester_id":10332850159252,"collaborator_ids":[],"email_cc_ids":[],"is_public":true,"due_at":null,"can_be_solved_by_me":false,"created_at":"2023-12-25T05:09:16Z","updated_at":"2023-12-25T05:09:16Z","recipient":null,"followup_source_id":null,"assignee_id":null,"ticket_form_id":10361571109268,"custom_status_id":10332806749844,"fields":[{"id":10360943316500,"value":null},{"id":10361288879380,"value":null}]}}
+    //Response{protocol=h2, code=201, message=, url=https://jinmutraining.zendesk.com/api/v2/requests}
+    //201
     @Test
     void demo1922(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/requests")
                 .newBuilder();
@@ -1916,7 +1952,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -1973,7 +2009,7 @@ class ZendeskApplicationTests extends BaseExportService {
 
     @Test
     void list_sharing_agreements(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/sharing_agreements")
                 .newBuilder();
@@ -1982,7 +2018,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2011,7 +2047,7 @@ class ZendeskApplicationTests extends BaseExportService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/sharing_agreements")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\"sharing_agreement\": {\"remote_subdomain\": \"null\"}}");
+                "{\"sharing_agreement\": {\"remote_subdomain\": \"jinmutraining\"}}");
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", body)
@@ -2145,7 +2181,7 @@ class ZendeskApplicationTests extends BaseExportService {
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "{\n" +
                         "   \"schedule\": {\n" +
-                        "     \"name\": \"East Coast\",\n" +
+                        "     \"name\": \"外国节\",\n" +
                         "     \"time_zone\": \"Pacific Time (US & Canada)\"\n" +
                         "   }\n" +
                         " }");

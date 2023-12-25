@@ -18,9 +18,11 @@ import java.util.List;
 @Service
 public class IExportPhoneServiceImpl extends BaseExportService implements IExportPhoneService {
     @Override
+    //param可能有问题，要结合前面的东西再看看再更改
+
     public void exportPhoneNumberInfo() {
         ModuleRecord moduleRecord = beginModuleRecord("exportPhoneNumberInfo");
-        Long useTime = doExport("/api/v2/channels/voice/phone_numbers/search", "phone_numbers", ExportEnum.PHONE.getValue() + "_info");
+        Long useTime = doExport("/api/v2/channels/voice/phone_numbers", "phone_numbers", ExportEnum.PHONE.getValue() + "_info");
         endModuleRecord(moduleRecord, useTime);
 
     }
@@ -75,8 +77,11 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                System.out.println("???????" + jsonObject);
                 requestParam.put("greeting", jsonObject);
+                System.out.println("||||||||" + requestParam);
                 request = this.doPost("/api/v2/channels/voice/greetings", requestParam);
+                System.out.println("----" + request);
                 document.put("newId", request.get("id"));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -87,6 +92,19 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
         }
         log.info("导入Greeting_info成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+
+    }
+
+
+    @Override
+    public void exportAddressInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("exportAddressInfo");
+        Long useTime = doExport("/api/v2/channels/voice/addresses", "addresses", ExportEnum.ADDRESS.getValue() + "_info");
+        endModuleRecord(moduleRecord, useTime);
+    }
+
+    @Override
+    public void importAddressInfo() {
 
     }
 
@@ -108,6 +126,8 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.IVRS.getValue() + "_info");
         for (Document document : list) {
             try {
+                //IVR_id = document()
+                Long useTime = doExport("/api/v2/channels/voice/ivr", "ivrs", ExportEnum.IVRS.getValue() + "_info");
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 requestParam.put("ivr", jsonObject);
                 request = this.doPost("/api/v2/channels/voice/ivr", requestParam);
@@ -121,4 +141,19 @@ public class IExportPhoneServiceImpl extends BaseExportService implements IExpor
         log.info("导入ivrs_info成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
+
+
+    @Override
+    public void exportIVR_MENU_Info() {
+        ModuleRecord moduleRecord = beginModuleRecord("exportIVR_MENU_Info");
+        Long useTime = doExport("/api/v2/channels/voice/ivr", "ivr", ExportEnum.IVRS.getValue() + "_info");
+        endModuleRecord(moduleRecord, useTime);
+    }
+
+    @Override
+    public void importIVR_MENU_Info(){
+
+    }
 }
+
+

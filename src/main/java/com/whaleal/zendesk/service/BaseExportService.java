@@ -118,7 +118,10 @@ public abstract class BaseExportService {
         JSONObject jsonObject = null;
         try {
             Response response = doPost(targetDomain, url, param);
+            System.out.println(response.body().string());
+            System.out.println(response.code());
             jsonObject = JSONObject.parseObject(response.body().string());
+
             if (response.code() == 429) {
                 //API调用达到上线 就等待一下
                 Thread.sleep(1000);

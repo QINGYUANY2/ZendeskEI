@@ -155,7 +155,7 @@ public class Execute {
 
 //            iExportGatherService.exportPostsInfo();    //  没有权限  未开通
 //
-//            iExportGuideService.exportArticleInfo();   // 无数据
+//           iExportGuideService.exportArticleInfo();   // 无数据
 //
 //            iExportGuideService.exportThemeInfo();   // 导入不进去,没有创建主题
 //
@@ -189,8 +189,11 @@ public class Execute {
 
 //            iExportTicketService.exportResourceCollections();   // 文档不清楚
 
+//            iExportPhoneService.exportPhoneNumberInfo();
 
+//            iExportPhoneService.exportGreetingInfo();
 
+//            iExportPhoneService.exportAddressInfo();
 
 
 
@@ -293,6 +296,12 @@ public class Execute {
 
 //        iExportTicketService.importAccountAttributes();
 
+//        iExportGuideService.importArticleInfo();
+
+//        iExportPhoneService.importPhoneNumberInfo();
+
+//        iExportPhoneService.importGreetingInfo();
+
 
 //            mongoTemplate.updateFirst(id,status,TaskRecord.class);
 
@@ -300,7 +309,7 @@ public class Execute {
 //        }
 
 
-//
+
 //        Update status = new Update().set("status", IMPORTED);
 //
 //        mongoTemplate.updateFirst(id,status,TaskRecord.class);

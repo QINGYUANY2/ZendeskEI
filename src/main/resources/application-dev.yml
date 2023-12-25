@@ -12,7 +12,7 @@ zendesk:
     password: 1qaz@WSX
   # zendesk 目标站域名
   target:
-    domain: https://jinmu1442.zendesk.com
-    username: 1102361302@qq.com
-    password: 123456
-  filePath: C:\\Users\\cc\\Desktop\\temp
+    domain: https://jinmutraining.zendesk.com
+    username: user1@nqmo.com
+    password: 1qaz@WSX
+  filePath: /Users/qingyuanyang/Desktop/Temp

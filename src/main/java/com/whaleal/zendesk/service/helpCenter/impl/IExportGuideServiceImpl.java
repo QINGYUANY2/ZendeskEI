@@ -53,14 +53,49 @@ public class IExportGuideServiceImpl extends BaseExportService implements IExpor
     public void exportArticleInfo() {
         //todo /api/v2/help_center{/locale}/articles local需要根据所需填写
         ModuleRecord moduleRecord = beginModuleRecord("exportArticleInfo");
-        Long useTime = doExport("/api/v2/help_center/en/articles", "articles", ExportEnum.ARTICLE.getValue() + "_info");
+        Long useTime = doExport("/api/v2/help_center/articles", "articles", ExportEnum.ARTICLE.getValue() + "_info");
         endModuleRecord(moduleRecord, useTime);
     }
 
+
+    //导出文章失败
     @Override
     public void importArticleInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("importArticleInfo");
+        long startTime = System.currentTimeMillis();
+        JSONObject requestParam = new JSONObject();
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.ARTICLE.getValue() + "_info");
+        JSONObject request = null;
+        for (Document document : list) {
+            try {
+                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                requestParam.put("job", jsonObject);
+                request = this.doPost("/api/v2/help_center/articles", requestParam);
+                document.put("newId", request.getJSONObject("job").get("id"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log.info("importArticle 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
+            saveImportInfo("importArticle", request);
+            mongoTemplate.save(document, ExportEnum.ARTICLE.getValue() + "_info");
+        }
+        log.info("导入Article成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void exportArticleSection(){
+        ModuleRecord moduleRecord = beginModuleRecord("exportArticleSection");
+        Long useTime = doExport("/api/v2/help_center/articles", "articles", ExportEnum.ARTICLE.getValue() + "_info");
+        endModuleRecord(moduleRecord, useTime);
 
     }
+
+    @Override
+    public void importArticleSection(){
+
+    }
+
 
     @Override
     public void exportPermissionGroupInfo() {

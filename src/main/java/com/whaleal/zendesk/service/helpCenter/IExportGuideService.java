@@ -10,8 +10,13 @@ public interface IExportGuideService {
 
     void importArticleInfo();
 
+    void exportArticleSection();
+
+    void importArticleSection();
+
     void exportPermissionGroupInfo();
 
     void importPermissionGroupInfo();
+
     
 }

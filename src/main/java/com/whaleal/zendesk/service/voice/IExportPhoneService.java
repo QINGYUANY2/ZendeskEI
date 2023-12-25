@@ -12,8 +12,16 @@ public interface IExportPhoneService {
 
     void importGreetingInfo();
 
+    void exportAddressInfo();
+
+    void importAddressInfo();
+
     void exportIVRsInfo();
 
     void importIVRsInfo();
+
+    void exportIVR_MENU_Info();
+
+    void importIVR_MENU_Info();
     
 }
