@@ -46,6 +46,7 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
         for (Document users : documentList) {
             JSONObject requestParam = new JSONObject();
             Document param = new Document(users);
+
             // todo 版本不一致  例专业版与企业版 有custom_role与没有时 带custom_role_id 参数会报错
             if (param.get("custom_role_id") != null) {
                 param.remove("custom_role_id");

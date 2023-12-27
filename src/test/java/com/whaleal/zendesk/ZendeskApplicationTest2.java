@@ -804,7 +804,7 @@ public class ZendeskApplicationTest2 {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/community/posts")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\"post\": {\"title\": \"Help!\", \"details\": \"My printer is on fire!\", \"topic_id\": 10046}, \"notify_subscribers\": false}");
+                "{\"post\": {\"title\": \"Help!\", \"details\": \"My printer is on fire!\", \"topic_id\": 8696049675545}, \"notify_subscribers\": false}");
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())

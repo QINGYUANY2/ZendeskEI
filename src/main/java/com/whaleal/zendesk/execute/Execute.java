@@ -151,7 +151,7 @@ public class Execute {
 //
 //            iExportContentService.exportExternalContentRecordInfo();   //无数据
 //
-//            iExportGatherService.exportTopicInfo();    //ok
+ //           iExportGatherService.exportTopicInfo();    //ok
 
 //            iExportGatherService.exportPostsInfo();    //  没有权限  未开通
 //
@@ -159,23 +159,23 @@ public class Execute {
 //
 //            iExportGuideService.exportThemeInfo();   // 导入不进去,没有创建主题
 //
-//            iExportGuideService.exportPermissionGroupInfo();   //  ok
+ //           iExportGuideService.exportPermissionGroupInfo();   //  ok
 //
-//            iExportPhoneService.exportGreetingInfo();     // ok
+ //           iExportPhoneService.exportGreetingInfo();     // ok
 
 //            iExportPhoneService.exportPhoneNumberInfo();   // 无可用phone 数据
 
-//            iExportPhoneService.exportIVRsInfo();    // ok
+  //          iExportPhoneService.exportIVRsInfo();    // ok
 
-//            iExportSysService.exportSupportAddressInfo();   //ok
+  //          iExportSysService.exportSupportAddressInfo();   //ok
 
-//            iExportBusinessService.exportTriggerInfo();    // ok
+   //         iExportBusinessService.exportTriggerInfo();    // ok
 
-//            iExportBusinessService.exportTriggerCategoriesInfo();   //ok
+   //         iExportBusinessService.exportTriggerCategoriesInfo();   //ok
 
-//            iExportBusinessService.exportAutomationsInfo();   //ok
+   //         iExportBusinessService.exportAutomationsInfo();   //ok
 
-//            iExportBusinessService.exportSLAPoliciesInfo();   //ok
+   //         iExportBusinessService.exportSLAPoliciesInfo();   //ok
 
 //            iExportBusinessService.exportGroupSLAPoliciesInfo();   // 无数据
 
@@ -183,9 +183,9 @@ public class Execute {
 
 //            iExportTicketService.exportSharingAgreement();  //  无数据
 
-//            iExportTicketService.exportSchedules();  //  ok
+   //        iExportTicketService.exportSchedules();  //  ok
 
-//            iExportTicketService.exportAccountAttributes();  //  ok
+   //         iExportTicketService.exportAccountAttributes();  //  ok
 
 //            iExportTicketService.exportResourceCollections();   // 文档不清楚
 
@@ -263,7 +263,7 @@ public class Execute {
 //        //6.视图
 //        iExportBusinessService.importViewInfo();
 //        //7.宏
-//        iExportBusinessService.importMacroInfo();
+        iExportBusinessService.importMacroInfo();
 //        //8.工单form  暂时无数据
 //        iExportFormsService.importTicketForms();
 //        //9.工单field

@@ -73,6 +73,9 @@ public class IExportOrgServiceImpl extends BaseExportService implements IExportO
                 jsonObject.put("organization_id",orgDoc.get("newId"));
                 jsonObject.put("user_id",userDoc.get("newId"));
                 requestParam.put("organization_membership", jsonObject);
+                System.out.println("=========");
+                System.out.println("=========");
+                System.out.println(requestParam);
                 request = this.doPost("/api/v2/organization_memberships", requestParam);
                 document.put("newId", request.getJSONObject("organization_membership").get("id"));
             } catch (Exception e) {

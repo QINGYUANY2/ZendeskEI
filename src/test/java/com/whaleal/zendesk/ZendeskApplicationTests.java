@@ -631,7 +631,7 @@ class ZendeskApplicationTests extends BaseExportService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/organization_memberships")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\"organization_membership\": {\"user_id\": 10335617720852, \"organization_id\": 10332806750740}}");
+                "{\"organization_membership\":{\"view_tickets\":true,\"default\":true,\"updated_at\":\"2023-07-13T03:33:20Z\",\"organization_id\":8533649767695,\"domain\":\"jinmutraining\",\"created_at\":\"2023-07-13T03:33:20Z\",\"_id\":{\"$oid\":\"656fee2c7dd6b556588f58b6\"},\"id\":17353293803028,\"organization_name\":\"JinmuTraining123\",\"url\":\"https://jinmutraining.zendesk.com/api/v2/organization_memberships/17353293803028.json\"}}");
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -900,7 +900,7 @@ class ZendeskApplicationTests extends BaseExportService {
     void demo151(){
         String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/ticket_fields/21862584851860/options")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/ticket_fields/10360943316500/options")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "{\"custom_field_option\": {\"name\": \"Grapes\", \"position\": 9999, \"value\": \"grape\"}}");
@@ -1556,7 +1556,7 @@ class ZendeskApplicationTests extends BaseExportService {
     void macro_attachment_list(){
         String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/macros/21425832610969/attachments")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/macros/11452657828761/attachments")
                 .newBuilder();
         //      .addQueryParameter("access", "personal")
         //		.addQueryParameter("active", "true")
@@ -1597,12 +1597,19 @@ class ZendeskApplicationTests extends BaseExportService {
     void demo1832(){
         String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/macros/attachments")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/macros/26907951414169/attachments")
                 .newBuilder();
 
+        // Replace "YourTextValue" with the actual text you want to send
+        String textValue = "test1";
+
+
+        // Create a request body for the text field
+        RequestBody textRequestBody = RequestBody.create(textValue, MediaType.parse("text/plain"));
          //构建请求体
         File file = new File("/Users/qingyuanyang/Desktop/test1.png");
         MultipartBody multipartBody = new MultipartBody.Builder()
+                .addFormDataPart("text", textValue)
                 .addFormDataPart("file", file.getName(), RequestBody.create(file, MediaType.parse("image/jpeg")))
                 .build();
 
@@ -2009,7 +2016,7 @@ class ZendeskApplicationTests extends BaseExportService {
 
     @Test
     void list_sharing_agreements(){
-        String sourceUrl = "https://jinmutraining.zendesk.com";
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/sharing_agreements")
                 .newBuilder();
@@ -2018,7 +2025,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2174,7 +2181,7 @@ class ZendeskApplicationTests extends BaseExportService {
     //422
     @Test
     void demo11021(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/business_hours/schedules")
                 .newBuilder();
@@ -2189,7 +2196,7 @@ class ZendeskApplicationTests extends BaseExportService {
                     .url(urlBuilder.build())
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();

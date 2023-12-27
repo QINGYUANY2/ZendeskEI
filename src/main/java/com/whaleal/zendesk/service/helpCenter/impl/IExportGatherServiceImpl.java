@@ -80,4 +80,7 @@ public class IExportGatherServiceImpl extends BaseExportService implements IExpo
         log.info("导入 importPostsInfo 成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
+
+
+
 }
