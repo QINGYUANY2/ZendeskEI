@@ -131,10 +131,14 @@ public abstract class BaseExportService {
             }
             String s = jsonObject.toString();
             if (response.code() ==  422 && s.contains("Your account does not allow more than 5 agents (including account owner and admins)")){
-                param.remove("role");
-                param.put("role", "end-user");
+                JSONObject nestedObject = param.getJSONObject("user");
+                nestedObject.put("role", "end-user");
+                param.put("user", nestedObject);
                 System.out.println("++++++++++++"+jsonObject);
+                System.out.println(param);
                 System.out.println(param.get("role"));
+                System.out.println(param.get(""));
+
                 response = doPost(targetDomain, url, param);
                 jsonObject = JSONObject.parseObject(response.body().string());
 
