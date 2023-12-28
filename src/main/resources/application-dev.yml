@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://192.168.12.200:24578/zendesk
+      uri: mongodb://localhost:27017/abc
 
 
 zendesk:
@@ -12,7 +12,7 @@ zendesk:
     password: 1qaz@WSX
   # zendesk 目标站域名
   target:
-    domain: https://jinmutraining.zendesk.com
-    username: user1@nqmo.com
-    password: 1qaz@WSX
+    domain: https://jingmu.zendesk.com
+    username: 2694445233@qq.com
+    password: 123456
   filePath: /Users/qingyuanyang/Desktop/Temp

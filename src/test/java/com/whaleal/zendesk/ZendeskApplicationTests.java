@@ -360,7 +360,7 @@ class ZendeskApplicationTests extends BaseExportService {
     //与上面不一样，不管post几遍都是200success
     @Test
     void demo121(){
-        String sourceUrl = "https://jinmutraining.zendesk.com";
+        String sourceUrl = "https://jingmu.zendesk.com/";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users/create_many")
                 .newBuilder();
@@ -386,7 +386,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("2694445233@qq.com", "123456"))
                 .build();
         try {
             Response response = client.newCall(request).execute();

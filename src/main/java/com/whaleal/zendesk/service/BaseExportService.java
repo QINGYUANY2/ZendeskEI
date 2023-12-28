@@ -118,9 +118,10 @@ public abstract class BaseExportService {
         JSONObject jsonObject = null;
         try {
             Response response = doPost(targetDomain, url, param);
-            System.out.println(response.body().string());
+            //System.out.println(url+"================="+response.body().string());
             System.out.println(response.code());
             jsonObject = JSONObject.parseObject(response.body().string());
+            System.out.println("????????????????"+jsonObject);
 
             if (response.code() == 429) {
                 //API调用达到上线 就等待一下
@@ -128,9 +129,20 @@ public abstract class BaseExportService {
                 response = doPost(targetDomain, url, param);
                 jsonObject = JSONObject.parseObject(response.body().string());
             }
+            String s = jsonObject.toString();
+            if (response.code() ==  422 && s.contains("Your account does not allow more than 5 agents (including account owner and admins)")){
+                param.remove("role");
+                param.put("role", "end-user");
+                System.out.println("++++++++++++"+jsonObject);
+                System.out.println(param.get("role"));
+                response = doPost(targetDomain, url, param);
+                jsonObject = JSONObject.parseObject(response.body().string());
+
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("json======="+jsonObject);
         return jsonObject;
 
     }
