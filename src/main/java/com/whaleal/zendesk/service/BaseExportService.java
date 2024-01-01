@@ -83,6 +83,24 @@ public abstract class BaseExportService {
         return jsonObject;
     }
 
+
+    public JSONObject doGetTarget(String url, Map<String, String> param) {
+        JSONObject jsonObject = null;
+        try {
+            Response response = doGet(targetDomain, url, param);
+            jsonObject = JSONObject.parseObject(response.body().string());
+            if (response.code() == 429) {
+                //API调用达到上线 就等待一下
+                Thread.sleep(1000);
+                response = doGet(targetDomain, url, param);
+                jsonObject = JSONObject.parseObject(response.body().string());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return jsonObject;
+    }
+
     public Response doGet(String domain, String url, Map<String, String> param) {
         //拼接源端域名与接口路径
         String realPath = domain + url;
@@ -133,6 +151,7 @@ public abstract class BaseExportService {
             if (response.code() ==  422 && s.contains("Your account does not allow more than 5 agents (including account owner and admins)")){
                 JSONObject nestedObject = param.getJSONObject("user");
                 nestedObject.put("role", "end-user");
+                //nestedObject.put("role_type", "1");
                 param.put("user", nestedObject);
                 System.out.println("++++++++++++"+jsonObject);
                 System.out.println(param);
@@ -175,6 +194,72 @@ public abstract class BaseExportService {
         }
         return creatResponse;
     }
+
+
+
+    public JSONObject doUpdate(String url, JSONObject param, String id) {
+
+        JSONObject jsonObject = null;
+        try {
+            Response response = doUpdate(targetDomain, url, param, id);
+            //System.out.println(url+"================="+response.body().string());
+            System.out.println(response.code());
+            jsonObject = JSONObject.parseObject(response.body().string());
+            //System.out.println("????????????????"+jsonObject);
+
+            if (response.code() == 429) {
+                //API调用达到上线 就等待一下 okok
+                Thread.sleep(1000);
+                response = doPost(targetDomain, url, param);
+                jsonObject = JSONObject.parseObject(response.body().string());
+            }
+            String s = jsonObject.toString();
+            if (response.code() ==  422 && s.contains("Your account does not allow more than 5 agents (including account owner and admins)")){
+                JSONObject nestedObject = param.getJSONObject("user");
+                nestedObject.put("role", "end-user");
+                //different
+                //nestedObject.put("role_type", "1");
+                param.put("user", nestedObject);
+                System.out.println("++++++++++++"+jsonObject);
+                System.out.println(param);
+                System.out.println(param.get("role"));
+                System.out.println(param.get(""));
+
+                response = doPost(targetDomain, url, param);
+                jsonObject = JSONObject.parseObject(response.body().string());
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("json======="+jsonObject);
+        return jsonObject;
+
+    }
+    public Response doUpdate(String domain, String url, JSONObject param, String id) {
+
+        //拼接源端域名与接口路径
+        String realPath = domain + url + id;
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
+                .newBuilder();
+        RequestBody creatBody = RequestBody.create(MediaType.parse("application/json"), param.toString());
+        Request creatRequest = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("PUT", creatBody)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic(targetUsername, targetPassword))
+                .build();
+        Response creatResponse = null;
+        String string = null;
+        try {
+            creatResponse = targetClient.newCall(creatRequest).execute();
+//            string = creatResponse.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return creatResponse;
+    }
+
 
 
     public JSONObject doPost(String url, String type, File file) {

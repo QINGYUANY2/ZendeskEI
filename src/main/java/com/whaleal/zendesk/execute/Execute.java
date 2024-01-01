@@ -121,7 +121,7 @@ public class Execute {
 //            //5.人员
 //            iExportUserService.exportUserInfo();
 //            //6.视图
-//            iExportBusinessService.exportViewInfo();
+//            iExportBusinessService.exportViewInfo();   1
 //            //7.宏
 //            iExportBusinessService.exportMacroInfo();
 //            //8.工单request
@@ -247,10 +247,10 @@ public class Execute {
         //1.组织
 //        iExportOrgService.importOrgInfo();      1
 
-        iExportOrgService.importOrgMembershipInfo();
+//        iExportOrgService.importOrgMembershipInfo();
 
         //2.群组
-//        iExportGroupService.importGroupInfo();
+//        iExportGroupService.importGroupInfo();     1
 
 //        iExportGroupService.importGroupMembershipInfo();
 
@@ -259,8 +259,8 @@ public class Execute {
 //        //4.人员字段
 //        iExportUserService.importUserField();       1
 //        //5.人员
- //       iExportUserService.importUserInfo();
-//        //6.视图
+//       iExportUserService.importUserInfo();
+        //6.视图
 //        iExportBusinessService.importViewInfo();
 //        //7.宏
 //        iExportBusinessService.importMacroInfo();

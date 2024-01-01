@@ -36,6 +36,9 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                if(jsonObject.get("is_public").equals(false)){
+                    jsonObject.put("is_public","true");
+                }
                 requestParam.put("group", jsonObject);
                 request = this.doPost("/api/v2/groups", requestParam);
                 document.put("newId", request.getJSONObject("group").get("id"));

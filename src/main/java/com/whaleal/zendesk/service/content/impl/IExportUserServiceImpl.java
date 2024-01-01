@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -42,8 +43,11 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
         Criteria criteria = new Criteria();
         criteria.and("domain").is(StringSub.getDomain(this.sourceDomain));
 //        criteria.and("_id").is("6539dee3245bba4880f86da4");
+
         List<Document> documentList = mongoTemplate.find(new Query(criteria), Document.class, ExportEnum.USER.getValue() + "_info");
         JSONObject request = null;
+        JSONObject source_default_user = doGet("/api/v2/users/me", new HashMap<>());
+        JSONObject target_default_user = doGetTarget("/api/v2/users/me", new HashMap<>());
 
         for (Document users : documentList) {
             JSONObject requestParam = new JSONObject();
@@ -60,6 +64,11 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
                 param.remove("custom_role_id");
             }
             try {
+                //如果是默认用户，更新
+                if(users.get("id") == source_default_user.get("id")){
+                    //doUpdate("/api/v2/users",target_default_user.get("id"));
+                    continue;
+                }
                 if (users.get("organization_id") != null) {
                     Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, ExportEnum.ORGANIZATIONS.getValue() + "_info");
                     param.put("organization_id", orgDoc.get("newId"));
@@ -67,6 +76,9 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
                 if (users.get("default_group_id") != null) {
                     Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("default_group_id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
                     param.put("default_group_id", groupDoc.get("newId"));
+                }
+                if (users.get("role") == "agent"){
+
                 }
                 requestParam.put("user", param);
                 request = this.doPost("/api/v2/users", requestParam);

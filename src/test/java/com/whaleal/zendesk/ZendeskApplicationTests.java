@@ -442,8 +442,8 @@ class ZendeskApplicationTests extends BaseExportService {
     @Test
     void user1list(){
         OkHttpClient client = new OkHttpClient();
-        String sourceUrl = "https://jinmutraining.zendesk.com";
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users")
+        String sourceUrl = "https://jingmu.zendesk.com";
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users/me")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "");
@@ -452,7 +452,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("2694445233@qq.com", "123456"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -763,6 +763,36 @@ class ZendeskApplicationTests extends BaseExportService {
     }
 
 
+    //List all Memberships
+    //{"group_memberships":[{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10332815304468.json","id":10332815304468,"user_id":10332850159252,"group_id":10332850315540,"default":false,"created_at":"2022-10-25T03:50:28Z","updated_at":"2023-09-06T08:44:38Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10335580287380.json","id":10335580287380,"user_id":10335558472340,"group_id":10332850315540,"default":true,"created_at":"2022-10-25T09:23:49Z","updated_at":"2022-10-25T09:23:49Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10335639570708.json","id":10335639570708,"user_id":10335617720852,"group_id":10332850315540,"default":true,"created_at":"2022-10-25T09:31:22Z","updated_at":"2023-09-08T01:52:07Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10335657464084.json","id":10335657464084,"user_id":10335667132692,"group_id":10332850315540,"default":false,"created_at":"2022-10-25T09:35:25Z","updated_at":"2023-09-07T06:28:28Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10358060310292.json","id":10358060310292,"user_id":10332850159252,"group_id":10358060309652,"default":false,"created_at":"2022-10-26T01:33:23Z","updated_at":"2022-10-26T01:33:23Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10359041198356.json","id":10359041198356,"user_id":10335617720852,"group_id":10358062100244,"default":false,"created_at":"2022-10-26T02:44:36Z","updated_at":"2022-10-26T02:44:36Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10359067296020.json","id":10359067296020,"user_id":10335558472340,"group_id":10358061078036,"default":false,"created_at":"2022-10-26T02:43:30Z","updated_at":"2022-10-26T02:43:30Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10387023520020.json","id":10387023520020,"user_id":10387023513492,"group_id":10358060309652,"default":true,"created_at":"2022-10-27T02:12:48Z","updated_at":"2022-10-27T02:12:48Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10387032066836.json","id":10387032066836,"user_id":10387041346324,"group_id":10358060309652,"default":true,"created_at":"2022-10-27T02:17:00Z","updated_at":"2022-10-27T02:17:00Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10387038983572.json","id":10387038983572,"user_id":10387029761428,"group_id":10358060309652,"default":true,"created_at":"2022-10-27T02:15:36Z","updated_at":"2022-10-27T02:15:36Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10387146026260.json","id":10387146026260,"user_id":10387029761428,"group_id":10360903397140,"default":false,"created_at":"2022-10-27T02:26:09Z","updated_at":"2022-10-27T02:26:09Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10387155055764.json","id":10387155055764,"user_id":10387023513492,"group_id":10360971766676,"default":false,"created_at":"2022-10-27T02:25:53Z","updated_at":"2022-10-27T02:25:53Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10387157464212.json","id":10387157464212,"user_id":10335667132692,"group_id":10358017293332,"default":false,"created_at":"2022-10-27T02:27:39Z","updated_at":"2022-10-27T02:27:39Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/10387157897364.json","id":10387157897364,"user_id":10387041346324,"group_id":10360939320596,"default":false,"created_at":"2022-10-27T02:27:59Z","updated_at":"2022-10-27T02:27:59Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17389958309908.json","id":17389958309908,"user_id":10332850159252,"group_id":17389974779156,"default":false,"created_at":"2023-07-14T05:38:52Z","updated_at":"2023-07-14T05:38:52Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17389959202196.json","id":17389959202196,"user_id":10335558472340,"group_id":17389974779156,"default":false,"created_at":"2023-07-14T05:39:35Z","updated_at":"2023-07-14T05:39:35Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17389968959124.json","id":17389968959124,"user_id":10332850159252,"group_id":17390000935060,"default":false,"created_at":"2023-07-14T05:39:27Z","updated_at":"2023-07-14T05:39:27Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17389983996564.json","id":17389983996564,"user_id":10335617720852,"group_id":17389974779156,"default":false,"created_at":"2023-07-14T05:38:52Z","updated_at":"2023-09-08T01:52:07Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17389987857812.json","id":17389987857812,"user_id":10335558472340,"group_id":17390000935060,"default":false,"created_at":"2023-07-14T05:39:27Z","updated_at":"2023-07-14T05:39:27Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17390012656404.json","id":17390012656404,"user_id":10332850159252,"group_id":17390029169044,"default":false,"created_at":"2023-07-14T05:42:10Z","updated_at":"2023-07-14T05:42:10Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17390037643156.json","id":17390037643156,"user_id":10335558472340,"group_id":17390029169044,"default":false,"created_at":"2023-07-14T05:42:10Z","updated_at":"2023-07-14T05:42:10Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17765969894164.json","id":17765969894164,"user_id":10332850159252,"group_id":17766000965908,"default":true,"created_at":"2023-07-27T07:29:29Z","updated_at":"2023-09-06T08:44:38Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/17765985878676.json","id":17765985878676,"user_id":10335558472340,"group_id":17766017245460,"default":false,"created_at":"2023-07-27T07:29:43Z","updated_at":"2023-07-27T07:29:43Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/18187503841172.json","id":18187503841172,"user_id":10387023513492,"group_id":18187468400020,"default":false,"created_at":"2023-08-11T03:20:40Z","updated_at":"2023-08-11T03:20:40Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/18992861372052.json","id":18992861372052,"user_id":10335667132692,"group_id":10358060309652,"default":true,"created_at":"2023-09-07T06:28:26Z","updated_at":"2023-09-07T06:28:27Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/20931217721364.json","id":20931217721364,"user_id":10335667132692,"group_id":20061695377684,"default":false,"created_at":"2023-11-14T01:54:48Z","updated_at":"2023-11-14T01:54:48Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/20931226770836.json","id":20931226770836,"user_id":10335617720852,"group_id":20061695377684,"default":false,"created_at":"2023-11-14T01:53:02Z","updated_at":"2023-11-14T01:53:02Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/20931274305172.json","id":20931274305172,"user_id":10335635046676,"group_id":20061695377684,"default":true,"created_at":"2023-11-14T01:57:20Z","updated_at":"2023-11-14T01:57:20Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/21573512359700.json","id":21573512359700,"user_id":10332850159252,"group_id":21573480606228,"default":false,"created_at":"2023-12-06T05:10:31Z","updated_at":"2023-12-06T05:10:31Z"},{"url":"https://jinmutraining.zendesk.com/api/v2/group_memberships/21857592299540.json","id":21857592299540,"user_id":21857117370132,"group_id":20061695377684,"default":true,"created_at":"2023-12-14T01:59:37Z","updated_at":"2023-12-14T01:59:37Z"}],"next_page":null,"previous_page":null,"count":30}
+    //Response{protocol=h2, code=200, message=, url=https://jinmutraining.zendesk.com/api/v2/group_memberships}
+    //200
+    @Test
+    void group_list(){
+        OkHttpClient client = new OkHttpClient();
+        String sourceUrl = "https://jingmu.zendesk.com";
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/groups")
+                .newBuilder();
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic("2694445233@qq.com", "123456"))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //https://developer.zendesk.com/api-reference/ticketing/groups/groups/#create-group
     //导入群组   群组导入群组模块
     //{"group":{"url":"https://jinmutraining.zendesk.com/api/v2/groups/21860955402388.json","id":21860955402388,"is_public":true,"name":"My Group","description":"","default":false,"deleted":false,"created_at":"2023-12-14T05:23:04Z","updated_at":"2023-12-14T05:23:04Z"}}
@@ -803,7 +833,7 @@ class ZendeskApplicationTests extends BaseExportService {
     @Test
     void membership_list(){
         OkHttpClient client = new OkHttpClient();
-        String sourceUrl = "https://jinmutraining.zendesk.com";
+        String sourceUrl = "https://jingmu.zendesk.com";
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/group_memberships")
                 .newBuilder();
 
@@ -811,7 +841,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("2694445233@qq.com", "123456"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -1593,44 +1623,80 @@ class ZendeskApplicationTests extends BaseExportService {
     //Response{protocol=h2, code=200, message=, url=https://jinmutraining.zendesk.com/api/v2/macros/21864577399956/attachments}
     //200
     //不会上传文件，还需要搜索
+//    @Test
+//    void demo1832(){
+//        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+//        OkHttpClient client = new OkHttpClient();
+//        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/macros/26907951414169/attachments")
+//                .newBuilder();
+//
+//        // Replace "YourTextValue" with the actual text you want to send
+//        String filename = "截屏2023-12-27_13.46.10.png";
+//
+//
+//        MultipartBody body = new MultipartBody.Builder()
+//                .addFormDataPart("attachment", filename, RequestBody.create("https://pdi-jinmuinfo.zendesk.com/api/v2/macros/attachments/26907951414169.json", MediaType.parse("application/json")))
+//                .addFormDataPart("filename", filename)
+//                .build();
+//
+//        Request request = new Request.Builder()
+//                .url(urlBuilder.build())
+//                .method("Post", body)
+//                .addHeader("Content-Type", "application/json")
+//                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+//                .build();
+//        try {
+//            Response response = client.newCall(request).execute();
+//
+//            System.out.println("==========================");
+//            System.out.println(response.body().string());
+//            System.out.println(response);
+//            System.out.println(response.code());
+//            System.out.println("==========================");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     @Test
-    void demo1832(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+    void test888() throws IOException {
+        // /api/v2/channels/voice/phone_numbers
+
+
+        //不知道是没有私有组还是什么，反正查询出的全是公开组 为什么查出来包含分页参数？
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/macros/26907951414169/attachments")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://pdi-jinmuinfo.zendesk.com/api/v2/macros/11452657828761/attachments")
                 .newBuilder();
+//                .addQueryParameter("sort_by", "")
+//                .addQueryParameter("sort_order", "");
 
-        // Replace "YourTextValue" with the actual text you want to send
-        String textValue = "test1";
-
-
-        // Create a request body for the text field
-        RequestBody textRequestBody = RequestBody.create(textValue, MediaType.parse("text/plain"));
-         //构建请求体
-        File file = new File("/Users/qingyuanyang/Desktop/test1.png");
-        MultipartBody multipartBody = new MultipartBody.Builder()
-                .addFormDataPart("text", textValue)
-                .addFormDataPart("file", file.getName(), RequestBody.create(file, MediaType.parse("image/jpeg")))
+        String str = "{\"macro_attachment\":{\"url\":\"https://pdi-jinmuinfo.zendesk.com/api/v2/macros/attachments/26907951414169.json\",\"id\":26907951414169,\"filename\":\"截屏2023-12-27_13.46.10.png\",\"content_type\":\"image/png\",\"content_url\":\"https://pdi-jinmuinfo.zendesk.com/api/v2/macros/attachments/26907951414169/content\",\"size\":3958,\"created_at\":\"2023-12-27T08:56:00Z\"}}\n";
+        JSONObject jsonObject = JSONObject.parseObject(str);
+        String url = jsonObject.getJSONObject("macro_attachment").getString("url");
+        String filename = jsonObject.getJSONObject("macro_attachment").getString("filename");
+        //构建请求体
+//        File file = new File(url);
+        MultipartBody body = new MultipartBody.Builder()
+                .addFormDataPart("attachment", filename, RequestBody.create(url, MediaType.parse("application/json")))
+                .addFormDataPart("filename", filename)
                 .build();
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
-                .method("Post", multipartBody)
+                .method("POST", body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
                 .build();
-        try {
-            Response response = client.newCall(request).execute();
-
+        Response response = client.newCall(request).execute();
             System.out.println("==========================");
             System.out.println(response.body().string());
             System.out.println(response);
             System.out.println(response.code());
             System.out.println("==========================");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
+
+
 
 
     //{"automations":[{"url":"https://jinmutraining.zendesk.com/api/v2/automations/10332815310228.json","id":10332815310228,"title":"當狀態設定為已解決的 4 天後，關閉工單","active":true,"updated_at":"2023-09-27T08:37:24Z","created_at":"2022-10-25T03:50:29Z","default":true,"actions":[{"field":"status","value":"closed"}],"conditions":{"all":[{"field":"status","operator":"is","value":"solved"},{"field":"SOLVED","operator":"greater_than","value":"96"}],"any":[]},"position":0,"raw_title":"當狀態設定為已解決的 4 天後，關閉工單"},{"url":"https://jinmutraining.zendesk.com/api/v2/automations/10332821987220.json","id":10332821987220,"title":"24 小時未解決通知","active":false,"updated_at":"2022-11-14T15:43:24Z","created_at":"2022-10-25T03:50:29Z","default":true,"actions":[{"field":"notification_user","value":["requester_and_ccs","[{{ticket.account}}] 未解決請求：{{ticket.title}}","这封电邮是为了提醒您，您的请求（#{{ticket.id}}）正处于待回应状态，等待您的反馈。\n\n{{ticket.latest_public_comment_html}}"]}],"conditions":{"all":[{"field":"PENDING","operator":"is","value":"24"},{"field":"ticket_is_public","operator":"is","value":"public"}],"any":[]},"position":9998,"raw_title":"24 小時未解決通知"},{"url":"https://jinmutraining.zendesk.com/api/v2/automations/10332833163028.json","id":10332833163028,"title":"5 天未解決通知","active":false,"updated_at":"2022-11-14T15:43:25Z","created_at":"2022-10-25T03:50:29Z","default":true,"actions":[{"field":"notification_user","value":["requester_and_ccs","[{{ticket.account}}] 未解決請求：{{ticket.title}}","这封电邮是为了提醒您，您的请求（#{{ticket.id}}）已处于待回应状态达 5 天，正等待您的反馈。\n\n{{ticket.latest_public_comment_html}}"]}],"conditions":{"all":[{"field":"PENDING","operator":"is","value":"120"},{"field":"ticket_is_public","operator":"is","value":"public"}],"any":[]},"position":9999,"raw_title":"5 天未解決通知"},{"url":"https://jinmutraining.zendesk.com/api/v2/automations/10388174465684.json","id":10388174465684,"title":"提醒处理1天未处理的法律票据","active":true,"updated_at":"2022-10-27T04:09:20Z","created_at":"2022-10-27T04:09:20Z","default":false,"actions":[{"field":"notification_group","value":["10358017293332","【提醒】有一些法律相关的工单即将超时","你好，有一些法律相关的工单即将超时，请尽快处理。"]},{"field":"current_tags","value":"已提醒"}],"conditions":{"all":[{"field":"current_tags","operator":"includes","value":"Sales/Legal"},{"field":"status","operator":"less_than","value":"pending"},{"field":"custom_fields_10361288879380","operator":"is","value":"legal_questions"},{"field":"updated_at","operator":"greater_than","value":"24"},{"field":"current_tags","operator":"not_includes","value":"已提醒"}],"any":[]},"position":10000,"raw_title":"提醒处理1天未处理的法律票据"},{"url":"https://jinmutraining.zendesk.com/api/v2/automations/10388883314068.json","id":10388883314068,"title":"通知客户处理3个工作日以上未处理的工单","active":true,"updated_at":"2022-10-27T05:52:19Z","created_at":"2022-10-27T05:52:19Z","default":false,"actions":[{"field":"current_tags","value":"已提醒"},{"field":"notification_user","value":["requester_id","[{{ticket.account}}] [操作提醒] {{ticket.title}}","{{ticket.requester.name}} 你好：\n\n我们已经在3天前发送了后续的处理要求给您，\n\n{{ticket.latest_comment_html}}\n\n正在等待您的回复，请尽快提供进一步的信息以便我们为您提供更好的服务。\n\n{{ticket.description}}"]}],"conditions":{"all":[{"field":"PENDING","operator":"greater_than_business_hours","value":"72"},{"field":"status","operator":"is","value":"pending"},{"field":"current_tags","operator":"not_includes","value":"已提醒"}],"any":[]},"position":10001,"raw_title":"通知客户处理3个工作日以上未处理的工单"},{"url":"https://jinmutraining.zendesk.com/api/v2/automations/10389761824660.json","id":10389761824660,"title":"請求客戶滿意度（系統自行執行程式）","active":true,"updated_at":"2023-08-18T10:05:06Z","created_at":"2022-10-27T07:49:27Z","default":true,"actions":[{"field":"notification_user","value":["requester_id","請求 #{{ticket.id}}：您會如何評價您的支援服務？","哈囉 {{ticket.requester.name}}：\n\n我們將很樂於得到對我們客戶服務的意見。請按以下任一連結，用簡短的時間回答一個簡單的問題：\n\n{{satisfaction.rating_section}}\n\n這是此請求所涉及內容的提醒：\n\n{{ticket.comments_formatted}}\n"]},{"field":"satisfaction_score","value":"offered"}],"conditions":{"all":[{"field":"status","operator":"less_than","value":"closed"},{"field":"SOLVED","operator":"greater_than","value":"24"},{"field":"satisfaction_score","operator":"is","value":"unoffered"},{"field":"ticket_is_public","operator":"is","value":"public"}],"any":[]},"position":10002,"raw_title":"請求客戶滿意度（系統自行執行程式）"},{"url":"https://jinmutraining.zendesk.com/api/v2/automations/10390800524820.json","id":10390800524820,"title":"白金客户问卷调查","active":true,"updated_at":"2022-10-27T09:47:20Z","created_at":"2022-10-27T09:46:51Z","default":false,"actions":[{"field":"current_tags","value":"已发送满意度调查"},{"field":"notification_user","value":["requester_id","[{{ticket.account}}] 满意度调查","{{ticket.assignee.name}}，你好\n\n很高兴能为您解决问题，希望您能对我们的服务满意，为了不断提升我们的服务品质，希望您能对本次服务进行评价。\n1（不满意） - 10 （非常满意）"]}],"conditions":{"all":[{"field":"status","operator":"is","value":"solved"},{"field":"SOLVED","operator":"greater_than","value":"1"},{"field":"current_tags","operator":"not_includes","value":"已发送满意度调查"},{"field":"organization_id","operator":"is","value":"10361930146836"}],"any":[]},"position":10003,"raw_title":"白金客户问卷调查"}],"next_page":null,"previous_page":null,"count":7}

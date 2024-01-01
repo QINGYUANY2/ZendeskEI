@@ -13,8 +13,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,6 +39,17 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                if(jsonObject.get("restriction")!= null) {
+                    JSONObject nestedObject = jsonObject.getJSONObject("restriction");
+                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                    List<Integer> idsList = ((List<Integer>) nestedObject.get("ids"));
+
+                    List<Document> newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                    List<Long> newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());
+                    nestedObject.put("ids",newId);
+                    nestedObject.put("id",groupDoc.get("newId"));
+                    jsonObject.put("restriction", nestedObject);
+                }
                 requestParam.put("view", jsonObject);
                 request = this.doPost("/api/v2/views", requestParam);
                 document.put("newId", request.getJSONObject("view").get("id"));
