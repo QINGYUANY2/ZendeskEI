@@ -87,12 +87,12 @@ public abstract class BaseExportService {
     public JSONObject doGetTarget(String url, Map<String, String> param) {
         JSONObject jsonObject = null;
         try {
-            Response response = doGet(targetDomain, url, param);
+            Response response = doTargetGet(targetDomain, url, param);
             jsonObject = JSONObject.parseObject(response.body().string());
             if (response.code() == 429) {
                 //API调用达到上线 就等待一下
                 Thread.sleep(1000);
-                response = doGet(targetDomain, url, param);
+                response = doTargetGet(targetDomain, url, param);
                 jsonObject = JSONObject.parseObject(response.body().string());
             }
         } catch (Exception e) {
@@ -100,6 +100,37 @@ public abstract class BaseExportService {
         }
         return jsonObject;
     }
+
+    public Response doTargetGet(String domain, String url, Map<String, String> param) {
+        //拼接源端域名与接口路径
+        String realPath = domain + url;
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
+                .newBuilder();
+        //如果携带参数了 就拼接参数
+        if (!param.isEmpty()) {
+            param.entrySet().forEach(item -> {
+                urlBuilder.addQueryParameter(item.getKey(), item.getValue());
+            });
+        }
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", targetBasic)
+                .build();
+
+        Response response;
+        String string;
+        try {
+            response = targetClient.newCall(request).execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
+    }
+
+
 
     public Response doGet(String domain, String url, Map<String, String> param) {
         //拼接源端域名与接口路径
@@ -210,25 +241,25 @@ public abstract class BaseExportService {
             if (response.code() == 429) {
                 //API调用达到上线 就等待一下 okok
                 Thread.sleep(1000);
-                response = doPost(targetDomain, url, param);
+                response = doUpdate(targetDomain, url, param, id);
                 jsonObject = JSONObject.parseObject(response.body().string());
             }
             String s = jsonObject.toString();
-            if (response.code() ==  422 && s.contains("Your account does not allow more than 5 agents (including account owner and admins)")){
-                JSONObject nestedObject = param.getJSONObject("user");
-                nestedObject.put("role", "end-user");
-                //different
-                //nestedObject.put("role_type", "1");
-                param.put("user", nestedObject);
-                System.out.println("++++++++++++"+jsonObject);
-                System.out.println(param);
-                System.out.println(param.get("role"));
-                System.out.println(param.get(""));
-
-                response = doPost(targetDomain, url, param);
-                jsonObject = JSONObject.parseObject(response.body().string());
-
-            }
+//            if (response.code() ==  422 && s.contains("Your account does not allow more than 5 agents (including account owner and admins)")){
+//                JSONObject nestedObject = param.getJSONObject("user");
+//                nestedObject.put("role", "end-user");
+//                //different
+//                //nestedObject.put("role_type", "1");
+//                param.put("user", nestedObject);
+//                System.out.println("++++++++++++"+jsonObject);
+//                System.out.println(param);
+//                System.out.println(param.get("role"));
+//                System.out.println(param.get(""));
+//
+//                response = doPost(targetDomain, url, param);
+//                jsonObject = JSONObject.parseObject(response.body().string());
+//
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -239,7 +270,7 @@ public abstract class BaseExportService {
     public Response doUpdate(String domain, String url, JSONObject param, String id) {
 
         //拼接源端域名与接口路径
-        String realPath = domain + url + id;
+        String realPath = domain + url + "/"+ id;
         HttpUrl.Builder urlBuilder = HttpUrl.parse(realPath)
                 .newBuilder();
         RequestBody creatBody = RequestBody.create(MediaType.parse("application/json"), param.toString());

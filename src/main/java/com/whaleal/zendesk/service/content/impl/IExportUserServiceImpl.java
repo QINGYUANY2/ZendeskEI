@@ -1,5 +1,6 @@
 package com.whaleal.zendesk.service.content.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.ExportEnum;
 import com.whaleal.zendesk.model.ModuleRecord;
@@ -12,6 +13,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,11 +50,19 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 
         List<Document> documentList = mongoTemplate.find(new Query(criteria), Document.class, ExportEnum.USER.getValue() + "_info");
         JSONObject request = null;
+        //源端default user
         JSONObject source_default_user = doGet("/api/v2/users/me", new HashMap<>());
+        JSONObject nested_source_user = source_default_user.getJSONObject("user");
+        Document defaultSource = new Document(nested_source_user);
+        //目标端default user
         JSONObject target_default_user = doGetTarget("/api/v2/users/me", new HashMap<>());
+        JSONObject nested_target_user = target_default_user.getJSONObject("user");
+        Document defaultTarget = new Document(nested_target_user);
 
         for (Document users : documentList) {
             JSONObject requestParam = new JSONObject();
+            JSONObject requestDefaultParam = new JSONObject();
+            JSONObject requestIdentityParam = new JSONObject();
             Document param = new Document(users);
             List<String> duplicateEmail = new ArrayList<>();
             if(param.get("email")!=null) {
@@ -63,12 +75,14 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
             if (param.get("custom_role_id") != null) {
                 param.remove("custom_role_id");
             }
+
+            BufferedWriter writer = null;
             try {
-                //如果是默认用户，更新
-                if(users.get("id") == source_default_user.get("id")){
-                    //doUpdate("/api/v2/users",target_default_user.get("id"));
-                    continue;
-                }
+                //如果是默认用户，更新id
+//                target_id =
+                System.out.println(param.get("id"));
+
+
                 if (users.get("organization_id") != null) {
                     Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("organization_id"))), Document.class, ExportEnum.ORGANIZATIONS.getValue() + "_info");
                     param.put("organization_id", orgDoc.get("newId"));
@@ -77,15 +91,81 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
                     Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(users.get("default_group_id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
                     param.put("default_group_id", groupDoc.get("newId"));
                 }
-                if (users.get("role") == "agent"){
 
+                if (users.get("role").equals("agent")){
+                    //IO output user.get("name")
+                    param.put("role", "end-user");
+                    users.put("user_to_end-user", "changed");
+                    String userName = users.get("name").toString();
+                    String filePath = "/Users/qingyuanyang/Desktop/Record/Agent_name.txt";
+
+                    // 将用户名写入文件
+                    //---------
+                    writer = new BufferedWriter(new FileWriter(filePath,true));
+
+                    writer.append("User Name: ").append(userName);
+                    writer.newLine();
+                    log.info("User name recorded to file successfully.");
+
+
+                    }
+//                nestedObject.put("role", "end-user");
+//                //different
+//                //nestedObject.put("role_type", "1");
+//                param.put("user", nestedObject);
+//                System.out.println("++++++++++++"+jsonObject);
+//                System.out.println(param);
+//                System.out.println(param.get("role"));
+//                System.out.println(param.get(""));
+//
+//                response = doPost(targetDomain, url, param);
+//                jsonObject = JSONObject.parseObject(response.body().string());
+ //               }
+
+                if(param.get("id").equals(defaultSource.get("id"))){//确认是源端的id
+                    requestDefaultParam.put("user", param);
+                    request = this.doUpdate("/api/v2/users",requestDefaultParam, defaultTarget.get("id").toString());
+                    //用目标端id返回identities
+                    JSONObject target_user_identity = doGetTarget("/api/v2/users/"+request.getJSONObject("user").get("id")+"/identities", new HashMap<>());
+                    // 获取 identities 数组
+                    JSONArray identities = (JSONArray) target_user_identity.get("identities");
+                    //更改identity的primary选项
+
+                    for (Object identityObj : identities) {
+                        JSONObject identity = (JSONObject) identityObj;
+                        if(identity.get("value").equals(requestDefaultParam.getJSONObject("user").get("email")) && !identity.get("primary").equals("true")){
+                            requestIdentityParam.put("primary", "true");
+                            this.doUpdate("/api/v2/users/"+ request.getJSONObject("user").get("id") +"/identities",requestIdentityParam,identity.get("id").toString()+"/make_primary");
+                        }
+                        //requestIdentityParam =
+                        //this.doUpdate("/api/v2/users/"+ request.getJSONObject("user").get("id") +"/identities/",requestIdentityParam,identity.get("id")+"/make_primary");
+                    }
+                    //
+//                    Document defaultTarget = new Document(nested_target_user);
+                    users.put("newId", request.getJSONObject("user").get("id"));
+
+
+                }else{
+                    requestParam.put("user", param);
+                    request = this.doPost("/api/v2/users", requestParam);
+
+                    users.put("newId", request.getJSONObject("user").get("id"));
                 }
-                requestParam.put("user", param);
-                request = this.doPost("/api/v2/users", requestParam);
 
-                users.put("newId", request.getJSONObject("user").get("id"));
-            } catch (Exception e) {
+
+            } catch (IOException e) {
+                log.info("Error writing to file: " + e.getMessage());
+            }catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                try {
+                    if (null != writer){
+                        writer.flush();
+                        writer.close();
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
             }
 
             mongoTemplate.save(users, "user_info");
