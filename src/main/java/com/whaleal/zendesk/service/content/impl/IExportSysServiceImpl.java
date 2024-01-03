@@ -1,5 +1,6 @@
 package com.whaleal.zendesk.service.content.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.ExportEnum;
 import com.whaleal.zendesk.model.ModuleRecord;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -32,15 +34,29 @@ public class IExportSysServiceImpl extends BaseExportService implements IExportS
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.BRAND.getValue() + "_info");
         JSONObject requestParam = new JSONObject();
         JSONObject request = null;
+        //拿到目标端id
+        JSONObject getTargetId = doGetTarget("/api/v2/account/settings", new HashMap<>());
+        JSONObject getBrand = getTargetId.getJSONObject("settings").getJSONObject("brands");
+        String TargetDefaultBrandId = getBrand.getLong("default_brand_id").toString();
+        //拿到目标端domain
         for (Document document : list) {
             try {
                 // host_mapping 关联问题 请求时移除即可
                 document.remove("host_mapping");
                 // todo  临时加 111 防止重复
-                document.put("subdomain", document.get("subdomain") + "111");
+                if (document.get("default").toString().equals("false")) {
+                    document.put("subdomain", document.get("subdomain") + "111");
+                }else{
+                    document.remove("subdomain");
+                }
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 requestParam.put("brand", jsonObject);
-                request = this.doPost("/api/v2/brands", requestParam);
+                if (document.get("default").toString().equals("true")){
+                    request = this.doUpdate("/api/v2/brands",requestParam, TargetDefaultBrandId);
+                }else{
+                    request = this.doPost("/api/v2/brands", requestParam);
+                }
+
                 document.put("newId", request.getJSONObject("brand").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();

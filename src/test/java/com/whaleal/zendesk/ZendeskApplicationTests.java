@@ -469,9 +469,9 @@ class ZendeskApplicationTests extends BaseExportService {
 
 //{"identities":[{"url":"https://jingmu.zendesk.com/api/v2/users/26906349711897/identities/26906352617497.json","id":26906352617497,"user_id":26906349711897,"type":"email","value":"2694445233@qq.com","verified":true,"primary":true,"created_at":"2023-12-27T08:18:57Z","updated_at":"2024-01-02T07:22:18Z","undeliverable_count":0,"deliverable_state":"deliverable"},{"url":"https://jingmu.zendesk.com/api/v2/users/26906349711897/identities/27112224858777.json","id":27112224858777,"user_id":26906349711897,"type":"email","value":"user1@yzm.de","verified":true,"primary":false,"created_at":"2024-01-02T05:13:56Z","updated_at":"2024-01-02T07:22:18Z","undeliverable_count":0,"deliverable_state":"deliverable"},{"url":"https://jingmu.zendesk.com/api/v2/users/26906349711897/identities/27118670032537.json","id":27118670032537,"user_id":26906349711897,"type":"email","value":"2622799675@qq.com","verified":true,"primary":false,"created_at":"2024-01-02T07:28:16Z","updated_at":"2024-01-02T07:29:02Z","undeliverable_count":0,"deliverable_state":"deliverable"}],"next_page":null,"previous_page":null,"count":3}
     @Test
-    void Update_identities(){
+    void Update_brands(){
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://jingmu.zendesk.com/api/v2/users/26906349711897/identities/27119291591961/make_primary")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("/api/v2/brands/{brand_id}")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "{\n" +

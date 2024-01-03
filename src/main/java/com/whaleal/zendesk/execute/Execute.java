@@ -255,11 +255,11 @@ public class Execute {
 //        iExportGroupService.importGroupMembershipInfo();
 
 //        //3.品牌
-//        iExportSysService.importBrandInfo();      1
+        iExportSysService.importBrandInfo();
 //        //4.人员字段
 //        iExportUserService.importUserField();       1
 //        //5.人员
-       iExportUserService.importUserInfo();
+//       iExportUserService.importUserInfo();
         //6.视图
 //        iExportBusinessService.importViewInfo();
 //        //7.宏
