@@ -1582,7 +1582,7 @@ class ZendeskApplicationTests extends BaseExportService {
 
     @Test
     void macro_list(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jingmu.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/macros")
                 .newBuilder();
@@ -1599,7 +1599,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("2694445233@qq.com", "123456"))
                 .build();
         try {
             Response response = client.newCall(request).execute();

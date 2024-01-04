@@ -44,6 +44,7 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                     Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
                     List<Integer> idsList = ((List<Integer>) nestedObject.get("ids"));
 
+
                     List<Document> newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.GROUP.getValue() + "_info");
                     List<Long> newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());
                     nestedObject.put("ids",newId);

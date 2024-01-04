@@ -247,21 +247,21 @@ public class Execute {
         //1.组织
 //        iExportOrgService.importOrgInfo();      1
 
-//        iExportOrgService.importOrgMembershipInfo();
+//        iExportOrgService.importOrgMembershipInfo();    需要工单和用户信息
 
         //2.群组
-//        iExportGroupService.importGroupInfo();     1
+//        iExportGroupService.importGroupInfo();
 
-//        iExportGroupService.importGroupMembershipInfo();
+//        iExportGroupService.importGroupMembershipInfo();   有些不是agent没有权限
 
 //        //3.品牌
-        iExportSysService.importBrandInfo();
+//        iExportSysService.importBrandInfo();
 //        //4.人员字段
 //        iExportUserService.importUserField();       1
 //        //5.人员
 //       iExportUserService.importUserInfo();
         //6.视图
-//        iExportBusinessService.importViewInfo();
+        iExportBusinessService.importViewInfo();
 //        //7.宏
 //        iExportBusinessService.importMacroInfo();
 //        //8.工单form  暂时无数据

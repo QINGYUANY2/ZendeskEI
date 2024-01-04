@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -33,6 +34,15 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.GROUP.getValue() + "_info");
         JSONObject requestParam = new JSONObject();
         JSONObject request = null;
+        JSONObject getTargetid = doGetTarget("/api/v2/groups", new HashMap<>());
+        JSONArray getGroups = (JSONArray) getTargetid.getJSONArray("groups");
+        String DefaultGroupId = null;
+        for (Object GroupObj : getGroups) {
+            JSONObject Group = (JSONObject) GroupObj;
+            if(Group.getBoolean("default").equals(true)){
+                DefaultGroupId = Group.getLong("id").toString();
+            }
+        }
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
@@ -40,8 +50,13 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
                     jsonObject.put("is_public","true");
                 }
                 requestParam.put("group", jsonObject);
-                request = this.doPost("/api/v2/groups", requestParam);
+                if(jsonObject.get("default").equals(true)){
+                    request = this.doUpdate("/api/v2/groups", requestParam, DefaultGroupId);
+                }else {
+                    request = this.doPost("/api/v2/groups", requestParam);
+                }
                 document.put("newId", request.getJSONObject("group").get("id"));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
