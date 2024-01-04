@@ -41,15 +41,33 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 if(jsonObject.get("restriction")!= null) {
                     JSONObject nestedObject = jsonObject.getJSONObject("restriction");
+                    //查找restriction中id队应的新id
                     Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                    //System.out.println(nestedObject.get("id").getClass());
+                    //创建ids的list保存所有ids中的id对应的newId
                     List<Integer> idsList = ((List<Integer>) nestedObject.get("ids"));
-
-
                     List<Document> newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.GROUP.getValue() + "_info");
                     List<Long> newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());
+                    //替换原来的
                     nestedObject.put("ids",newId);
                     nestedObject.put("id",groupDoc.get("newId"));
                     jsonObject.put("restriction", nestedObject);
+                }
+                if(jsonObject.get("conditions")!= null ){
+                    JSONObject ConditionObject = jsonObject.getJSONObject("conditions");
+                    JSONArray nestedConditionObject = ConditionObject.getJSONArray("all");
+                    for (Object nestedConditionObj : nestedConditionObject) {
+                        JSONObject nestedCondition = (JSONObject) nestedConditionObj;
+                        if(nestedCondition.get("field").equals("group_id")){
+                            //System.out.println(nestedCondition.get("value").getClass()); //nestedCondition.get("value")
+                            //System.out.println("Query Criteria: " + new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedCondition.get("value"))));
+                            Document ConditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedCondition.getLong("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+
+                            nestedCondition.put("value", ConditionGroupDoc.get("newId").toString());
+                        }
+                    }
+                    ConditionObject.put("all", nestedConditionObject);
+                    jsonObject.put("conditions", ConditionObject);
                 }
                 requestParam.put("view", jsonObject);
                 request = this.doPost("/api/v2/views", requestParam);
