@@ -35,6 +35,7 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 JSONObject requestParam = new JSONObject();
+                if(jsonObject.get("default"))
                 requestParam.put("ticket_form", jsonObject);
                 JSONObject request = this.doPost("/api/v2/ticket_forms", requestParam);
                 document.put("newId", request.getJSONObject("ticket_form").get("id"));

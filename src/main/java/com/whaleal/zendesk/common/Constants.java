@@ -1,5 +1,8 @@
 package com.whaleal.zendesk.common;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author lyz
  * @desc
@@ -33,4 +36,13 @@ public class Constants {
     public final static int EXCEPTION = 5;
 
 
+    /**
+     * 自定义字段
+     */
+
+    public final static String[] customType = new String[]{"checkbox", "partialcreditcard", "partial_credit_card", "date", "decimal", "integer", "regexp", "text", "textarea", "tagger", "multiselect"};
+
+    public static List<String> stringToList(){
+        return Arrays.asList(customType);
+    }
 }

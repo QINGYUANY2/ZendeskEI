@@ -121,7 +121,7 @@ public class Execute {
 //            //5.人员
 //            iExportUserService.exportUserInfo();
 //            //6.视图
-//            iExportBusinessService.exportViewInfo();   1
+//            iExportBusinessService.exportViewInfo();
 //            //7.宏
 //            iExportBusinessService.exportMacroInfo();
 //            //8.工单request
@@ -261,13 +261,13 @@ public class Execute {
 //        //5.人员
 //       iExportUserService.importUserInfo();
         //6.视图
-        iExportBusinessService.importViewInfo();
+//        iExportBusinessService.importViewInfo();
 //        //7.宏
 //        iExportBusinessService.importMacroInfo();
 //        //8.工单form  暂时无数据
 //        iExportFormsService.importTicketForms();
 //        //9.工单field
-//        iExportTicketService.importTicketFields();
+        iExportTicketService.importTicketFields();
 //        //10.工单
 //        iExportTicketService.importTicketInfo();
 

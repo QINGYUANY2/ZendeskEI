@@ -1,6 +1,7 @@
 package com.whaleal.zendesk.service.content.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.whaleal.zendesk.common.Constants;
 import com.whaleal.zendesk.common.ExportEnum;
 import com.whaleal.zendesk.model.ModuleRecord;
 import com.whaleal.zendesk.service.BaseExportService;
@@ -286,18 +287,19 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         JSONObject requestParam = new JSONObject();
         JSONObject request = null;
         for (Document document : list) {
-            try {
-                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-
-                requestParam.put("ticket_field", jsonObject);
-                request = this.doPost("/api/v2/ticket_fields", requestParam);
-                document.put("newId", request.getJSONObject("ticket_field").get("id"));
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (Constants.stringToList().contains(document.get("type"))) {
+                try {
+                    JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                    requestParam.put("ticket_field", jsonObject);
+                    request = this.doPost("/api/v2/ticket_fields", requestParam);
+                    document.put("newId", request.getJSONObject("ticket_field").get("id"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                log.info("importTicketFields 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+                saveImportInfo("importTicketFields", request);
+                mongoTemplate.save(document, ExportEnum.TICKET.getValue() + "_field");
             }
-            log.info("importTicketFields 执行完毕,请求参数：{},执行结果{}", requestParam, request);
-            saveImportInfo("importTicketFields", request);
-            mongoTemplate.save(document, ExportEnum.TICKET.getValue() + "_field");
         }
         log.info("导入 TicketFields 成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);

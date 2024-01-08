@@ -6,13 +6,18 @@ import com.whaleal.zendesk.common.ExportEnum;
 import com.whaleal.zendesk.model.ModuleRecord;
 import com.whaleal.zendesk.service.BaseExportService;
 import com.whaleal.zendesk.service.content.IExportBusinessService;
+import com.whaleal.zendesk.util.DetermineNumber;
 import com.whaleal.zendesk.util.StringSub;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,24 +46,40 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 if(jsonObject.get("restriction")!= null) {
                     JSONObject nestedObject = jsonObject.getJSONObject("restriction");
+                    List<Document> newIds = new ArrayList<>();
+                    List<Long> newId = new ArrayList<>();
                     //查找restriction中id队应的新id
-                    Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                    Document groupDoc = null;
+                    Document userDoc = null;
+                    if (nestedObject.get("type").equals("Group")) {
+                        groupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                        nestedObject.put("id", groupDoc.get("newId"));
+                    }else if (nestedObject.get("type").equals("User")){
+                        userDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.USER.getValue() + "_info");
+                        nestedObject.put("id", userDoc.get("newId"));
+                    }
                     //System.out.println(nestedObject.get("id").getClass());
                     //创建ids的list保存所有ids中的id对应的newId
                     List<Integer> idsList = ((List<Integer>) nestedObject.get("ids"));
-                    List<Document> newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.GROUP.getValue() + "_info");
-                    List<Long> newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());
-                    //替换原来的
-                    nestedObject.put("ids",newId);
-                    nestedObject.put("id",groupDoc.get("newId"));
+                    if (idsList != null && idsList.size() != 0) {
+                        if (idsList.size() > 1) {
+                            newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                        } else {
+                            newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(idsList.get(0))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                        }
+                        newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());
+                    }//替换原来的
+                    nestedObject.put("ids", newId);
+
                     jsonObject.put("restriction", nestedObject);
+
                 }
                 if(jsonObject.get("conditions")!= null ){
                     JSONObject ConditionObject = jsonObject.getJSONObject("conditions");
                     JSONArray nestedConditionObject = ConditionObject.getJSONArray("all");
                     for (Object nestedConditionObj : nestedConditionObject) {
                         JSONObject nestedCondition = (JSONObject) nestedConditionObj;
-                        if(nestedCondition.get("field").equals("group_id")){
+                        if(nestedCondition.get("field").equals("group_id") && DetermineNumber.isNumeric(nestedCondition.get("value").toString())){
                             //System.out.println(nestedCondition.get("value").getClass()); //nestedCondition.get("value")
                             //System.out.println("Query Criteria: " + new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedCondition.get("value"))));
                             Document ConditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedCondition.getLong("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
@@ -100,6 +121,36 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
+//    @Override
+//    public void importMacroInfo() {
+//        ModuleRecord moduleRecord = beginModuleRecord("importMacroInfo");
+//        long startTime = System.currentTimeMillis();
+//        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.MACRO.getValue() + "_info");
+//        JSONObject requestParam = new JSONObject();
+//        JSONObject request = null;
+//        JSONObject attachmentRequest = null;
+//        for (Document document : list) {
+//            try {
+//                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+//                requestParam.put("macro", jsonObject);
+//                request = this.doPost("/api/v2/macros", requestParam);
+//                document.put("newId", request.getJSONObject("macro").get("id"));
+//                List<Document> macroAttachments = document.getList("macro_attachments",Document.class);
+//                for (Document attachment : macroAttachments) {
+//                    JSONObject attachmentJson = JSONObject.parseObject(attachment.toJson());
+//                    attachmentRequest = this.doPost("/api/v2/macros/" + document.get("newId") + "/attachments", attachmentJson);
+//                    log.info("导入macro的attachments 执行完毕,请求参数：{},执行结果{}", attachmentJson, attachmentRequest);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            log.info("importMacroInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+//            mongoTemplate.save(document, ExportEnum.MACRO.getValue() + "_info");
+//            saveImportInfo("importMacroInfo", request);
+//        }
+//        log.info("导入macro_info成功，一共导入{}条记录", list.size());
+//        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+//    }
     @Override
     public void importMacroInfo() {
         ModuleRecord moduleRecord = beginModuleRecord("importMacroInfo");
@@ -114,10 +165,52 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                 requestParam.put("macro", jsonObject);
                 request = this.doPost("/api/v2/macros", requestParam);
                 document.put("newId", request.getJSONObject("macro").get("id"));
+
+                if(jsonObject.get("restriction")!= null) {
+                    JSONObject nestedObject = jsonObject.getJSONObject("restriction");
+                    List<Document> newIds = new ArrayList<>();
+                    List<Long> newId = new ArrayList<>();
+                    //查找restriction中id队应的新id
+                    Document groupDoc = null;
+                    Document userDoc = null;
+                    if (nestedObject.get("type").equals("Group")) {
+                        groupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                        nestedObject.put("id", groupDoc.get("newId"));
+                    }else if (nestedObject.get("type").equals("User")){
+                        userDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedObject.get("id"))), Document.class, ExportEnum.USER.getValue() + "_info");
+                        nestedObject.put("id", userDoc.get("newId"));
+                    }
+                    //System.out.println(nestedObject.get("id").getClass());
+                    //创建ids的list保存所有ids中的id对应的newId
+                    List<Integer> idsList = ((List<Integer>) nestedObject.get("ids"));
+                    if (idsList != null && idsList.size() != 0) {
+                        if (idsList.size() > 1) {
+                            newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                        } else {
+                            newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(idsList.get(0))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                        }
+                        newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());
+                    }//替换原来的
+                    nestedObject.put("ids", newId);
+
+                    jsonObject.put("restriction", nestedObject);
+
+                }
+                //todo: 完成action中id替换
+//                if(jsonObject.get("actions")!=null){
+//                    if(jsonObject.get("field").equals("group_id") && DetermineNumber.isNumeric(nestedCondition.get("value").toString())){
+//
+//                    }else if (jsonObject.get("field").equals("ticket_form_id")){
+//
+//                    }
+//                }
                 List<Document> macroAttachments = document.getList("macro_attachments",Document.class);
                 for (Document attachment : macroAttachments) {
+
                     JSONObject attachmentJson = JSONObject.parseObject(attachment.toJson());
-                    attachmentRequest = this.doPost("/api/v2/macros/" + document.get("newId") + "/attachments", attachmentJson);
+                    String url = attachmentJson.getString("content_url");
+                    File file = downloadFile(url, attachmentJson.getString("filename"));
+                    attachmentRequest = this.doPostMacroAttachments("/api/v2/macros/" + document.get("newId") + "/attachments",attachmentJson,file);
                     log.info("导入macro的attachments 执行完毕,请求参数：{},执行结果{}", attachmentJson, attachmentRequest);
                 }
             } catch (Exception e) {
@@ -130,7 +223,37 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         log.info("导入macro_info成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
-
+    public File downloadFile(String url, String filename) {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .addHeader("Content-Type","application/json")
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .url(url).build();
+        // todo  临时目录
+        File dir = new File(filePath);
+        File file = null;
+        FileOutputStream fos = null;
+        try {
+            Response response = client.newCall(request).execute();
+            ResponseBody body = response.body();
+            if (body != null) {
+                file = new File(dir, filename);
+                fos = new FileOutputStream(file);
+                fos.write(body.bytes());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file;
+    }
 
     @Override
     public void exportTriggerInfo() {

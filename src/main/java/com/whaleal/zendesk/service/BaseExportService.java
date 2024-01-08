@@ -161,6 +161,42 @@ public abstract class BaseExportService {
         return response;
     }
 
+    public JSONObject doPostMacroAttachments(String url, JSONObject param,File file) {
+
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(targetDomain+url).newBuilder();
+        String filename = param.getString("filename");
+        //构建请求体
+        MultipartBody body = new MultipartBody.Builder()
+                .addFormDataPart("attachment", filename, RequestBody.create(file, MediaType.parse("application/json")))
+                .addFormDataPart("filename", filename)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic(targetUsername, targetPassword))
+                .build();
+        Response response = null;
+        JSONObject jsonObject = null;
+        try {
+            response = client.newCall(request).execute();
+            if (response.code() == 429) {
+                //API调用达到上线 就等待一下
+                Thread.sleep(1000);
+                response = doPost(targetDomain, url, param);
+                jsonObject = JSONObject.parseObject(response.body().string());
+            }
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
 
     public JSONObject doPost(String url, JSONObject param) {
 
