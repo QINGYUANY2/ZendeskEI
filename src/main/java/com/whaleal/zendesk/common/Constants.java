@@ -19,6 +19,8 @@ public class Constants {
 
     public final static String doDelete = "delete";
 
+    public final static String doUserImport = "userimport";
+
 
     /**
      * 任务类型

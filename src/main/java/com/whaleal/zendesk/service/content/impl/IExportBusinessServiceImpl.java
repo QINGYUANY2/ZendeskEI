@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,13 +84,27 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                             //System.out.println(nestedCondition.get("value").getClass()); //nestedCondition.get("value")
                             //System.out.println("Query Criteria: " + new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedCondition.get("value"))));
                             Document ConditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedCondition.getLong("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
-
+                            //System.out.println(nestedCondition);
+                            //System.out.println(nestedConditionObj);
+                            //nestedCondition和nestedConditionObj地址相同，所以可以通过直接改nestedCondition来更改nestedConditionObject
                             nestedCondition.put("value", ConditionGroupDoc.get("newId").toString());
+                            //System.out.println(nestedCondition == nestedConditionObj);
+                        }
+                        if(nestedCondition.get("field").equals("brand_id") && DetermineNumber.isNumeric(nestedCondition.get("value").toString())){
+                            Document ConditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(nestedCondition.getLong("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                            nestedCondition.put("value", ConditionGroupDoc.get("newId").toString());
+                        }
+                        if(nestedCondition.get("field").toString().contains("custom_fields")) {
+                            String[] split = nestedCondition.get("field").toString().split("_");
+                            String field_id = Arrays.asList(split).get(split.length - 1);
+                            Document ConditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                            nestedCondition.put("field", "custom_fields_"+ConditionGroupDoc.get("newId").toString());
                         }
                     }
                     ConditionObject.put("all", nestedConditionObject);
                     jsonObject.put("conditions", ConditionObject);
                 }
+
                 requestParam.put("view", jsonObject);
                 request = this.doPost("/api/v2/views", requestParam);
                 document.put("newId", request.getJSONObject("view").get("id"));
@@ -182,6 +197,7 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                     }
                     //System.out.println(nestedObject.get("id").getClass());
                     //创建ids的list保存所有ids中的id对应的newId
+                    //todo：写进里面，user也要写一样的
                     List<Integer> idsList = ((List<Integer>) nestedObject.get("ids"));
                     if (idsList != null && idsList.size() != 0) {
                         if (idsList.size() > 1) {

@@ -26,19 +26,21 @@ public class DoJobApplication implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         List<String> modes = args.getOptionValues("mode");
-        if(modes.isEmpty()){
+        if (modes.isEmpty()) {
             log.error("缺少执行模式");
         }
         //获取执行模式
         String mode = modes.get(0);
 
-        if(doExport.equalsIgnoreCase(mode)){
+        if (doExport.equalsIgnoreCase(mode)) {
             execute.doExport();
-        }else if(doImport.equalsIgnoreCase(mode)){
+        } else if (doImport.equalsIgnoreCase(mode)) {
             execute.doImport();
-        }else if(doDelete.equalsIgnoreCase(mode)){
+        } else if (doDelete.equalsIgnoreCase(mode)) {
             String moduleName = args.getOptionValues("moduleName").get(0);
             execute.doDelete(moduleName);
+        }else if(doUserImport.equalsIgnoreCase(mode)){
+            execute.doUserImport();
         }else {
             log.error("执行模式不合法");
         }

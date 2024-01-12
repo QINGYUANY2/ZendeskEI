@@ -110,89 +110,89 @@ public class Execute {
         int status = 0;
         try {
 
-//            //1.组织
+////            //1.组织
 //            iExportOrgService.exportOrgInfo();
-//            //2.群组
+////            //2.群组
 //            iExportGroupService.exportGroupInfo();
-//            //3.品牌
+////            //3.品牌
 //            iExportSysService.exportBrandInfo();
-//            //4.人员字段
+////            //4.人员字段
 //            iExportUserService.exportUserField();
-//            //5.人员
+////            //5.人员
 //            iExportUserService.exportUserInfo();
-//            //6.视图
+////            //6.视图
 //            iExportBusinessService.exportViewInfo();
-//            //7.宏
+////            //7.宏
 //            iExportBusinessService.exportMacroInfo();
-//            //8.工单request
+////            //8.工单request
 //            iExportTicketService.exportTicketRequest();
-//            //9.工单form
+////            //9.工单form
 //            iExportFormsService.exportTicketForms();
-//            //10.工单field
+////            //10.工单field
 //            iExportTicketService.exportTicketFields();
-//            //11.工单
+////            //11.工单
 //            iExportTicketService.exportTicketInfo();
-
-            //-------------------------------------------------
-
+//
+//            //-------------------------------------------------
+//
 //            iExportOrgService.exportOrgMembershipInfo();  // ok
-//
+////
 //            iExportOrgService.exportOrgSubscriptionsInfo();  //无数据
-
+//
 //            iExportUserService.exportRoleInfo();   // 此版本无角色
-//
+////
 //            iExportGroupService.exportGroupMembershipInfo(); // ok
-//
+////
 //            iExportItemService.exportItemInfo();    //  ok
-
+//
 //            iExportTicketService.exportSatisfactionRatingInfo();   //ticket 中已传
-//
+////
 //            iExportTicketService.exportTicketAudit();    // 加ticket
-//
+////
 //            iExportContentService.exportExternalContentRecordInfo();   //无数据
+////
+//            iExportGatherService.exportTopicInfo();    //ok
 //
- //           iExportGatherService.exportTopicInfo();    //ok
-
 //            iExportGatherService.exportPostsInfo();    //  没有权限  未开通
-//
-//           iExportGuideService.exportArticleInfo();   // 无数据
-//
+////
+//            iExportGuideService.exportArticleInfo();   // 无数据
+////
 //            iExportGuideService.exportThemeInfo();   // 导入不进去,没有创建主题
+////
+//            iExportGuideService.exportPermissionGroupInfo();   //  ok
+////
+//            iExportPhoneService.exportGreetingInfo();     // ok
 //
- //           iExportGuideService.exportPermissionGroupInfo();   //  ok
-//
- //           iExportPhoneService.exportGreetingInfo();     // ok
-
 //            iExportPhoneService.exportPhoneNumberInfo();   // 无可用phone 数据
-
-  //          iExportPhoneService.exportIVRsInfo();    // ok
-
-  //          iExportSysService.exportSupportAddressInfo();   //ok
-
-   //         iExportBusinessService.exportTriggerInfo();    // ok
-
-   //         iExportBusinessService.exportTriggerCategoriesInfo();   //ok
-
-   //         iExportBusinessService.exportAutomationsInfo();   //ok
-
-   //         iExportBusinessService.exportSLAPoliciesInfo();   //ok
-
+//
+//            iExportPhoneService.exportIVRsInfo();    // ok
+//
+//            iExportSysService.exportSupportAddressInfo();   //ok
+//
+//            iExportBusinessService.exportTriggerInfo();    // ok
+//
+//            iExportBusinessService.exportTriggerCategoriesInfo();   //ok
+//
+//            iExportBusinessService.exportAutomationsInfo();   //ok
+//
+//            iExportBusinessService.exportSLAPoliciesInfo();   //ok
+//
 //            iExportBusinessService.exportGroupSLAPoliciesInfo();   // 无数据
-
+//
 //            iExportTicketService.exportCustomTicketStatus();  // 版本不包含new 且标签等已占用问题
-
+//
 //            iExportTicketService.exportSharingAgreement();  //  无数据
-
-   //        iExportTicketService.exportSchedules();  //  ok
-
-   //         iExportTicketService.exportAccountAttributes();  //  ok
-
+//
+//           iExportTicketService.exportSchedules();  //  ok
+//
+//            iExportTicketService.exportAccountAttributes();  //  ok
+//
 //            iExportTicketService.exportResourceCollections();   // 文档不清楚
-
+//
 //            iExportPhoneService.exportPhoneNumberInfo();
-
+//
 //            iExportPhoneService.exportGreetingInfo();
-
+//
 //            iExportPhoneService.exportAddressInfo();
 
 
@@ -221,6 +221,21 @@ public class Execute {
         mongoTemplate.updateFirst(id,update,TaskRecord.class);
     }
 
+
+    /**
+    * 导出人员字段
+     */
+    //--mode=userimport
+    public void doUserImport(){
+        log.info("执行导入人员任务");
+        Criteria criteria = Criteria.where("source_url").is(sourceDomain).and("target_url").is(targetDomain);
+        Query query = Query.query(criteria);
+        TaskRecord taskRecord = mongoTemplate.findOne(query, TaskRecord.class);
+        iExportUserService.importUserInfo();
+        log.info("导入任务执行完成");
+    }
+
+
     /**
      * 把数据库中记录导入到目标端
      */
@@ -244,32 +259,32 @@ public class Execute {
             //更新任务状态为导入中
             Update status = new Update().set("status", IMPORTING);
 
-        //1.组织
-//        iExportOrgService.importOrgInfo();      1
-
-//        iExportOrgService.importOrgMembershipInfo();    需要工单和用户信息
-
-        //2.群组
+//        //1.组织
+//        iExportOrgService.importOrgInfo();      //1
+//        //2.群组
 //        iExportGroupService.importGroupInfo();
-
-//        iExportGroupService.importGroupMembershipInfo();   有些不是agent没有权限
-
-//        //3.品牌
-//        iExportSysService.importBrandInfo();
+//          //3.品牌
+//          iExportSysService.importBrandInfo();
 //        //4.人员字段
-//        iExportUserService.importUserField();       1
-//        //5.人员
-//       iExportUserService.importUserInfo();
-        //6.视图
+//        iExportUserService.importUserField();
+//        //9.工单field
+//        iExportTicketService.importTicketFields();
+//        //8.工单form
+//        iExportFormsService.importTicketForms();
+//        //6.视图
 //        iExportBusinessService.importViewInfo();
+//        //10.工单
+        iExportTicketService.importTicketInfo();
 //        //7.宏
 //        iExportBusinessService.importMacroInfo();
-//        //8.工单form  暂时无数据
-//        iExportFormsService.importTicketForms();
-//        //9.工单field
-        iExportTicketService.importTicketFields();
-//        //10.工单
-//        iExportTicketService.importTicketInfo();
+//        iExportGroupService.importGroupMembershipInfo();   //有些不是agent没有权限
+
+//        iExportOrgService.importOrgMembershipInfo();    //需要工单和用户信息
+
+
+//
+
+
 
 
 //        iExportItemService.importItemInfo();

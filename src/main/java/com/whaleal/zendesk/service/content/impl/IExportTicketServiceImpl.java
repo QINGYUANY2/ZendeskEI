@@ -193,11 +193,16 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                         List<String> tokenList = new ArrayList<>();
                         //映射新id
                         if (comment.get("author_id") != null) {
-                            Document authorDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(comment.get("author_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
-                            if (authorDoc != null) {
+                            if(comment.get("author_id") instanceof Integer){
+                                Document authorDoc = mongoTemplate.findOne(new Query(new Criteria("add_reason").is("author_id_-1")), Document.class, ExportEnum.USER.getValue() + "_info");
                                 comment.put("author_id", authorDoc.get("newId"));
-                            } else {
-                                log.warn("同步ticket时,未找到comment中 {} 对应的新 author_id", comment.get("author_id"));
+                            }else {
+                                Document authorDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(comment.get("author_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
+                                if (authorDoc != null) {
+                                    comment.put("author_id", authorDoc.get("newId"));
+                                } else {
+                                    log.warn("同步ticket时,未找到comment中 {} 对应的新 author_id", comment.get("author_id"));
+                                }
                             }
                         }
                         // 附件相关
@@ -223,6 +228,8 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 if (document.get("satisfaction_rating") != null) {
                     Document satisfaction = (Document) param.get("satisfaction_rating");
                     if (satisfaction.get("score") != null && satisfaction.get("score").equals("unoffered")) {
+                        satisfaction.put("score", "good");
+                    }else if (satisfaction.get("score") != null && satisfaction.get("score").equals("offered")) {
                         satisfaction.put("score", "good");
                     }
                 }

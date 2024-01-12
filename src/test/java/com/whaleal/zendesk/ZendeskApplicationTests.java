@@ -14,10 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.io.File;
 
 //@SpringBootTest
@@ -360,33 +357,19 @@ class ZendeskApplicationTests extends BaseExportService {
     //与上面不一样，不管post几遍都是200success
     @Test
     void demo121(){
-        String sourceUrl = "https://jingmu.zendesk.com/";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users/create_many")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\n" +
-                        "  \"users\": [\n" +
-                        "    {\n" +
-                        "      \"email\": \"roge@example.org\",\n" +
-                        "      \"name\": \"Roger Wilco\",\n" +
-                        "      \"organization_id\": 567812345,\n" +
-                        "      \"role\": \"agent\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"email\": \"woge@example.org\",\n" +
-                        "      \"name\": \"Woger Rilco\",\n" +
-                        "      \"role\": \"admin\"\n" +
-                        "    }\n" +
-                        "  ]\n" +
-                        "}"
+                "{\"user\": {\"name\": \"Roger Wilco\", \"email\": \"roge@example.org\", \"role\": \"end-user\", \"custom_role_id\": null}}"
         );
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("2694445233@qq.com", "123456"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -442,8 +425,8 @@ class ZendeskApplicationTests extends BaseExportService {
     @Test
     void user1list(){
         OkHttpClient client = new OkHttpClient();
-        String sourceUrl = "https://jingmu.zendesk.com";
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users/me")
+        String sourceUrl = " https://pdi-jinmuinfo.zendesk.com";
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "");
@@ -452,7 +435,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("2694445233@qq.com", "123456"))
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2213,7 +2196,9 @@ class ZendeskApplicationTests extends BaseExportService {
     }
     @Test
     void list_ticket(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+//        long abc = 24920009118105L;
+//        System.out.println(abc);
+        String sourceUrl = "https://jinmu6532.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/tickets")
                 .newBuilder();
@@ -2223,7 +2208,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("yqingyuan@sohu.com", "123456"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2858,6 +2843,13 @@ class ZendeskApplicationTests extends BaseExportService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    @Test
+    void printNew(){
+        System.out.println(String.valueOf(new Date().getTime()));
     }
 
 

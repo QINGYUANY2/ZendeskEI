@@ -13,8 +13,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,22 +38,48 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
         String TargetDefaultId = null;
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
         JSONObject request = null;
+        List<Document> newIds = new ArrayList<>();
+        List<Long> newId = new ArrayList<>();
+        Document ticketNewIdDoc = null;
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 JSONObject requestParam = new JSONObject();
-                if(jsonObject.get("default").equals("true")){
+
+                if(jsonObject.get("restricted_brand_ids")!= null && jsonObject.getJSONArray("restricted_brand_ids").size() != 0){
+                    List<Integer> idsList = ((List<Integer>) jsonObject.get("restricted_brand_ids"));
+                    if(idsList.size()==1){
+                        newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(idsList.get(0))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                    }else{
+                        newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                    }
+                    newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());                    jsonObject.put("restricted_brand_ids", newId);
+                }
+                if(jsonObject.getJSONArray("ticket_field_ids").size()!=0){
+                    JSONArray ticketIds = jsonObject.getJSONArray("ticket_field_ids");
+                    for (int i = 0; i < ticketIds.size(); i++) {
+//                        Long ticketId = (Long) ticketIdObj;
+                        ticketNewIdDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(ticketIds.get(i))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                        if(ticketNewIdDoc.getLong("newId")!= null) {
+                            ticketIds.set(i, ticketNewIdDoc.getLong("newId"));
+                        }
+                    }
+
+                    jsonObject.put("ticket_field_ids", ticketIds);
+
+                }
+                if (jsonObject.get("default").toString().equals("true")) {
                     JSONObject getDefaultTarget = doGetTarget("/api/v2/ticket_forms", new HashMap<>());
                     JSONArray nestedDefaultTarget = getDefaultTarget.getJSONArray("ticket_forms");
                     for (Object nestedDefaultObj : nestedDefaultTarget) {
                         JSONObject nestedDefault = (JSONObject) nestedDefaultObj;
-                        if(nestedDefault.get("default").equals("true")){
+                        if (nestedDefault.get("default").toString().equals("true")) {
                             TargetDefaultId = nestedDefault.get("id").toString();
                         }
                     }
                     requestParam.put("ticket_form", jsonObject);
-                    request = this.doUpdate("/api/v2/ticket_forms", requestParam ,TargetDefaultId);
-                }else {
+                    request = this.doUpdate("/api/v2/ticket_forms", requestParam, TargetDefaultId);
+                } else {
                     requestParam.put("ticket_form", jsonObject);
                     request = this.doPost("/api/v2/ticket_forms", requestParam);
                 }
@@ -62,9 +90,10 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            log.info("导入 TicketForms 成功，一共导入{}条记录", list.size());
-            endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
         }
+        log.info("导入 TicketForms 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+
     }
 
 

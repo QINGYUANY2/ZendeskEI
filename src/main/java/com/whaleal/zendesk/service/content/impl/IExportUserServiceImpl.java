@@ -36,7 +36,19 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
     @Override
     public void exportUserInfo() {
         ModuleRecord moduleRecord = beginModuleRecord("exportUserInfo");
+        List<JSONObject> botUser = new ArrayList<>();
         Long useTime = doExport("/api/v2/users", "users", ExportEnum.USER.getValue() + "_info");
+        //String botName = "机器人应答";
+        //String botEmail = "jiqirenyingda@jiqirenyingda.com";
+        JSONObject botResponse = new JSONObject();
+        botResponse.put("name", "机器人应答");
+        botResponse.put("email","jiqirenyingda@jiqirenyingda.com");
+        botResponse.put("role", "end-user");
+        botResponse.put("add_reason","author_id_-1");
+        botResponse.put("domain", "pdi-jinmuinfo");
+        botResponse.put("active", "true");
+        botUser.add(botResponse);
+        mongoTemplate.insert(botUser, ExportEnum.USER.getValue() + "_info");
         endModuleRecord(moduleRecord, useTime);
     }
 
@@ -78,8 +90,7 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 
             BufferedWriter writer = null;
             try {
-                //如果是默认用户，更新id
-//                target_id =
+
                 System.out.println(param.get("id"));
 
 
@@ -92,15 +103,17 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
                     param.put("default_group_id", groupDoc.get("newId"));
                 }
 
+                //如果是agent转换为end-user并记录，手动改
                 if (users.get("role").equals("agent")){
                     //IO output user.get("name")
                     param.put("role", "end-user");
                     users.put("user_to_end-user", "changed");
                     String userName = users.get("name").toString();
-                    String filePath = "/Users/qingyuanyang/Desktop/Record/Agent_name.txt";
+
 
                     // 将用户名写入文件
                     //---------
+                    String filePath = "/Users/qingyuanyang/Desktop/Record/Agent_name.txt";
                     writer = new BufferedWriter(new FileWriter(filePath,true));
 
                     writer.append("User Name: ").append(userName);
@@ -122,7 +135,7 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 //                jsonObject = JSONObject.parseObject(response.body().string());
  //               }
 
-                if(param.get("id").equals(defaultSource.get("id"))){//确认是源端的id
+                if(param.get("id") != null && param.get("id").equals(defaultSource.get("id"))){//确认是源端的id
                     requestDefaultParam.put("user", param);
                     request = this.doUpdate("/api/v2/users",requestDefaultParam, defaultTarget.get("id").toString());
                     //用目标端id返回identities

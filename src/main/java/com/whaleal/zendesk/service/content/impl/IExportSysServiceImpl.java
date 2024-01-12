@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,9 +44,9 @@ public class IExportSysServiceImpl extends BaseExportService implements IExportS
             try {
                 // host_mapping 关联问题 请求时移除即可
                 document.remove("host_mapping");
-                // todo  临时加 111 防止重复
+                // todo  加 timestamp 防止重复
                 if (document.get("default").toString().equals("false")) {
-                    document.put("subdomain", document.get("subdomain") + "111");
+                    document.put("subdomain", document.get("subdomain") + String.valueOf(new Date().getTime()));
                 }else{
                     document.remove("subdomain");
                 }
