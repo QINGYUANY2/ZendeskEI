@@ -64,7 +64,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
     public void importTicketInfo() {
         ModuleRecord moduleRecord = beginModuleRecord("importTicketInfo");
         long startTime = System.currentTimeMillis();
-
+        int count = 1;
         Criteria criteria = new Criteria();
         criteria.and("domain").is(StringSub.getDomain(this.sourceDomain));
 //        criteria.and("id").is(72);
@@ -99,6 +99,9 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                     } else {
                         log.warn("同步ticket时,未找到 {} 对应的新 assignee_id", document.get("assignee_id"));
                     }
+                }else{
+                    count++;
+                    System.out.println(count);
                 }
                 if (document.get("requester_id") != null) {
                     Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("requester_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
@@ -235,6 +238,7 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                 }
                 requestParam.put("ticket", param);
                 request = this.doPost("/api/v2/imports/tickets", requestParam);
+                document.put("newId", request.getJSONObject("ticket").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();
             }

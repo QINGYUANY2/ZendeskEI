@@ -62,7 +62,9 @@ public enum ExportEnum {
 
     RESOURCE_COLLECTIONS("资源集合", "resource_collections", 27),
 
+    SIDE_CONVERSATION("协助对话", "side_conversation", 28),
 
+    EVENT("协助对话活动", "side_conversation_event", 29),
     /**
      * 帮助中心
      */

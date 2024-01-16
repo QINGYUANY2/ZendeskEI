@@ -63,6 +63,8 @@ public class Execute {
     @Resource
     private IExportPhoneService iExportPhoneService;
 
+    @Resource IExportSideConversationService iExportSideConversationService;
+
     @Resource
     private IDeleteService deleteService;
 
@@ -195,6 +197,11 @@ public class Execute {
 //
 //            iExportPhoneService.exportAddressInfo();
 
+//            iExportSideConversationService.exportSideConversationInfo();
+
+
+      //      iExportSideConversationService.exportSideConversationEventsInfo();
+
 
 
 
@@ -274,10 +281,14 @@ public class Execute {
 //        //6.视图
 //        iExportBusinessService.importViewInfo();
 //        //10.工单
-        iExportTicketService.importTicketInfo();
+//        iExportTicketService.importTicketInfo();
 //        //7.宏
 //        iExportBusinessService.importMacroInfo();
+//
 //        iExportGroupService.importGroupMembershipInfo();   //有些不是agent没有权限
+            //协助对话
+        iExportSideConversationService.importSideConversationInfo();
+
 
 //        iExportOrgService.importOrgMembershipInfo();    //需要工单和用户信息
 

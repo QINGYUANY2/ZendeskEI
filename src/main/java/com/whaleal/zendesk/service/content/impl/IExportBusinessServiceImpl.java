@@ -197,7 +197,6 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                     }
                     //System.out.println(nestedObject.get("id").getClass());
                     //创建ids的list保存所有ids中的id对应的newId
-                    //todo：写进里面，user也要写一样的
                     List<Integer> idsList = ((List<Integer>) nestedObject.get("ids"));
                     if (idsList != null && idsList.size() != 0) {
                         if (idsList.size() > 1) {
@@ -212,14 +211,25 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                     jsonObject.put("restriction", nestedObject);
 
                 }
+                JSONArray actions = jsonObject.getJSONArray("actions");
                 //todo: 完成action中id替换
-//                if(jsonObject.get("actions")!=null){
-//                    if(jsonObject.get("field").equals("group_id") && DetermineNumber.isNumeric(nestedCondition.get("value").toString())){
-//
-//                    }else if (jsonObject.get("field").equals("ticket_form_id")){
-//
-//                    }
-//                }
+                if(actions.size()!=0){
+                    for (Object actionObj : actions) {
+                        JSONObject action = (JSONObject) actionObj;
+                        if(action.get("field").equals("group_id") && DetermineNumber.isNumeric(action.get("value").toString())){
+                            Document actionGroupDoc =  mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.get("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                            action.put("value", actionGroupDoc.get("newId"));
+                        }else if (action.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(action.get("value").toString())){
+                            Document actionTicketFieldDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.get("value"))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                            action.put("value", actionTicketFieldDoc.get("newId"));
+                        }else if (action.get("field").equals("ticket_form_id")){
+                            Document actionUsrDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.get("value"))), Document.class, ExportEnum.USER.getValue() + "_info");
+                            action.put("value", actionUsrDoc.get("newId"));
+                        }
+
+                    }
+
+                }
                 List<Document> macroAttachments = document.getList("macro_attachments",Document.class);
                 for (Document attachment : macroAttachments) {
 

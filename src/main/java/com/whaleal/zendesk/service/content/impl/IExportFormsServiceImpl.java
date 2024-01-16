@@ -53,7 +53,8 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
                     }else{
                         newIds = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").in(idsList)), Document.class, ExportEnum.BRAND.getValue() + "_info");
                     }
-                    newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());                    jsonObject.put("restricted_brand_ids", newId);
+                    newId = newIds.stream().map(e -> e.getLong("newId")).collect(Collectors.toList());
+                    jsonObject.put("restricted_brand_ids", newId);
                 }
                 if(jsonObject.getJSONArray("ticket_field_ids").size()!=0){
                     JSONArray ticketIds = jsonObject.getJSONArray("ticket_field_ids");

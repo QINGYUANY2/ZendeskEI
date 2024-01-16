@@ -2599,11 +2599,12 @@ class ZendeskApplicationTests extends BaseExportService {
 
 
     //list 出来都是空值，所以后面测试无法进行
+    //{"events":[{"id":"3fa4b0c5-1b08-11ee-8e6d-c4781a10dd9b","side_conversation_id":"3fa4b0c5-1b08-11ee-8e6d-c4781a10dd9b","actor":{"user_id":11942258898585,"name":"Agent No.1","email":"user1@yzm.de"},"type":"create","via":"support","created_at":"2023-07-05T07:47:53.651Z","message":{"subject":"subticket aweer","preview_text":"asdfasd","from":{"user_id":11942258898585,"name":"Agent No.1","email":"user1@yzm.de"},"to":[{"user_id":11942258898585,"group_id":8427015474329,"name":"支持/Agent No.1","email":"user1@yzm.de"}],"body":"asdfasd","html_body":"\u003cdiv class=\"zd-comment\"\u003e\n\u003cdiv data-comment-type=\"body\"\u003e\n\u003cdiv\u003easdfasd\u003c/div\u003e\n\u003c/div\u003e\n\u003c/div\u003e","external_ids":{"ticketAuditId":"20334066107545"},"attachments":[]},"updates":{},"ticket_id":53}],"next_page":null,"previous_page":null,"count":1}
     @Test
     void list_side_conversations(){
-        String sourceUrl = "https://jinmutraining.zendesk.com";
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/tickets/50/side_conversations")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/tickets/120/side_conversations/58915698-2c23-11ee-8c20-d53a6c4e313d/events")
                 .newBuilder();
         //.addQueryParameter("external_id", "");
 
@@ -2611,7 +2612,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -2636,19 +2637,156 @@ class ZendeskApplicationTests extends BaseExportService {
     void demo11111(){
         String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/tickets/2/side_conversations")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/tickets/705/side_conversations/import")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "{\n" +
-                        "  \"message\": {\n" +
-                        "    \"subject\": \"My printer is on fire!\",\n" +
-                        "    \"body\": \"The smoke is very colorful.\",\n" +
-                        "    \"to\": [\n" +
-                        "      {\n" +
-                        "        \"user_id\": 10332801830548\n" +
+                        "   \"side_conversation\":{\n" +
+                        "      \"url\":\"https://pdi-jinmuinfo.zendesk.com/api/v2/tickets/120/side_conversations/58915698-2c23-11ee-8c20-d53a6c4e313d\",\n" +
+                        "      \"id\":\"58915698-2c23-11ee-8c20-d53a6c4e313d\",\n" +
+                        "      \"ticket_id\":705,\n" +
+                        "      \"subject\":\"下拉框占位符测试相关宏是否运行成功\",\n" +
+                        "      \"preview_text\":\"我不能看见这个下拉框\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n 周星宇\\nxingyu.zhou@jinmuinfo.com\\n  \\n\\n\\n\\n\\n\\n\\n\\n\\nOriginal:\\nFrom：AAAA (Shanghai Jinmu Information Technology Co.,)\\u003csupport@pdi-jinmuinfo.zendesk.com\\u003eDate：2023-07-27 10:14:41(中国 (GMT+08:00))To：zendesk support\\u003czendesk-support@jinmuinfo.com\\u003eCc：Subject：下拉框占位符测试相关宏是否运行成功如\",\n" +
+                        "      \"state\":\"open\",\n" +
+                        "      \"participants\":[\n" +
+                        "         {\n" +
+                        "            \"user_id\":10332850159252,\n" +
+                        "            \"name\":\"Agent No.1\",\n" +
+                        "            \"email\":\"user1@yzm.de\"\n" +
+                        "         },\n" +
+                        "         {\n" +
+                        "            \"user_id\":22738814337684,\n" +
+                        "            \"name\":\"Zendesk-support\",\n" +
+                        "            \"email\":\"zendesk-support@jinmuinfo.com\"\n" +
+                        "         },\n" +
+                        "         {\n" +
+                        "            \"user_id\":22738877704084,\n" +
+                        "            \"name\":\"Xingyu Zhou\",\n" +
+                        "            \"email\":\"xingyu.zhou@jinmuinfo.com\"\n" +
+                        "         }\n" +
+                        "      ],\n" +
+                        "      \"created_at\":\"2023-07-27T02:14:41.645Z\",\n" +
+                        "      \"updated_at\":\"2023-07-27T02:19:08.016Z\",\n" +
+                        "      \"message_added_at\":\"2023-07-27T02:15:38.028Z\",\n" +
+                        "      \"state_updated_at\":\"2023-07-27T02:19:07.338Z\",\n" +
+                        "      \"external_ids\":{\n" +
+                        "         \n" +
                         "      }\n" +
-                        "    ]\n" +
-                        "  }\n" +
+                        "   }\n" +
+                        "   \n" +
+                        "\n" +
+                        "\n" +
+                        "   {\n" +
+                        "   \"events\":[\n" +
+                        "      {\n" +
+                        "         \"id\":\"58915698-2c23-11ee-8c20-d53a6c4e313d\",\n" +
+                        "         \"side_conversation_id\":\"58915698-2c23-11ee-8c20-d53a6c4e313d\",\n" +
+                        "         \"actor\":{\n" +
+                        "            \"user_id\":10332850159252,\n" +
+                        "            \"name\":\"Agent No.1\",\n" +
+                        "            \"email\":\"user1@yzm.de\"\n" +
+                        "         },\n" +
+                        "         \"type\":\"create\",\n" +
+                        "         \"via\":\"support\",\n" +
+                        "         \"created_at\":\"2023-07-27T02:14:41.645Z\",\n" +
+                        "         \"message\":{\n" +
+                        "            \"subject\":\"下拉框占位符测试相关宏是否运行成功\",\n" +
+                        "            \"preview_text\":\"如果出现就成功了\",\n" +
+                        "            \"from\":{\n" +
+                        "               \"user_id\":10332850159252,\n" +
+                        "               \"name\":\"Agent No.1\",\n" +
+                        "               \"email\":\"user1@yzm.de\"\n" +
+                        "            },\n" +
+                        "            \"to\":[\n" +
+                        "               {\n" +
+                        "                  \"user_id\":22738814337684,\n" +
+                        "                  \"name\":\"Zendesk-support\",\n" +
+                        "                  \"email\":\"zendesk-support@jinmuinfo.com\"\n" +
+                        "               }\n" +
+                        "            ],\n" +
+                        "            \"body\":\"如果出现就成功了\",\n" +
+                        "            \"html_body\":\"\\u003cdiv class=\\\"zd-comment\\\"\\u003e\\n\\u003cdiv data-comment-type=\\\"body\\\"\\u003e\\n\\u003cdiv\\u003e如果出现就成功了\\u003c/div\\u003e\\n\\u003c/div\\u003e\\n\\u003c/div\\u003e\",\n" +
+                        "            \"external_ids\":{\n" +
+                        "               \"outboundEmail\":\"\\u003cc11n+58915698-2c23-11ee-8c20-d53a6c4e313d+58915698-2c23-11ee-8c20-d53a6c4e313d+245bfb0@zendesk.com\\u003e\",\n" +
+                        "               \"ticketAuditId\":\"21115782495897\"\n" +
+                        "            },\n" +
+                        "            \"attachments\":[\n" +
+                        "               \n" +
+                        "            ]\n" +
+                        "         },\n" +
+                        "         \"updates\":{\n" +
+                        "            \n" +
+                        "         },\n" +
+                        "         \"ticket_id\":705\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "         \"id\":\"7a2c8abc-2c23-11ee-a6b4-a68d6787bbb6\",\n" +
+                        "         \"side_conversation_id\":\"58915698-2c23-11ee-8c20-d53a6c4e313d\",\n" +
+                        "         \"actor\":{\n" +
+                        "            \"user_id\":21115855376537,\n" +
+                        "            \"name\":\"Xingyu Zhou\",\n" +
+                        "            \"email\":\"xingyu.zhou@jinmuinfo.com\"\n" +
+                        "         },\n" +
+                        "         \"type\":\"reply\",\n" +
+                        "         \"via\":\"email\",\n" +
+                        "         \"created_at\":\"2023-07-27T02:15:38.028Z\",\n" +
+                        "         \"message\":{\n" +
+                        "            \"subject\":\"Re:下拉框占位符测试相关宏是否运行成功\",\n" +
+                        "            \"preview_text\":\"我不能看见这个下拉框\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n 周星宇\\nxingyu.zhou@jinmuinfo.com\\n  \\n\\n\\n\\n\\n\\n\\n\\n\\nOriginal:\\nFrom：AAAA (Shanghai Jinmu Information Technology Co.,)\\u003csupport@pdi-jinmuinfo.zendesk.com\\u003eDate：2023-07-27 10:14:41(中国 (GMT+08:00))To：zendesk support\\u003czendesk-support@jinmuinfo.com\\u003eCc：Subject：下拉框占位符测试相关宏是否运行成功如\",\n" +
+                        "            \"from\":{\n" +
+                        "               \"user_id\":22738877704084,\n" +
+                        "               \"name\":\"Xingyu Zhou\",\n" +
+                        "               \"email\":\"xingyu.zhou@jinmuinfo.com\"\n" +
+                        "            },\n" +
+                        "            \"to\":[\n" +
+                        "               {\n" +
+                        "                  \"user_id\":10332850159252,\n" +
+                        "                  \"name\":\"Agent No.1\",\n" +
+                        "                  \"email\":\"user1@yzm.de\"\n" +
+                        "               },\n" +
+                        "               {\n" +
+                        "                  \"user_id\":22738814337684,\n" +
+                        "                  \"name\":\"Zendesk-support\",\n" +
+                        "                  \"email\":\"zendesk-support@jinmuinfo.com\"\n" +
+                        "               }\n" +
+                        "            ],\n" +
+                        "            \"body\":\"我不能看见这个下拉框 [image 358937d44c344b11a20921d666309a7e.png] 周星宇 xingyu.zhou@jinmuinfo.com Original: From：AAAA (Shanghai Jinmu Information Technology Co.,)\\u003csupport@pdi-jinmuinfo.zendesk.com\\u003e Date：2023-07-27 10:14:41(中国 (GMT+08:00)) To：zendesk support\\u003czendesk-support@jinmuinfo.com\\u003e Cc： Subject：下拉框占位符测试相关宏是否运行成功 如果出现就成功了 \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C Conversation ID: 58915698-2c23-11ee-8c20-d53a6c4e313d 58915698-2c23-11ee-8c20-d53a6c4e313d 245bfb0 [image 0a89952125cf00f5kurm189923a2a60?zone=bj\\u0026to=support@pdi-jinmuinfo.zendesk.com\\u0026tm=1690424129263\\u0026sign=229344465b8e35f7bc76c575621519fa\\u0026from=xingyu.zhou@jinmuinfo.com\\u0026mid=\\u0026ack=0\\u0026toname=support]\",\n" +
+                        "            \"html_body\":\"\\u003cdiv class=\\\"zd-comment\\\"\\u003e\\n\\u003cp\\u003e我不能看见这个下拉框\\u003c/p\\u003e\\n\\u003cp\\u003e\\u003c/p\\u003e\\n\\u003cdiv\\u003e\\u003c/div\\u003e\\n\\u003cdiv style=\\\"font-size:14px\\\"\\u003e\\n\\u003cbr /\\u003e\\n\\u003c/div\\u003e\\n\\u003cdiv style=\\\"font-size:14px\\\"\\u003e\\n\\u003cbr /\\u003e\\n\\u003c/div\\u003e\\n\\u003cdiv style=\\\"font-size:14px\\\"\\u003e\\n\\u003cbr /\\u003e\\n\\u003c/div\\u003e\\n\\u003cdiv style=\\\"font-size:14px\\\"\\u003e\\n\\u003cbr /\\u003e\\n\\u003c/div\\u003e\\n\\u003cdiv\\u003e     \\u003cdiv\\u003e                    \\u003ctable style=\\\"border-collapse: collapse;width: 100%;text-size-adjust:none !important;table-layout: fixed;\\\"\\u003e               \\u003ctbody style=\\\"text-size-adjust:none !important;word-wrap:break-word; word-break:break-all;\\\"\\u003e                    \\u003ctr style=\\\"width: 100%;text-decoration: none;\\\"\\u003e                         \\u003ctd width=\\\"52\\\" style=\\\"width: 52px;padding: 16px 12px 0 0;white-space: nowrap;box-sizing: border-box;\\\"\\u003e                              \\u003cimg src=\\\"https://cowork-storage-public-cdn.lx.netease.com/sign/2023/06/28/358937d44c344b11a20921d666309a7e.png\\\" style=\\\"border-radius: 50%;object-fit: cover;width: 40px;height: 40px;\\\" width=\\\"40px\\\" height=\\\"40px\\\" /\\u003e                                                       \\u003c/td\\u003e                         \\u003ctd style=\\\"font-size: 14px;line-height: 16px;color: #7A8599;padding: 16px 16px 4px 0px;word-break: break-all;\\\"\\u003e                              \\u003cdiv style=\\\"color: #232D47;border: none;margin-bottom:4px;font-size: 16px;line-height: 20px;height:20px;font-weight: bolder;overflow: hidden;\\\"\\u003e周星宇\\u003c/div\\u003e                                                                                                                                       \\u003cdiv style=\\\"border: none;margin-bottom:8px;\\\"\\u003exingyu.zhou@jinmuinfo.com\\u003c/div\\u003e                                                                                                                                                                \\u003c/td\\u003e                    \\u003c/tr\\u003e               \\u003c/tbody\\u003e          \\u003c/table\\u003e                                             \\u003c/div\\u003e\\u003c/div\\u003e\\n\\u003cdiv\\u003e\\u003c/div\\u003e\\n\\u003cdiv\\u003e\\n\\u003cdiv style=\\\"font-size:14px\\\"\\u003e\\n\\u003cbr /\\u003e\\n\\u003c/div\\u003e\\n\\u003cdiv style=\\\"font-size:14px\\\"\\u003e\\n\\u003cbr /\\u003e\\n\\u003c/div\\u003e\\n\\u003cdiv style=\\\"font-size:14px\\\"\\u003e\\n\\u003cbr /\\u003e\\n\\u003c/div\\u003e\\n\\u003cblockquote style=\\\"PADDING-LEFT: 1ex; MARGIN: 0px 0px 0px 0.8ex; BORDER-LEFT: #ccc 1px solid; margin: 0\\\"\\u003e\\u003cdiv style=\\\"color: #7d8085\\\"\\u003eOriginal:\\u003c/div\\u003e\\u003cul style=\\\"color: #7d8085; font-size:12px; padding-left: 20px\\\"\\u003e\\u003cli\\u003eFrom：AAAA (Shanghai Jinmu Information Technology Co.,)\\u0026lt;\\u003ca href=\\\"mailto:support@pdi-jinmuinfo.zendesk.com\\\" rel=\\\"noreferrer\\\"\\u003esupport@pdi-jinmuinfo.zendesk.com\\u003c/a\\u003e\\u0026gt;\\u003c/li\\u003e\\u003cli\\u003eDate：2023-07-27 10:14:41(中国 (GMT+08:00))\\u003c/li\\u003e\\u003cli\\u003eTo：zendesk support\\u0026lt;\\u003ca href=\\\"mailto:zendesk-support@jinmuinfo.com\\\" rel=\\\"noreferrer\\\"\\u003ezendesk-support@jinmuinfo.com\\u003c/a\\u003e\\u0026gt;\\u003c/li\\u003e\\u003cli\\u003eCc：\\u003c/li\\u003e\\u003cli\\u003eSubject：下拉框占位符测试相关宏是否运行成功\\u003c/li\\u003e\\u003c/ul\\u003e\\n\\n    \\n\\n    \\n\\n  \\n\\n    \\u003cdiv class=\\\"zd-comment\\\"\\u003e\\u003cdiv data-comment-type=\\\"body\\\"\\u003e\\u003cdiv\\u003e如果出现就成功了\\u003c/div\\u003e\\u003c/div\\u003e\\u003c/div\\u003e\\u003cvar style=\\\"color:#FFFFFF;display:none !important;font-size:1px;\\\"\\u003e \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C \u200C  Conversation ID: 58915698-2c23-11ee-8c20-d53a6c4e313d 58915698-2c23-11ee-8c20-d53a6c4e313d 245bfb0\\u003c/var\\u003e\\n\\n  \\n\\n\\u003c/blockquote\\u003e\\n\\u003c/div\\u003e\\n\\u003cbr /\\u003e\\n\\u003cbr /\\u003e\\n\\u003cimg width=\\\"0\\\" height=\\\"0\\\" style=\\\"display:flex\\\" src=\\\"https://tr.qiye.163.com/datacapture/mailreport/v2/0a89952125cf00f5kurm189923a2a60?zone=bj\\u0026amp;to=support@pdi-jinmuinfo.zendesk.com\\u0026amp;tm=1690424129263\\u0026amp;sign=229344465b8e35f7bc76c575621519fa\\u0026amp;from=xingyu.zhou@jinmuinfo.com\\u0026amp;mid=\\u0026amp;ack=0\\u0026amp;toname=support\\\" /\\u003e\\n\\u003c/div\\u003e\",\n" +
+                        "            \"external_ids\":{\n" +
+                        "               \"inboundEmail\":\"\\u003cANcAGABtJF29dakjdaqujaqe.3.1690424125122.Hmail.xingyu.zhou@jinmuinfo.com\\u003e\",\n" +
+                        "               \"ticketAuditId\":\"21115817314713\"\n" +
+                        "            },\n" +
+                        "            \"attachments\":[\n" +
+                        "               \n" +
+                        "            ]\n" +
+                        "         },\n" +
+                        "         \"updates\":{\n" +
+                        "            \n" +
+                        "         },\n" +
+                        "         \"ticket_id\":705\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "         \"id\":\"f6eeb2a0-2c23-11ee-88e5-6bed399a60fd\",\n" +
+                        "         \"side_conversation_id\":\"58915698-2c23-11ee-8c20-d53a6c4e313d\",\n" +
+                        "         \"actor\":{\n" +
+                        "            \"user_id\":10332850159252,\n" +
+                        "            \"name\":\"Agent No.1\",\n" +
+                        "            \"email\":\"user1@yzm.de\"\n" +
+                        "         },\n" +
+                        "         \"type\":\"update\",\n" +
+                        "         \"via\":\"support\",\n" +
+                        "         \"created_at\":\"2023-07-27T02:19:07.338Z\",\n" +
+                        "         \"message\":null,\n" +
+                        "         \"updates\":{\n" +
+                        "            \"state\":\"open\"\n" +
+                        "         },\n" +
+                        "         \"ticket_id\":705\n" +
+                        "      }\n" +
+                        "   ],\n" +
+                        "   \"next_page\":null,\n" +
+                        "   \"previous_page\":null,\n" +
+                        "   \"count\":3\n" +
+                        "}\n" +
                         "}");
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
