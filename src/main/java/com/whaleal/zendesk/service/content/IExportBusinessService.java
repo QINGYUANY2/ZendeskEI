@@ -6,21 +6,30 @@ public interface IExportBusinessService {
 
     void importViewInfo();
 
+    void deleteViewInfo();
+
     void exportMacroInfo();
 
     void importMacroInfo();
+
+    void deleteMacroInfo();
 
     void exportTriggerInfo();
 
     void importTriggerInfo();
 
+    void deleteTriggerInfo();
+
     void exportTriggerCategoriesInfo();
 
     void importTriggerCategoriesInfo();
 
+    void deleteTriggerCategoriesInfo();
+
     void exportAutomationsInfo();
 
     void importAutomationsInfo();
+
 
     void exportSLAPoliciesInfo();
 
@@ -29,6 +38,7 @@ public interface IExportBusinessService {
     void exportGroupSLAPoliciesInfo();
 
     void importGroupSLAPoliciesInfo();
+
 
 
 }

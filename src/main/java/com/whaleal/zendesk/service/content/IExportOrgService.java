@@ -6,6 +6,8 @@ public interface IExportOrgService {
 
     void importOrgInfo();
 
+    void deleteOrgInfo();
+
     void exportOrgMembershipInfo();
 
     void importOrgMembershipInfo();
@@ -13,5 +15,14 @@ public interface IExportOrgService {
     void exportOrgSubscriptionsInfo();
 
     void importOrgSubscriptionsInfo();
+
+    void deleteOrgSubscriptionsInfo();
+
+    void exportOrgField();
+
+    void importOrgField();
+
+    void deleteOrgField();
+
 
 }

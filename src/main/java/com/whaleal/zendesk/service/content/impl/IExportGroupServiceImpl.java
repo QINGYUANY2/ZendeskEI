@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,6 +66,49 @@ public class IExportGroupServiceImpl extends BaseExportService implements IExpor
             mongoTemplate.save(document, ExportEnum.GROUP.getValue() + "_info");
         }
         log.info("导入 Group_info 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteGroupInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteGroupInfo");
+        log.info("开始执行删除 group 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/groups", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("groups");
+        JSONObject agents = doGetTarget("/api/v2/group_memberships", new HashMap<>());
+        JSONArray agentsArray = agents.getJSONArray("group_memberships");
+        List<String> groupIds = new ArrayList<>();
+        JSONObject requestParam = new JSONObject();
+        JSONObject nestedParam = new JSONObject();
+        Long default_group_id = null;
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            groupIds.add(temps.getLong("id").toString());
+            if(temps.getBoolean("default")==true){
+                default_group_id = temps.getLong("id");
+            }
+        }
+        Document defaultDoc = mongoTemplate.findOne(new Query(new Criteria("newId").is(default_group_id)), Document.class, ExportEnum.GROUP.getValue() + "_info");
+        Long default_group_old_id = defaultDoc.getLong("id");
+        try{
+            for (Object agentsObj : agentsArray) {
+                JSONObject agent = (JSONObject) agentsObj;
+                if (agent.get("group_id")!=default_group_old_id && agent.getBoolean("default")==true){
+                    nestedParam.put("default_group_id", default_group_id);
+                    nestedParam.put("user_id", agent.get("user_id"));
+                    requestParam.put("user", nestedParam);
+                    doUpdate("/api/v2/users", requestParam, agent.get("user_id").toString());
+                }
+
+            }
+            for (String groupId : groupIds) {
+                doDelete("/api/v2/groups/",groupId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 group 成功，一共删除{}条记录\n", groupIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

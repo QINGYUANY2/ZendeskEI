@@ -19,7 +19,9 @@ public class Constants {
 
     public final static String doDelete = "delete";
 
-    public final static String doUserImport = "userimport";
+    public final static String doUserImport = "userImport";
+
+    public final static String doDeleteAll = "deleteAll";
 
 
     /**

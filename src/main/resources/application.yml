@@ -3,5 +3,24 @@
 spring:
   profiles:
     active: dev
+server:
+  port: 9703
 
 
+
+#spring:
+#  data:
+#    mongodb:
+#      uri: mongodb://127.0.0.1:27017/zendesk
+#zendesk:
+#  # zendesk 源站域名
+#  source:
+#    domain: https://pdi-jinmuinfo.zendesk.com
+#    username: user1@yzm.de
+#    password: 1qaz@WSX
+#  # zendesk 目标站域名
+#  target:
+#    domain: https://jinmutraining.zendesk.com
+#    username: user1@nqmo.com
+#    password: 1qaz@WSX
+#  filePath: /home/yangqingyuan/file

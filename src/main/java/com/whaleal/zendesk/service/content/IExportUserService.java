@@ -13,6 +13,8 @@ public interface IExportUserService {
 
     void importUserInfo();
 
+    void deleteUserInfo();
+
     void exportRoleInfo();
 
     void importRoleInfo();
@@ -20,5 +22,7 @@ public interface IExportUserService {
     void exportUserField();
 
     void importUserField();
+
+    void deleteUserField();
 
 }

@@ -6,6 +6,8 @@ public interface IExportSysService {
 
     void importBrandInfo();
 
+    void deleteBrandInfo();
+
     void exportSupportAddressInfo();
 
     void importSupportAddressInfo();

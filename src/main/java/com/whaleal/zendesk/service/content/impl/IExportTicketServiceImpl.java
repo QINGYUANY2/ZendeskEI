@@ -1,5 +1,6 @@
 package com.whaleal.zendesk.service.content.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.Constants;
 import com.whaleal.zendesk.common.ExportEnum;
@@ -252,6 +253,29 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
     }
 
+    @Override
+    public void deleteTicketInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteTicketInfo");
+        log.info("开始执行删除 ticket_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/tickets", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("tickets");
+        List<String> ticketIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            ticketIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String ticketId : ticketIds) {
+                doDelete("/api/v2/tickets/",ticketId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 ticket_info 成功，一共删除{}条记录\n", ticketIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
     public File downloadFile(String url, String filename) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
@@ -313,6 +337,31 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
             }
         }
         log.info("导入 TicketFields 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteTicketFields() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteTicketFieldsInfo");
+        log.info("开始执行删除 ticket_field 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/ticket_fields", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("ticket_fields");
+        List<String> ticketFieldsIds = new ArrayList<>();
+        JSONObject request = null;
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            ticketFieldsIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String ticketFieldsId : ticketFieldsIds) {
+                doDelete("/api/v2/ticket_fields/",ticketFieldsId);
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 ticket_field 成功，一共删除{}条记录\n", ticketFieldsIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

@@ -1,5 +1,6 @@
 package com.whaleal.zendesk.service.content.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.whaleal.zendesk.common.ExportEnum;
 import com.whaleal.zendesk.model.ModuleRecord;
@@ -12,6 +13,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -46,6 +49,29 @@ public class IExportItemServiceImpl extends BaseExportService implements IExport
             saveImportInfo("importItemInfo", request);
         }
         log.info("导入 item_info 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteItemInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteItemInfo");
+        log.info("开始执行删除 item_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/dynamic_content/items", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("items");
+        List<String> itemIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            itemIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String itemId : itemIds) {
+                doDelete("/api/v2/dynamic_content/items/",itemId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 item 成功，一共删除{}条记录\n", itemIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

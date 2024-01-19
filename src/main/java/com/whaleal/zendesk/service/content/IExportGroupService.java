@@ -6,6 +6,8 @@ public interface IExportGroupService {
 
     void importGroupInfo();
 
+    void deleteGroupInfo();
+
     void exportGroupMembershipInfo();
 
     void importGroupMembershipInfo();

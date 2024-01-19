@@ -6,4 +6,6 @@ public interface IExportItemService {
 
     void importItemInfo();
 
+    void deleteItemInfo();
+
 }

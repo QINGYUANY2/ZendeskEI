@@ -7,4 +7,5 @@ public interface IExportSideConversationService {
     void exportSideConversationEventsInfo();
 
     void importSideConversationInfo();
+
 }

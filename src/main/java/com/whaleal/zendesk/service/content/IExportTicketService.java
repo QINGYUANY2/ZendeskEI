@@ -10,9 +10,13 @@ public interface IExportTicketService {
 
     void importTicketInfo();
 
+    void deleteTicketInfo();
+
     void exportTicketFields();
 
     void importTicketFields();
+
+    void deleteTicketFields();
 
     void exportSatisfactionRatingInfo();
 

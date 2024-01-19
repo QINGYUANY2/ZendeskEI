@@ -684,9 +684,27 @@ class ZendeskApplicationTests extends BaseExportService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/organization_fields")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\"organization_field\": {\"type\": \"text\", \"title\": \"Support description\",\n" +
-                        "      \"description\": \"This field describes the support plan this organization has\",\n" +
-                        "      \"position\": 0, \"active\": true, \"key\": \"support_description\"}}");
+                "{\n" +
+                        "   \"organization_field\":{\n" +
+                        "      \"raw_title\":\"组织昵称\",\n" +
+                        "      \"description\":\"组织昵称\",\n" +
+                        "      \"active\":true,\n" +
+                        "      \"created_at\":\"2022-10-13T07:36:01Z\",\n" +
+                        "      \"type\":\"text\",\n" +
+                        "      \"title\":\"组织昵称\",\n" +
+                        "      \"raw_description\":\"组织昵称\",\n" +
+                        "      \"url\":\"https://pdi-jinmuinfo.zendesk.com/api/v2/organization_fields/11456369949465.json\",\n" +
+                        "      \"system\":false,\n" +
+                        "      \"updated_at\":\"2022-10-13T07:36:01Z\",\n" +
+                        "      \"domain\":\"pdi-jinmuinfo\",\n" +
+                        "      \"_id\":{\n" +
+                        "         \"$oid\":\"65a772c9a8eafc7a4ebaeae4\"\n" +
+                        "      },\n" +
+                        "      \"id\":11456369949465,\n" +
+                        "      \"position\":0,\n" +
+                        "      \"key\":\"org_nickname\"\n" +
+                        "   }\n" +
+                        "}");
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -883,7 +901,7 @@ class ZendeskApplicationTests extends BaseExportService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/group_memberships")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\"group_membership\": {\"user_id\": 10335558472340, \"group_id\": 21573480606228}}");
+                "{\"group_membership\":{\"group_id\":22950168428180,\"user_id\":10332850159252}}");
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -913,7 +931,7 @@ class ZendeskApplicationTests extends BaseExportService {
     void ticket_field_list(){
         String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/ticket_fields")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/ticket_fields/21115427350425")
                 .newBuilder();
                 //.addQueryParameter("creator", "")
                 //.addQueryParameter("locale", "");
@@ -1294,7 +1312,26 @@ class ZendeskApplicationTests extends BaseExportService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl + "/api/v2/recipient_addresses")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\"recipient_address\": {\"name\": \"Sales\", \"email\": \"support999@jinmutraining.zendesk.com\", \"default\": false, \"brand_id\": 10332833146772}}");
+                "{\n" +
+                        "   \"recipient_address\":{\n" +
+                        "      \"cname_status\":\"verified\",\n" +
+                        "      \"forwarding_status\":\"verified\",\n" +
+                        "      \"created_at\":\"2022-07-13T03:21:13Z\",\n" +
+                        "      \"spf_status\":\"verified\",\n" +
+                        "      \"url\":\"https://pdi-jinmuinfo.zendesk.com/api/v2/recipient_addresses/8427030807577.json\",\n" +
+                        "      \"brand_id\":10332833146772,\n" +
+                        "      \"default\":false,\n" +
+                        "      \"updated_at\":\"2022-07-13T03:21:13Z\",\n" +
+                        "      \"domain\":\"pdi-jinmuinfo\",\n" +
+                        "      \"name\":\"Shanghai Jinmu Information Technology Co.,\",\n" +
+                        "      \"_id\":{\n" +
+                        "         \"$oid\":\"659f7da06fa7720e74b79c6a\"\n" +
+                        "      },\n" +
+                        "      \"id\":8427030807577,\n" +
+                        "      \"domain_verification_status\":\"verified\",\n" +
+                        "      \"email\":\"support@pdi-jinmuinfo.zendesk.com\"\n" +
+                        "   }\n" +
+                        "}");
 
 
         Request request = new Request.Builder()
@@ -2866,22 +2903,18 @@ class ZendeskApplicationTests extends BaseExportService {
     @Test
     void demo33(){
         OkHttpClient client = new OkHttpClient();
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/guide/external_content/types/01E7GZVZHBWYD50V00XDMYCMYP")
+        String sourceUrl = "https://jinmutraining.zendesk.com";
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/users/10332850159252")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\n" +
-                        "          \\type\\: {\n" +
-                        "            \\name\\: \\Book\\\n" +
-                        "          }\n" +
-                        "        }"
+                "{\"user\":{\"default_group_id\":22950168428180}}"
         );
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("PUT", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();

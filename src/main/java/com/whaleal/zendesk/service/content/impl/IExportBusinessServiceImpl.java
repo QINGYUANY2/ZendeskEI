@@ -120,6 +120,29 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
     }
 
     @Override
+    public void deleteViewInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteViewInfo");
+        log.info("开始执行删除 view_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/views", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("views");
+        List<String> viewIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            viewIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String viewId : viewIds) {
+                doDelete("/api/v2/views/",viewId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 view 成功，一共删除{}条记录\n", viewIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
     public void exportMacroInfo() {
 
         ModuleRecord moduleRecord = beginModuleRecord("exportMacroInfo");
@@ -177,10 +200,6 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-                requestParam.put("macro", jsonObject);
-                request = this.doPost("/api/v2/macros", requestParam);
-                document.put("newId", request.getJSONObject("macro").get("id"));
-
                 if(jsonObject.get("restriction")!= null) {
                     JSONObject nestedObject = jsonObject.getJSONObject("restriction");
                     List<Document> newIds = new ArrayList<>();
@@ -217,19 +236,32 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                     for (Object actionObj : actions) {
                         JSONObject action = (JSONObject) actionObj;
                         if(action.get("field").equals("group_id") && DetermineNumber.isNumeric(action.get("value").toString())){
-                            Document actionGroupDoc =  mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.get("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                            Document actionGroupDoc =  mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.getLongValue("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
                             action.put("value", actionGroupDoc.get("newId"));
-                        }else if (action.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(action.get("value").toString())){
-                            Document actionTicketFieldDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.get("value"))), Document.class, ExportEnum.TICKET.getValue() + "_field");
-                            action.put("value", actionTicketFieldDoc.get("newId"));
-                        }else if (action.get("field").equals("ticket_form_id")){
-                            Document actionUsrDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.get("value"))), Document.class, ExportEnum.USER.getValue() + "_info");
-                            action.put("value", actionUsrDoc.get("newId"));
+                        }
+                        if (action.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(action.get("value").toString())){
+                            Document actionTicketFormDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.getLongValue("value"))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
+                            action.put("value", actionTicketFormDoc.get("newId"));
+                        }
+                        if(action.get("field").equals("brand_id")&& DetermineNumber.isNumeric(action.get("value").toString())){
+                            Document actionBrandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.getLongValue("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                            action.put("value", actionBrandDoc.get("newId"));
+                        }
+                        if(action.get("field").toString().contains("custom_fields")) {
+                            String[] split_action = action.get("field").toString().split("_");
+                            String field_id = Arrays.asList(split_action).get(split_action.length - 1);
+                            Document actionTicketDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                            action.put("field", "ticket_fields_"+actionTicketDoc.get("newId").toString());
                         }
 
                     }
 
                 }
+                jsonObject.remove("attachments");
+                requestParam.put("macro", jsonObject);
+                request = this.doPost("/api/v2/macros", requestParam);
+                document.put("newId", request.getJSONObject("macro").get("id"));
+
                 List<Document> macroAttachments = document.getList("macro_attachments",Document.class);
                 for (Document attachment : macroAttachments) {
 
@@ -239,6 +271,8 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                     attachmentRequest = this.doPostMacroAttachments("/api/v2/macros/" + document.get("newId") + "/attachments",attachmentJson,file);
                     log.info("导入macro的attachments 执行完毕,请求参数：{},执行结果{}", attachmentJson, attachmentRequest);
                 }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -249,6 +283,31 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         log.info("导入macro_info成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
+
+    @Override
+    public void deleteMacroInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteMacroInfo");
+        log.info("开始执行删除 macro_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/macros", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("macros");
+        List<String> macroIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            macroIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String macroId : macroIds) {
+                doDelete("/api/v2/macros/",macroId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 macro 成功，一共删除{}条记录\n", macroIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+
     public File downloadFile(String url, String filename) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -297,9 +356,65 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         JSONObject request = null;
         for (Document document : list) {
             try {
-                Document categories = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(document.get("category_id"))), Document.class, ExportEnum.TRIGGER_CATEGORIES.getValue() + "_info");
-                document.put("category_id", categories.get("newId"));
+
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                JSONArray actions = jsonObject.getJSONArray("actions");
+                Document categories = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(document.get("category_id"))), Document.class, ExportEnum.TRIGGER_CATEGORIES.getValue() + "_info");
+                jsonObject.put("category_id", categories.get("newId"));
+                //完成action中id替换
+                if(actions.size()!=0) {
+                    for (Object actionObj : actions) {
+                        JSONObject action = (JSONObject) actionObj;
+                        if (action.get("field").equals("group_id") && DetermineNumber.isNumeric(action.get("value").toString())) {
+                            Document actionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.getLongValue("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                            action.put("value", actionGroupDoc.get("newId"));
+                        }
+                        if (action.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(action.get("value").toString())) {
+                            Document actionTicketFormDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.getLongValue("value"))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
+                            action.put("value", actionTicketFormDoc.get("newId"));
+                        }
+                        if (action.get("field").equals("brand_id") && DetermineNumber.isNumeric(action.get("value").toString())) {
+                            Document actionBrandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.getLongValue("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                            action.put("value", actionBrandDoc.get("newId"));
+                        }
+                        if (action.get("field").toString().contains("custom_fields")) {
+                            String[] split_action = action.get("field").toString().split("_");
+                            String field_id = Arrays.asList(split_action).get(split_action.length - 1);
+                            Document actionTicketDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                            action.put("field", "custom_fields_" + actionTicketDoc.get("newId").toString());
+                        }
+                    }
+
+                    JSONArray conditions = jsonObject.getJSONObject("conditions").getJSONArray("any");
+                    //完成action中id替换
+                    if (conditions.size() != 0) {
+                        for (Object conditionObj : conditions) {
+                            JSONObject condition = (JSONObject) conditionObj;
+                            if (condition.get("field").equals("group_id") && DetermineNumber.isNumeric(condition.get("value").toString())) {
+                                Document conditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(condition.getLongValue("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                                condition.put("value", conditionGroupDoc.get("newId"));
+                            }
+                            if (condition.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(condition.get("value").toString())) {
+                                Document conditionTicketFormDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(condition.getLongValue("value"))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
+                                condition.put("value", conditionTicketFormDoc.get("newId"));
+                            }
+                            if (condition.get("field").equals("brand_id") && DetermineNumber.isNumeric(condition.get("value").toString())) {
+                                Document conditionBrandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(condition.getLongValue("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                                condition.put("value", conditionBrandDoc.get("newId"));
+                            }
+                            if (condition.get("field").toString().contains("custom_fields")) {
+                                String[] split_action = condition.get("field").toString().split("_");
+                                String field_id = Arrays.asList(split_action).get(split_action.length - 1);
+                                Document conditionTicketDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                                condition.put("field", "custom_fields_" + conditionTicketDoc.get("newId").toString());
+                            }
+
+                        }
+
+
+                    }
+                }
+
                 requestParam.put("trigger", jsonObject);
                 request = this.doPost("/api/v2/triggers", requestParam);
                 document.put("newId", request.getJSONObject("trigger").get("id"));
@@ -308,9 +423,32 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
             }
             log.info("importTriggerInfo 执行完毕,请求参数：{},执行结果{}", requestParam, request);
             mongoTemplate.save(document, ExportEnum.TRIGGER.getValue() + "_info");
-            saveImportInfo("importMacroInfo", request);
+            saveImportInfo("importTriggerInfo", request);
         }
         log.info("导入TriggerInfo成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteTriggerInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteTriggerInfo");
+        log.info("开始执行删除 trigger_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/triggers", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("triggers");
+        List<String> triggerIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            triggerIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String triggerId : triggerIds) {
+                doDelete("/api/v2/triggers/",triggerId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 trigger 成功，一共删除{}条记录\n", triggerIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
@@ -342,6 +480,30 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
             saveImportInfo("importTriggerCategoriesInfo", request);
         }
         log.info("importTriggerCategoriesInfo 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteTriggerCategoriesInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteTriggerCategories");
+        log.info("开始执行删除 trigger_categories 任务");
+
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/trigger_categories", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("trigger_categories");
+        List<String> triggerCatIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            triggerCatIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String triggerCatId : triggerCatIds) {
+                doDelete("/api/v2/trigger_categories/",triggerCatId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 trigger_categories 成功，一共删除{}条记录\n", triggerCatIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

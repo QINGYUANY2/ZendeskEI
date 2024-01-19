@@ -97,5 +97,28 @@ public class IExportFormsServiceImpl extends BaseExportService implements IExpor
 
     }
 
+    @Override
+    public void deleteTicketForms() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteTicketForms");
+        log.info("开始执行删除 ticket_forms 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/ticket_forms", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("ticket_forms");
+        List<String> ticketFormIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            ticketFormIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String ticketFormId : ticketFormIds) {
+                doDelete("/api/v2/ticket_forms/",ticketFormId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 ticket_forms 成功，一共删除{}条记录\n", ticketFormIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
 
 }

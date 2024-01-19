@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +68,29 @@ public class IExportSysServiceImpl extends BaseExportService implements IExportS
             saveImportInfo("importBrandInfo", request);
         }
         log.info("导入 brand_info 成功,一共导入 {} 记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteBrandInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteBrandInfo");
+        log.info("开始执行删除 brand_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/brands", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("brands");
+        List<String> brandIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            brandIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String brandId : brandIds) {
+                doDelete("/api/v2/brands/",brandId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 brand 成功，一共删除{}条记录\n", brandIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

@@ -198,6 +198,30 @@ public abstract class BaseExportService {
     }
 
 
+    public void doDelete(String url, String id){
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(targetDomain+url+id)
+                .newBuilder();
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("DELETE", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic(targetUsername, targetPassword))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ;
+    }
+
+
     public JSONObject doPost(String url, JSONObject param) {
 
         JSONObject jsonObject = null;

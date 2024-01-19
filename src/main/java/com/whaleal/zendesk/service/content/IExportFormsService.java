@@ -5,4 +5,6 @@ public interface IExportFormsService {
 
     void importTicketForms();
 
+    void deleteTicketForms();
+
 }

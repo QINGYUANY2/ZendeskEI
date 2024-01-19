@@ -190,6 +190,29 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
+    @Override
+    public void deleteUserInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteUserInfo");
+        log.info("开始执行删除 user_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/users", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("users");
+        List<String> usersIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            usersIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String usersId : usersIds) {
+                doDelete("/api/v2/users/",usersId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 user_info 成功，一共删除{}条记录\n", usersIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
 
     // 没有角色
 
@@ -235,6 +258,29 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
             mongoTemplate.save(document, ExportEnum.USER.getValue() + "_field");
         }
         log.info("导入user_Field成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteUserField() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteUserField");
+        log.info("开始执行删除 user_field 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/user_fields", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("user_fields");
+        List<String> userFieldsIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            userFieldsIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String userFieldsId : userFieldsIds) {
+                doDelete("/api/v2/user_fields/",userFieldsId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 user_field 成功，一共删除{}条记录\n", userFieldsIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

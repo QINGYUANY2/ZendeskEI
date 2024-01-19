@@ -39,6 +39,8 @@ public class DoJobApplication implements ApplicationRunner {
         } else if (doDelete.equalsIgnoreCase(mode)) {
             String moduleName = args.getOptionValues("moduleName").get(0);
             execute.doDelete(moduleName);
+        }else if(doDeleteAll.equalsIgnoreCase(mode)){
+            execute.doDeleteAll();
         }else if(doUserImport.equalsIgnoreCase(mode)){
             execute.doUserImport();
         }else {
