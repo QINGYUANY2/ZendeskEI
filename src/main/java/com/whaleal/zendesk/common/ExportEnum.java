@@ -84,7 +84,8 @@ public enum ExportEnum {
     GREETING("问候语类别", "Greeting", 4),
     ADDRESS("地址导入", "Address", 6),
     IVRS("交互式语音应答", "ivrs", 5),
-    PHONE("电话配置", "phone", 2);
+    PHONE("电话配置", "phone", 2),
+    SKILLS("技能","skills" , 7);
 
 
     private final String module;

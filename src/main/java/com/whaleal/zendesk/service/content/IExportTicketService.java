@@ -4,6 +4,8 @@ public interface IExportTicketService {
 
     void exportTicketRequest();
 
+    void importTicketRequest();
+
     void exportTicketAudit();
 
     void exportTicketInfo();
@@ -33,6 +35,11 @@ public interface IExportTicketService {
     void exportSchedules();
 
     void importSchedules();
+
+
+    void exportAttributeValue();
+
+    void importAttributeValue();
 
     void exportAccountAttributes();
 

@@ -2072,7 +2072,69 @@ class ZendeskApplicationTests extends BaseExportService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/requests")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{\"request\": {\"subject\": \"Help!\", \"comment\": {\"body\": \"My printer is on fire!\", \"uploads\": [] }}}");
+                "{\n" +
+                        "   \"request\":{\n" +
+                        "      \"url\":\"https://jinmutraining.zendesk.com/api/v2/requests.json\",\n" +
+                        "      \"status\":\"new\",\n" +
+                        "      \"priority\":null,\n" +
+                        "      \"type\":null,\n" +
+                        "      \"subject\":\"Help!\",\n" +
+                        "      \"description\":\"My printer is on fire!\",\n" +
+                        "      \"organization_id\":22953461957140,\n" +
+                        "      \"via\":{\n" +
+                        "         \"channel\":\"api\",\n" +
+                        "         \"source\":{\n" +
+                        "            \"from\":{\n" +
+                        "               \n" +
+                        "            },\n" +
+                        "            \"to\":{\n" +
+                        "               \n" +
+                        "            },\n" +
+                        "            \"rel\":null\n" +
+                        "         }\n" +
+                        "      },\n" +
+                        "      \"custom_fields\":[\n" +
+                        "         {\n" +
+                        "            \"id\":22953624086036,\n" +
+                        "            \"value\":null\n" +
+                        "         },\n" +
+                        "         {\n" +
+                        "            \"id\":22953659083284,\n" +
+                        "            \"value\":null\n" +
+                        "         },\n" +
+                        "         {\n" +
+                        "            \"id\":22953614968980,\n" +
+                        "            \"value\":null\n" +
+                        "         }\n" +
+                        "      ],\n" +
+                        "      \"requester_id\":10332850159252,\n" +
+                        "      \"collaborator_ids\":[\n" +
+                        "         \n" +
+                        "      ],\n" +
+                        "      \"email_cc_ids\":[\n" +
+                        "         \n" +
+                        "      ],\n" +
+                        "      \"is_public\":true,\n" +
+                        "      \"followup_source_id\":null,\n" +
+                        "      \"assignee_id\":null,\n" +
+                        "      \"ticket_form_id\":10361571109268,\n" +
+                        "      \"custom_status_id\":10332806749844,\n" +
+                        "      \"fields\":[\n" +
+                        "         {\n" +
+                        "            \"id\":22953624086036,\n" +
+                        "            \"value\":null\n" +
+                        "         },\n" +
+                        "         {\n" +
+                        "            \"id\":22953659083284,\n" +
+                        "            \"value\":null\n" +
+                        "         },\n" +
+                        "         {\n" +
+                        "            \"id\":22953614968980,\n" +
+                        "            \"value\":null\n" +
+                        "         }\n" +
+                        "      ]\n" +
+                        "   }\n" +
+                        "}");
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", body)
@@ -2307,11 +2369,196 @@ class ZendeskApplicationTests extends BaseExportService {
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "{\n" +
-                        "   \"schedule\": {\n" +
-                        "     \"name\": \"外国节\",\n" +
-                        "     \"time_zone\": \"Pacific Time (US & Canada)\"\n" +
-                        "   }\n" +
-                        " }");
+                        "   \"schedules\":[\n" +
+                        "      {\n" +
+                        "         \"id\":10358680386836,\n" +
+                        "         \"name\":\"Tier 1\",\n" +
+                        "         \"time_zone\":\"American Samoa\",\n" +
+                        "         \"created_at\":\"2022-10-26T02:16:08Z\",\n" +
+                        "         \"updated_at\":\"2023-12-15T05:57:02Z\",\n" +
+                        "         \"intervals\":[\n" +
+                        "            {\n" +
+                        "               \"start_time\":1860,\n" +
+                        "               \"end_time\":2580\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":3300,\n" +
+                        "               \"end_time\":4020\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":4740,\n" +
+                        "               \"end_time\":5460\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":6180,\n" +
+                        "               \"end_time\":6900\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":7620,\n" +
+                        "               \"end_time\":8340\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":9060,\n" +
+                        "               \"end_time\":9780\n" +
+                        "            }\n" +
+                        "         ]\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "         \"id\":10358937417364,\n" +
+                        "         \"name\":\"Tier 2\",\n" +
+                        "         \"time_zone\":\"Pacific Time (US & Canada)\",\n" +
+                        "         \"created_at\":\"2022-10-26T02:34:09Z\",\n" +
+                        "         \"updated_at\":\"2022-10-26T02:34:09Z\",\n" +
+                        "         \"intervals\":[\n" +
+                        "            {\n" +
+                        "               \"start_time\":1980,\n" +
+                        "               \"end_time\":2580\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":3420,\n" +
+                        "               \"end_time\":4020\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":4860,\n" +
+                        "               \"end_time\":5460\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":6300,\n" +
+                        "               \"end_time\":6900\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":7740,\n" +
+                        "               \"end_time\":8340\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":9180,\n" +
+                        "               \"end_time\":9420\n" +
+                        "            }\n" +
+                        "         ]\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "         \"id\":10358991427604,\n" +
+                        "         \"name\":\"Tier 3\",\n" +
+                        "         \"time_zone\":\"Pacific Time (US & Canada)\",\n" +
+                        "         \"created_at\":\"2022-10-26T02:36:02Z\",\n" +
+                        "         \"updated_at\":\"2022-10-26T02:36:27Z\",\n" +
+                        "         \"intervals\":[\n" +
+                        "            {\n" +
+                        "               \"start_time\":1920,\n" +
+                        "               \"end_time\":2640\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":3360,\n" +
+                        "               \"end_time\":4080\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":4800,\n" +
+                        "               \"end_time\":5520\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":6240,\n" +
+                        "               \"end_time\":6960\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":7680,\n" +
+                        "               \"end_time\":8400\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":9120,\n" +
+                        "               \"end_time\":9420\n" +
+                        "            }\n" +
+                        "         ]\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "         \"id\":10360895806356,\n" +
+                        "         \"name\":\"Lightning & Thunder\",\n" +
+                        "         \"time_zone\":\"Pacific Time (US & Canada)\",\n" +
+                        "         \"created_at\":\"2022-10-26T06:00:07Z\",\n" +
+                        "         \"updated_at\":\"2022-10-26T06:00:08Z\",\n" +
+                        "         \"intervals\":[\n" +
+                        "            {\n" +
+                        "               \"start_time\":1860,\n" +
+                        "               \"end_time\":2580\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":3300,\n" +
+                        "               \"end_time\":4020\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":4740,\n" +
+                        "               \"end_time\":5460\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":6180,\n" +
+                        "               \"end_time\":6900\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":7620,\n" +
+                        "               \"end_time\":8340\n" +
+                        "            }\n" +
+                        "         ]\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "         \"id\":10360865142036,\n" +
+                        "         \"name\":\"Stormcloud\",\n" +
+                        "         \"time_zone\":\"Pacific Time (US & Canada)\",\n" +
+                        "         \"created_at\":\"2022-10-26T06:00:53Z\",\n" +
+                        "         \"updated_at\":\"2022-10-26T06:00:54Z\",\n" +
+                        "         \"intervals\":[\n" +
+                        "            {\n" +
+                        "               \"start_time\":1980,\n" +
+                        "               \"end_time\":2520\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":3420,\n" +
+                        "               \"end_time\":3960\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":4860,\n" +
+                        "               \"end_time\":5400\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":6300,\n" +
+                        "               \"end_time\":6840\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":7740,\n" +
+                        "               \"end_time\":8280\n" +
+                        "            }\n" +
+                        "         ]\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "         \"id\":16966666197396,\n" +
+                        "         \"name\":\"国庆假期\",\n" +
+                        "         \"time_zone\":\"Beijing\",\n" +
+                        "         \"created_at\":\"2023-06-30T07:06:54Z\",\n" +
+                        "         \"updated_at\":\"2023-06-30T07:06:56Z\",\n" +
+                        "         \"intervals\":[\n" +
+                        "            {\n" +
+                        "               \"start_time\":1980,\n" +
+                        "               \"end_time\":2460\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":3420,\n" +
+                        "               \"end_time\":3900\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":4860,\n" +
+                        "               \"end_time\":5340\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":6300,\n" +
+                        "               \"end_time\":6780\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "               \"start_time\":7740,\n" +
+                        "               \"end_time\":8220\n" +
+                        "            }\n" +
+                        "         ]\n" +
+                        "      }\n" +
+                        "   ],\n" +
+                        "   \"url\":\"https://jinmutraining.zendesk.com/api/v2/business_hours/schedules\"\n" +
+                        "}");
         Request request = new Request.Builder()
                     .url(urlBuilder.build())
                 .method("POST", body)
@@ -3021,6 +3268,34 @@ class ZendeskApplicationTests extends BaseExportService {
     @Test
     void printNew(){
         System.out.println(String.valueOf(new Date().getTime()));
+    }
+
+
+    @Test
+    void list_skills(){
+        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/skills")
+                .newBuilder();
+        //.addQueryParameter("external_id", "");
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("GET", null)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

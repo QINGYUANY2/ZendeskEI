@@ -377,7 +377,7 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                             Document actionBrandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(action.getLongValue("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
                             action.put("value", actionBrandDoc.get("newId"));
                         }
-                        if (action.get("field").toString().contains("custom_fields")) {
+                        if (action.get("field").toString().contains("custom_fields_")) {
                             String[] split_action = action.get("field").toString().split("_");
                             String field_id = Arrays.asList(split_action).get(split_action.length - 1);
                             Document actionTicketDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
@@ -385,30 +385,60 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
                         }
                     }
 
-                    JSONArray conditions = jsonObject.getJSONObject("conditions").getJSONArray("any");
+                    JSONObject conditions = jsonObject.getJSONObject("conditions");
+                    JSONArray allConditions = conditions.getJSONArray("all");
+                    JSONArray anyConditions = conditions.getJSONArray("any");
+
                     //完成action中id替换
-                    if (conditions.size() != 0) {
-                        for (Object conditionObj : conditions) {
-                            JSONObject condition = (JSONObject) conditionObj;
-                            if (condition.get("field").equals("group_id") && DetermineNumber.isNumeric(condition.get("value").toString())) {
-                                Document conditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(condition.getLongValue("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
-                                condition.put("value", conditionGroupDoc.get("newId"));
+                    if (allConditions.size() != 0) {
+                        for (Object allConditionObj : allConditions) {
+                            JSONObject allCondition = (JSONObject) allConditionObj;
+                            if (allCondition.get("field").equals("group_id") && DetermineNumber.isNumeric(allCondition.get("value").toString())) {
+                                Document conditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(allCondition.getLongValue("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                                allCondition.put("value", conditionGroupDoc.get("newId"));
                             }
-                            if (condition.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(condition.get("value").toString())) {
-                                Document conditionTicketFormDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(condition.getLongValue("value"))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
-                                condition.put("value", conditionTicketFormDoc.get("newId"));
+                            if (allCondition.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(allCondition.get("value").toString())) {
+                                Document conditionTicketFormDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(allCondition.getLongValue("value"))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
+                                allCondition.put("value", conditionTicketFormDoc.get("newId"));
                             }
-                            if (condition.get("field").equals("brand_id") && DetermineNumber.isNumeric(condition.get("value").toString())) {
-                                Document conditionBrandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(condition.getLongValue("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
-                                condition.put("value", conditionBrandDoc.get("newId"));
+                            if (allCondition.get("field").equals("brand_id") && DetermineNumber.isNumeric(allCondition.get("value").toString())) {
+                                Document conditionBrandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(allCondition.getLongValue("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                                allCondition.put("value", conditionBrandDoc.get("newId"));
                             }
-                            if (condition.get("field").toString().contains("custom_fields")) {
-                                String[] split_action = condition.get("field").toString().split("_");
+                            if (allCondition.get("field").equals("custom_status_id") && DetermineNumber.isNumeric(allCondition.get("value").toString())) {
+                                Document conditionStatusDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(allCondition.getLongValue("value"))), Document.class, ExportEnum.TICKET.getValue() + "_status");
+                                allCondition.put("value", conditionStatusDoc.get("newId"));
+                            }
+                            if (allCondition.get("field").toString().contains("custom_fields_")) {
+                                String[] split_action = allCondition.get("field").toString().split("_");
                                 String field_id = Arrays.asList(split_action).get(split_action.length - 1);
                                 Document conditionTicketDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
-                                condition.put("field", "custom_fields_" + conditionTicketDoc.get("newId").toString());
+                                allCondition.put("field", "custom_fields_" + conditionTicketDoc.get("newId").toString());
                             }
 
+                        }
+                    }
+                    if (anyConditions.size() != 0) {
+                        for (Object anyConditionObj : anyConditions) {
+                            JSONObject anyCondition = (JSONObject) anyConditionObj;
+                            if (anyCondition.get("field").equals("group_id") && DetermineNumber.isNumeric(anyCondition.get("value").toString())) {
+                                Document anyConditionGroupDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(anyCondition.getLongValue("value"))), Document.class, ExportEnum.GROUP.getValue() + "_info");
+                                anyCondition.put("value", anyConditionGroupDoc.get("newId"));
+                            }
+                            if (anyCondition.get("field").equals("ticket_form_id") && DetermineNumber.isNumeric(anyCondition.get("value").toString())) {
+                                Document anyConditionTicketFormDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(anyCondition.getLongValue("value"))), Document.class, ExportEnum.TICKET.getValue() + "_forms");
+                                anyCondition.put("value", anyConditionTicketFormDoc.get("newId"));
+                            }
+                            if (anyCondition.get("field").equals("brand_id") && DetermineNumber.isNumeric(anyCondition.get("value").toString())) {
+                                Document anyConditionBrandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(anyCondition.getLongValue("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                                anyCondition.put("value", anyConditionBrandDoc.get("newId"));
+                            }
+                            if (anyCondition.get("field").toString().contains("custom_fields_")) {
+                                String[] split_action = anyCondition.get("field").toString().split("_");
+                                String field_id = Arrays.asList(split_action).get(split_action.length - 1);
+                                Document anyConditionTicketDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                                anyCondition.put("field", "custom_fields_" + anyConditionTicketDoc.get("newId").toString());
+                            }
                         }
 
 
@@ -558,6 +588,18 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                JSONObject filter = jsonObject.getJSONObject("filter");
+                if(filter.get("all")!=null){
+                    JSONArray all = filter.getJSONArray("all");
+                    for (Object allObject : all) {
+                        JSONObject field = (JSONObject) allObject;
+                        if(field.get("field").equals("brand_id")){
+                            Document brandDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(field.getLong("value"))), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                            field.put("value", brandDoc.get("newId"));
+                        }
+                    }
+
+                }
                 requestParam.put("sla_policy", jsonObject);
                 request = this.doPost("/api/v2/slas/policies", requestParam);
                 document.put("newId", request.getJSONObject("sla_policy").get("id"));
@@ -569,6 +611,29 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
             saveImportInfo("importSLAPoliciesInfo", request);
         }
         log.info("importSLAPoliciesInfo 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+    @Override
+    public void deleteSLAPoliciesInfo() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteSLAPoliciesInfo");
+        log.info("开始执行删除 SLA_Policies_info 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/slas/policies", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("sla_policies");
+        List<String> slaIds = new ArrayList<>();
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            slaIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String slaId : slaIds) {
+                doDelete("/api/v2/slas/policies/",slaId);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 SLA_Policies 成功，一共删除{}条记录\n", slaIds.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
@@ -592,7 +657,7 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
                 requestParam.put("group_sla_policy", jsonObject);
-                request = this.doPost("/api/v2/slas/policies", requestParam);
+                request = this.doPost("/api/v2/group_slas/policies", requestParam);
                 document.put("newId", request.getJSONObject("group_sla_policy").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();

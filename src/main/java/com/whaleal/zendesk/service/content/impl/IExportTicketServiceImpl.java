@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,6 +37,102 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         Long useTime = doExport("/api/v2/requests", "requests", ExportEnum.TICKET.getValue() + "_request");
         endModuleRecord(moduleRecord, useTime);
     }
+
+    @Override
+    public void importTicketRequest() {
+        ModuleRecord moduleRecord = beginModuleRecord("importTicketRequest");
+        long startTime = System.currentTimeMillis();
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue() + "_request");
+        JSONObject requestParam = new JSONObject();
+        JSONObject request = null;
+        for (Document document : list) {
+            try {
+                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                //更新collaboratorId
+                if(jsonObject.getJSONArray("collaborator_ids").size()!=0) {
+                    JSONArray collaboratorIds = jsonObject.getJSONArray("collaborator_ids");
+                    for (int i=0; i<collaboratorIds.size();i++) {
+                        Document collaboratorDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(collaboratorIds.get(i))), Document.class, ExportEnum.USER.getValue() + "_info");
+                        collaboratorIds.set(i, collaboratorDoc.get("newId"));
+                    }
+                    jsonObject.put("collaborator_ids", collaboratorIds);
+                }
+
+                //更新custom_field
+                if(jsonObject.getJSONArray("custom_fields").size()!=0) {
+                    JSONArray customFields = jsonObject.getJSONArray("custom_fields");
+                    for (Object customFieldObj : customFields) {
+                        JSONObject customField = (JSONObject) customFieldObj;
+                        Long customFieldId = customField.getLong("id");
+                        Document customFieldDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(customFieldId)), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                        customField.put("id", customFieldDoc.get("newId"));
+                    }
+                    jsonObject.put("custom_fields", customFields);
+                }
+
+                //更新ticket_status
+                if(jsonObject.getLong("custom_status_id")!=null) {
+                    Long ticketStatusId = jsonObject.getLong("custom_status_id");
+                    Document ticketStatusDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(ticketStatusId)), Document.class, ExportEnum.TICKET.getValue() + "_status");
+                    jsonObject.put("custom_status_id", ticketStatusDoc.get("newId"));
+                }
+
+                //更新field
+                if(jsonObject.getJSONArray("fields").size()!=0) {
+                    JSONArray fields = jsonObject.getJSONArray("fields");
+                    for (Object fieldObj : fields) {
+                        JSONObject field = (JSONObject) fieldObj;
+                        Long fieldId = field.getLong("id");
+                        Document fieldDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(fieldId)), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                        field.put("id", fieldDoc.get("newId"));
+                    }
+                    jsonObject.put("fields", fields);
+                }
+
+                //更新organization_id
+                if(jsonObject.getLong("organization_id")!=null) {
+                    Long organizationId = jsonObject.getLong("organization_id");
+                    Document orgDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(organizationId)), Document.class, ExportEnum.ORGANIZATIONS.getValue() + "_info");
+                    jsonObject.put("organization_id", orgDoc.get("newId"));
+                }
+
+                //更新requester_id
+                if(jsonObject.getLong("requester_id")!=null) {
+                    Long requesterId = jsonObject.getLong("requester_id");
+                    Document requesterDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(requesterId)), Document.class, ExportEnum.USER.getValue() + "_info");
+                    jsonObject.put("requester_id", requesterDoc.get("newId"));
+                }
+
+                //更新ticket_form_id
+                if(jsonObject.getLong("ticket_form_id")!=null) {
+                    Long ticketFormId = jsonObject.getLong("ticket_form_id");
+                    Document ticketFormDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(ticketFormId)), Document.class, ExportEnum.TICKET.getValue() + "_forms");
+                    jsonObject.put("ticket_form_id", ticketFormDoc.get("newId"));
+                }
+
+                //更新assignee_id
+                if(jsonObject.getLong("assignee_id")!=null) {
+                    Long assigneeId = jsonObject.getLong("assignee_id");
+                    Document assigneeDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(assigneeId)), Document.class, ExportEnum.USER.getValue() + "_info");
+                    jsonObject.put("assignee_id", assigneeDoc.get("newId"));
+                }
+
+
+
+                requestParam.put("request", jsonObject);
+                request = this.doPost("/api/v2/requests", requestParam);
+                document.put("newId", request.getJSONObject("requests").get("id"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log.info("importTicketRequest 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+            mongoTemplate.save(document, ExportEnum.TICKET.getValue() + "_request");
+            saveImportInfo("importTicketRequest", request);
+        }
+        log.info("importTicketRequest 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
 
     @Override
     public void exportTicketAudit() {
@@ -414,14 +511,26 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         ModuleRecord moduleRecord = beginModuleRecord("importCustomTicketStatus");
         long startTime = System.currentTimeMillis();
         List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.TICKET.getValue() + "_status");
+        JSONObject allStatus = doGetTarget("/api/v2/custom_statuses", new HashMap<>());
+        JSONArray statuses = allStatus.getJSONArray("custom_statuses");
         JSONObject requestParam = new JSONObject();
         JSONObject request = null;
         for (Document document : list) {
             try {
+
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-                requestParam.put("custom_status", jsonObject);
-                request = this.doPost("/api/v2/custom_statuses", requestParam);
-                document.put("newId", request.getJSONObject("custom_status").get("id"));
+                if(jsonObject.getBoolean("default")==true){
+                    for (Object statusObj : statuses) {
+                        JSONObject status = (JSONObject) statusObj;
+                        if(status.get("raw_agent_label").equals(jsonObject.get("raw_agent_label"))){
+                            document.put("newId", status.get("id"));
+                        }
+                    }
+                }else {
+                    requestParam.put("custom_status", jsonObject);
+                    request = this.doPost("/api/v2/custom_statuses", requestParam);
+                    document.put("newId", request.getJSONObject("custom_status").get("id"));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -502,6 +611,71 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
 
     @Override
+    public void exportAttributeValue() {
+        ModuleRecord moduleRecord = beginModuleRecord("exportAttributeValue");
+        long startTime = System.currentTimeMillis();
+        List<Document> list = mongoTemplate.find(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain))), Document.class, ExportEnum.ACCOUNT_ATTRIBUTES.getValue() + "_info");
+        for (Document document : list) {
+            JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+            JSONObject request = this.doGet("/api/v2/routing/attributes/"+jsonObject.get("id").toString()+"/values", new HashMap<>());
+            List<JSONObject> innerList = request.getJSONArray("attribute_values").toJavaList(JSONObject.class);
+            for (JSONObject attributeId : innerList) {
+                attributeId.put("attribute_id", jsonObject.get("id"));
+            }
+            mongoTemplate.insert(innerList, ExportEnum.ACCOUNT_ATTRIBUTES.getValue() + "_value");
+            log.info("导出AttributeValue成功，一共导出{}条记录", list.size());
+        }
+        endModuleRecord(moduleRecord, System.currentTimeMillis()-startTime);
+
+    }
+
+    @Override
+    public void importAttributeValue(){
+        ModuleRecord moduleRecord = beginModuleRecord("importAccountAttributesValue");
+        long startTime = System.currentTimeMillis();
+        List<Document> list = mongoTemplate.find(new Query(), Document.class, ExportEnum.ACCOUNT_ATTRIBUTES.getValue() + "_value");
+        JSONObject requestParam = new JSONObject();
+        JSONObject request = null;
+        for (Document document : list) {
+            try{
+                JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                //更新condition中 customfield_id
+                if(jsonObject.getJSONObject("conditions")!=null) {
+                    JSONObject conditions = jsonObject.getJSONObject("conditions");
+                    if(conditions.getJSONArray("all").size()!=0) {
+                        JSONArray alls = conditions.getJSONArray("all");
+                        for (Object allObj : alls) {
+                            JSONObject all = (JSONObject) allObj;
+                            if (all.get("subject").toString().contains("custom_fields_")) {
+                                String[] split = all.get("subject").toString().split("_");
+                                String field_id = Arrays.asList(split).get(split.length - 1);
+                                Document ticketFieldDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(Long.parseLong(field_id))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                                all.put("subject", "custom_fields_" + ticketFieldDoc.get("newId").toString());
+                            }
+                        }
+                    }
+                }
+                //更新attribute_id
+                String attributeId = jsonObject.get("attribute_id").toString();
+                Document attributeDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(attributeId)), Document.class, ExportEnum.ACCOUNT_ATTRIBUTES.getValue() + "_info");
+                jsonObject.remove("attribute_id");
+                requestParam.put("attribute_value", jsonObject);
+                request = this.doPost("/api/v2/routing/attributes/"+attributeDoc.get("newId")+"/values", requestParam);
+                document.put("newId", request.getJSONObject("attribute_value").get("id"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log.info("AccountAttributeValue 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+            saveImportInfo("AccountAttributeValue", request);
+            mongoTemplate.save(document, ExportEnum.ACCOUNT_ATTRIBUTES.getValue() + "_value");
+        }
+        log.info("导入 importAccountAttributeValue 成功，一共导入{}条记录", list.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+
+
+    @Override
     public void exportAccountAttributes() {
         ModuleRecord moduleRecord = beginModuleRecord("exportAccountAttributes");
         Long useTime = doExport("/api/v2/routing/attributes", "attributes", ExportEnum.ACCOUNT_ATTRIBUTES.getValue() + "_info");
@@ -552,17 +726,34 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
-                requestParam.put("attribute", jsonObject);
-                request = this.doPost("/api/v2/routing/attributes", jsonObject);
-                document.put("newId", request.getJSONObject("attribute").get("id"));
+                //更新resource列中resource_id
+                if(jsonObject.getJSONArray("resources").size()!=0) {
+                    JSONArray resourceArray = jsonObject.getJSONArray("resources");
+                    for (Object resourceObj : resourceArray) {
+                        JSONObject resource = (JSONObject) resourceObj;
+                        if(resource.get("type").equals("ticket_fields")){
+                            Document ticketFieldDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(resource.getLong("resource_id"))), Document.class, ExportEnum.TICKET.getValue() + "_field");
+                            resource.put("resource_id",ticketFieldDoc.getLong("newId"));
+                        }
+                        if(resource.get("type").equals("user_fields")){
+                            Document userFieldDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(resource.getLong("resource_id"))), Document.class, ExportEnum.USER.getValue() + "_field");
+                            resource.put("resource_id",userFieldDoc.getLong("newId"));
+                        }
+                    }
+                    jsonObject.put("resource", resourceArray);
+                }
+
+                requestParam.put("payload", jsonObject);
+                request = this.doPost("/api/v2/resource_collections", requestParam);
+                document.put("newId", request.getJSONObject("job_status").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            log.info("importAccountAttributes 执行完毕,请求参数：{},执行结果{}", requestParam, request);
-            saveImportInfo("importAccountAttributes", request);
+            log.info("importResourceCollections 执行完毕,请求参数：{},执行结果{}", requestParam, request);
+            saveImportInfo("importResourceCollections", request);
             mongoTemplate.save(document, ExportEnum.RESOURCE_COLLECTIONS.getValue() + "_info");
         }
-        log.info("导入 importAccountAttributes 成功，一共导入{}条记录", list.size());
+        log.info("导入 importResourceCollections 成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

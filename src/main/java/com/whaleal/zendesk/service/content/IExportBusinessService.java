@@ -35,9 +35,12 @@ public interface IExportBusinessService {
 
     void importSLAPoliciesInfo();
 
+    void deleteSLAPoliciesInfo();
+
     void exportGroupSLAPoliciesInfo();
 
     void importGroupSLAPoliciesInfo();
+
 
 
 
