@@ -3273,9 +3273,9 @@ class ZendeskApplicationTests extends BaseExportService {
 
     @Test
     void list_skills(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/skills")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl +"/api/v2/resource_collections")
                 .newBuilder();
         //.addQueryParameter("external_id", "");
 
@@ -3283,7 +3283,7 @@ class ZendeskApplicationTests extends BaseExportService {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();

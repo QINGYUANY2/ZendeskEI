@@ -537,6 +537,31 @@ public class IExportBusinessServiceImpl extends BaseExportService implements IEx
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
+    @Override
+    public void deleteAutomationsInfo(){
+        ModuleRecord moduleRecord = beginModuleRecord("deleteAutomationsInfo");
+        log.info("开始执行删除 automations 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/automations", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("automations");
+        List<String> automationIds = new ArrayList<>();
+        JSONObject request = null;
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            automationIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String automationId : automationIds) {
+                doDelete("/api/v2/automations/",automationId);
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 automations 成功，一共删除{}条记录\n", automationIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
 
     @Override
     public void exportAutomationsInfo() {

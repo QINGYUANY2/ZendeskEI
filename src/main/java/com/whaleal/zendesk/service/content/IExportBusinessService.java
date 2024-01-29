@@ -26,6 +26,8 @@ public interface IExportBusinessService {
 
     void deleteTriggerCategoriesInfo();
 
+    void deleteAutomationsInfo();
+
     void exportAutomationsInfo();
 
     void importAutomationsInfo();

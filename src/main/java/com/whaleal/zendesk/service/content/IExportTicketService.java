@@ -32,6 +32,8 @@ public interface IExportTicketService {
 
     void importSharingAgreement();
 
+    void deleteSchedules();
+
     void exportSchedules();
 
     void importSchedules();
@@ -41,6 +43,8 @@ public interface IExportTicketService {
 
     void importAttributeValue();
 
+    void deleteAccountAttributes();
+
     void exportAccountAttributes();
 
     void importAccountAttributes();
@@ -48,6 +52,8 @@ public interface IExportTicketService {
     void exportResourceCollections();
 
     void importResourceCollections();
+
+    void deleteResourceCollections();
 
 
 

@@ -198,8 +198,8 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
                         log.warn("同步ticket时,未找到 {} 对应的新 assignee_id", document.get("assignee_id"));
                     }
                 }else{
-                    count++;
-                    System.out.println(count);
+                    //count++;
+                    //System.out.println(count);
                 }
                 if (document.get("requester_id") != null) {
                     Document groupDoc = mongoTemplate.findOne(new Query(new Criteria("id").is(document.get("requester_id"))), Document.class, ExportEnum.USER.getValue() + "_info");
@@ -578,6 +578,32 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
 
 
     @Override
+    public void deleteSchedules(){
+        ModuleRecord moduleRecord = beginModuleRecord("deleteSchedulesInfo");
+        log.info("开始执行删除 schedules 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/business_hours/schedules", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("schedules");
+        List<String> scheduleIds = new ArrayList<>();
+        JSONObject request = null;
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            scheduleIds.add(temps.getLong("id").toString());
+        }
+        try{
+            for (String scheduleId : scheduleIds) {
+                doDelete("/api/v2/business_hours/schedules/",scheduleId);
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 schedules 成功，一共删除{}条记录\n", scheduleIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+
+    @Override
     public void exportSchedules() {
         ModuleRecord moduleRecord = beginModuleRecord("exportSchedules");
         Long useTime = doExport("/api/v2/business_hours/schedules", "schedules", ExportEnum.SCHEDULES.getValue() + "_info");
@@ -674,6 +700,33 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
     }
 
 
+    @Override
+    public void deleteAccountAttributes(){
+        ModuleRecord moduleRecord = beginModuleRecord("deleteAccountAttributesInfo");
+        log.info("开始执行删除 account_attributes 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/routing/attributes", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("attributes");
+        List<String> attributeIds = new ArrayList<>();
+        JSONObject request = null;
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            attributeIds.add(temps.get("id").toString());
+        }
+        try{
+            for (String attributeId : attributeIds) {
+                doDelete("/api/v2/routing/attributes/",attributeId);
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 account_attributes 成功，一共删除{}条记录\n", attributeIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
+
+
+
 
     @Override
     public void exportAccountAttributes() {
@@ -757,6 +810,30 @@ public class IExportTicketServiceImpl extends BaseExportService implements IExpo
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 
+    @Override
+    public void deleteResourceCollections() {
+        ModuleRecord moduleRecord = beginModuleRecord("deleteResourceCollectionsInfo");
+        log.info("开始执行删除 recource_collections 任务");
+        long startTime = System.currentTimeMillis();
+        JSONObject temp = doGetTarget("/api/v2/resource_collections", new HashMap<>());
+        JSONArray tempArray = temp.getJSONArray("resource_collections");
+        List<String> resourceIds = new ArrayList<>();
+        JSONObject request = null;
+        for (Object tempObj : tempArray) {
+            JSONObject temps = (JSONObject) tempObj;
+            resourceIds.add(temps.get("id").toString());
+        }
+        try{
+            for (String resourceId : resourceIds) {
+                doDelete("/api/v2/resource_collections/",resourceId);
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        log.info("删除 resource_collections 成功，一共删除{}条记录\n", resourceIds.size());
+        endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
+    }
 
 
 }

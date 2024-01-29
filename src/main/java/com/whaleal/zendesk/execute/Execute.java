@@ -112,97 +112,97 @@ public class Execute {
         int status = 0;
         try {
 
-//////            //1.组织
-//            iExportOrgService.exportOrgInfo();
-////            //2.群组
-//            iExportGroupService.exportGroupInfo();
-////            //3.品牌
-//            iExportSysService.exportBrandInfo();
-////            //4.人员字段
-//            iExportUserService.exportUserField();
-////            //5.人员
-//            iExportUserService.exportUserInfo();
-////            //6.视图
-//            iExportBusinessService.exportViewInfo();
-////            //7.宏
-//            iExportBusinessService.exportMacroInfo();
-////            //8.工单request
-//            iExportTicketService.exportTicketRequest();
-////            //9.工单form
-//            iExportFormsService.exportTicketForms();
-////            //10.工单field
-//            iExportTicketService.exportTicketFields();
-////            //11.工单
-//            iExportTicketService.exportTicketInfo();
+////            //1.组织
+            iExportOrgService.exportOrgInfo();
+//            //2.群组
+            iExportGroupService.exportGroupInfo();
+//            //3.品牌
+            iExportSysService.exportBrandInfo();
+//            //4.人员字段
+            iExportUserService.exportUserField();
+//            //5.人员
+            iExportUserService.exportUserInfo();
+//            //6.视图
+            iExportBusinessService.exportViewInfo();
+//            //7.宏
+            iExportBusinessService.exportMacroInfo();
+//            //8.工单request
+            iExportTicketService.exportTicketRequest();
+//            //9.工单form
+            iExportFormsService.exportTicketForms();
+//            //10.工单field
+            iExportTicketService.exportTicketFields();
+//            //11.工单
+            iExportTicketService.exportTicketInfo();
+
+            //-------------------------------------------------
+
+            iExportOrgService.exportOrgMembershipInfo();  // ok
 //
-//            //-------------------------------------------------
+            iExportOrgService.exportOrgSubscriptionsInfo();  //无数据
 //
-//            iExportOrgService.exportOrgMembershipInfo();  // ok
-////
-//            iExportOrgService.exportOrgSubscriptionsInfo();  //无数据
-////
-//            iExportUserService.exportRoleInfo();   // 此版本无角色
+            iExportUserService.exportRoleInfo();   // 此版本无角色
+
+            iExportGroupService.exportGroupMembershipInfo(); // ok
+
+            iExportItemService.exportItemInfo();    //  ok
+
+            iExportTicketService.exportSatisfactionRatingInfo();   //ticket 中已传
+
+            iExportTicketService.exportTicketAudit();    // 加ticket
 //
-//            iExportGroupService.exportGroupMembershipInfo(); // ok
+            iExportContentService.exportExternalContentRecordInfo();   //无数据
 //
-//            iExportItemService.exportItemInfo();    //  ok
+            iExportGatherService.exportTopicInfo();    //ok
+
+            iExportGatherService.exportPostsInfo();    //  没有权限  未开通
 //
-//            iExportTicketService.exportSatisfactionRatingInfo();   //ticket 中已传
+            iExportGuideService.exportArticleInfo();   // 无数据
 //
-//            iExportTicketService.exportTicketAudit();    // 加ticket
-////
-//            iExportContentService.exportExternalContentRecordInfo();   //无数据
-////
-//            iExportGatherService.exportTopicInfo();    //ok
+            iExportGuideService.exportThemeInfo();   // 导入不进去,没有创建主题
 //
-//            iExportGatherService.exportPostsInfo();    //  没有权限  未开通
-////
-//            iExportGuideService.exportArticleInfo();   // 无数据
-////
-//            iExportGuideService.exportThemeInfo();   // 导入不进去,没有创建主题
-////
-//            iExportGuideService.exportPermissionGroupInfo();   //  ok
-////
-//            iExportPhoneService.exportGreetingInfo();     // ok
+            iExportGuideService.exportPermissionGroupInfo();   //  ok
 //
-//            iExportPhoneService.exportPhoneNumberInfo();   // 无可用phone 数据
-//
-//            iExportPhoneService.exportIVRsInfo();    // ok
-//
+            iExportPhoneService.exportGreetingInfo();     // ok
+
+            iExportPhoneService.exportPhoneNumberInfo();   // 无可用phone 数据
+
+            iExportPhoneService.exportIVRsInfo();    // ok
+
             iExportSysService.exportSupportAddressInfo();   //ok、
-//
-//            iExportBusinessService.exportTriggerInfo();    // ok
-//
-//            iExportBusinessService.exportTriggerCategoriesInfo();   //ok
-//
-//            iExportBusinessService.exportAutomationsInfo();   //ok
-//
-//            iExportBusinessService.exportSLAPoliciesInfo();   //ok
-//
-//            iExportBusinessService.exportGroupSLAPoliciesInfo();   // 无数据
-//
-//            iExportTicketService.exportCustomTicketStatus();  // 版本不包含new 且标签等已占用问题
-//
-//            iExportTicketService.exportSharingAgreement();  //  无数据
-//
-//           iExportTicketService.exportSchedules();  //  ok
-//
-//            iExportTicketService.exportAccountAttributes();  //  ok
-//
-//            iExportTicketService.exportResourceCollections();   // 文档不清楚
-//
-//            iExportPhoneService.exportPhoneNumberInfo();
-//
-//            iExportPhoneService.exportGreetingInfo();
-//
-//            iExportPhoneService.exportAddressInfo();
-//
-//            iExportSideConversationService.exportSideConversationInfo();
-//
-//
-//            iExportSideConversationService.exportSideConversationEventsInfo();
-//
-//            iExportOrgService.exportOrgField();
+
+            iExportBusinessService.exportTriggerInfo();    // ok
+
+            iExportBusinessService.exportTriggerCategoriesInfo();   //ok
+
+            iExportBusinessService.exportAutomationsInfo();   //ok
+
+            iExportBusinessService.exportSLAPoliciesInfo();   //ok
+
+            iExportBusinessService.exportGroupSLAPoliciesInfo();   // 无数据
+
+            iExportTicketService.exportCustomTicketStatus();  // 版本不包含new 且标签等已占用问题
+
+            iExportTicketService.exportSharingAgreement();  //  无数据
+
+           iExportTicketService.exportSchedules();  //  ok
+
+            iExportTicketService.exportAccountAttributes();  //  ok
+
+            iExportTicketService.exportResourceCollections();   // 文档不清楚
+
+            iExportPhoneService.exportPhoneNumberInfo();
+
+            iExportPhoneService.exportGreetingInfo();
+
+            iExportPhoneService.exportAddressInfo();
+
+            iExportSideConversationService.exportSideConversationInfo();
+
+
+            iExportSideConversationService.exportSideConversationEventsInfo();
+
+            iExportOrgService.exportOrgField();
 
             iExportTicketService.exportAttributeValue();
 
@@ -231,8 +231,68 @@ public class Execute {
     }
 
 
+
     /**
-    * 导出人员字段
+     * 删除目标端脚本
+     */
+    public void doDeleteAll(){
+        log.info("执行删除任务");
+        Criteria criteria = Criteria.where("source_url").is(sourceDomain).and("target_url").is(targetDomain);
+        Query query = Query.query(criteria);
+        TaskRecord taskRecord = mongoTemplate.findOne(query, TaskRecord.class);
+
+        //----------------------------------------------------------------
+        //-----------------------------------------------------------------
+        //第一模块
+
+
+        iExportTicketService.deleteResourceCollections();
+
+        iExportTicketService.deleteAccountAttributes();
+
+        iExportBusinessService.deleteSLAPoliciesInfo();
+
+        iExportTicketService.deleteSchedules();
+
+        iExportBusinessService.deleteAutomationsInfo();
+
+        iExportBusinessService.deleteViewInfo();
+
+        iExportBusinessService.deleteMacroInfo();
+
+        iExportBusinessService.deleteTriggerInfo();
+
+        iExportBusinessService.deleteTriggerCategoriesInfo();
+
+        iExportFormsService.deleteTicketForms();
+
+        iExportTicketService.deleteTicketFields();
+
+        iExportTicketService.deleteTicketInfo();
+
+        iExportOrgService.deleteOrgField();
+
+        iExportOrgService.deleteOrgInfo();
+
+        iExportSysService.deleteBrandInfo();
+//
+        iExportGroupService.deleteGroupInfo();
+
+        iExportItemService.deleteItemInfo();
+
+        iExportUserService.deleteUserField();
+
+//        iExportUserService.deleteUserInfo();
+
+
+
+        log.info("删除任务执行完成");
+    }
+
+
+
+    /**
+     * 导出人员字段
      */
     //--mode=userImport
     public void doUserImport(){
@@ -243,52 +303,9 @@ public class Execute {
         //1.组织
         iExportOrgService.importOrgInfo();      //1
         //2.用户
-        iExportUserService.importUserInfo();
+        //iExportUserService.importUserInfo();
         log.info("导入任务执行完成");
     }
-
-    public void doDeleteAll(){
-        log.info("执行删除任务");
-        Criteria criteria = Criteria.where("source_url").is(sourceDomain).and("target_url").is(targetDomain);
-        Query query = Query.query(criteria);
-        TaskRecord taskRecord = mongoTemplate.findOne(query, TaskRecord.class);
-
-
-//        iExportBusinessService.deleteSLAPoliciesInfo();
-
-//        iExportBusinessService.deleteViewInfo();
-//
-//        iExportBusinessService.deleteMacroInfo();
-//
-//        iExportBusinessService.deleteTriggerInfo();
-//
-//        iExportBusinessService.deleteTriggerCategoriesInfo();
-//
-//        iExportFormsService.deleteTicketForms();
-//
-//        iExportTicketService.deleteTicketFields();
-//
-//        iExportTicketService.deleteTicketInfo();
-//
-//        iExportOrgService.deleteOrgField();
-//
-//        iExportOrgService.deleteOrgInfo();
-//
-//        iExportSysService.deleteBrandInfo();
-////
-//        iExportGroupService.deleteGroupInfo();
-//
-//        iExportItemService.deleteItemInfo();
-//
-//        iExportUserService.deleteUserField();
-//
-//        iExportUserService.deleteUserInfo();
-
-
-
-        log.info("删除任务执行完成");
-    }
-
 
     /**
      * 把数据库中记录导入到目标端
@@ -313,67 +330,63 @@ public class Execute {
             //更新任务状态为导入中
             Update status = new Update().set("status", IMPORTING);
 
-
-        //2.群组
-        //iExportGroupService.importGroupInfo();
-          //3.品牌
-        //iExportSysService.importBrandInfo();
-        //4.人员字段
-     //   iExportUserService.importUserField();
-        //9.工单field
-     //   iExportTicketService.importTicketFields();
-        //8.工单form
-     //   iExportFormsService.importTicketForms();
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//--------------------------------第一模块--------------------------------------
+        //1.群组
+        iExportGroupService.importGroupInfo();
+        //2.品牌
+        iExportSysService.importBrandInfo();
+        //3.人员字段
+        iExportUserService.importUserField();
+        //4.工单field
+        iExportTicketService.importTicketFields();
+        //5.工单form
+        iExportFormsService.importTicketForms();
         //6.视图
-    //    iExportBusinessService.importViewInfo();
-
-        //导入技能类型
-        //iExportTicketService.importAccountAttributes();
-
-        //导入技能类型内容
-        //iExportTicketService.importAttributeValue();//还需要绑定关系
-
-        //10.工单
+        iExportBusinessService.importViewInfo();
+        //7.导入技能类型
+        iExportTicketService.importAccountAttributes();
+        //8.导入技能类型内容
+        iExportTicketService.importAttributeValue();//还需要绑定关系
+        //9.导入工单
         iExportTicketService.importTicketInfo();
-
-    //    iExportGroupService.importGroupMembershipInfo();
-            //协助对话
-    //    iExportSideConversationService.importSideConversationInfo();
-        //7.宏
-    //    iExportBusinessService.importMacroInfo();
-
-   //     iExportOrgService.importOrgMembershipInfo();    //不需要可能
-
-  //      iExportOrgService.importOrgField();
-
- //       iExportItemService.importItemInfo();    //ok
-//
-        // iExportGatherService.importTopicInfo();
-
-//         iExportBusinessService.importTriggerCategoriesInfo(); //ok
-//
-//        iExportTicketService.importCustomTicketStatus();
-//        iExportBusinessService.importTriggerInfo();
-
-//        iExportBusinessService.importAutomationsInfo();
-
-//        iExportBusinessService.importSLAPoliciesInfo();
-
-//        iExportBusinessService.importGroupSLAPoliciesInfo();//有问题, 不用管
-
-//        iExportTicketService.importTicketRequest(); //有问题全部422
+        //10.导入人员和组的关系
+        iExportGroupService.importGroupMembershipInfo();
+        //11.导入协助对话
+        iExportSideConversationService.importSideConversationInfo();
+        //12.导入宏
+        iExportBusinessService.importMacroInfo();
+        //13.导入组织字段
+        iExportOrgService.importOrgField();
+        //14.导入动态内容主数据
+        iExportItemService.importItemInfo();    //ok
+        //15.导入触发器类别
+         iExportBusinessService.importTriggerCategoriesInfo(); //ok
+        //16.导入工单状态
+        iExportTicketService.importCustomTicketStatus();
+        //17.导入触发器
+        iExportBusinessService.importTriggerInfo();
+        //18.导入自行程序
+        iExportBusinessService.importAutomationsInfo();
+        //19.导入SLA数据
+        iExportBusinessService.importSLAPoliciesInfo();
+        //20.导入时间表
+        iExportTicketService.importSchedules();//只能导一个
+        //21.导入资源收集
+        iExportTicketService.importResourceCollections(); //ok
 
 
-//        iExportTicketService.importSchedules();
+        //暂时不需要的
+//        iExportOrgService.importOrgMembershipInfo();    //不需要可能
 
+//        iExportBusinessService.importGroupSLAPoliciesInfo();//专业版没有
 
+//        iExportTicketService.importTicketRequest(); //不需要
 
-        //iExportTicketService.importResourceCollections(); //ok
+//--------------------------第一模块结束---------------------------------
+//---------------------------------------------------------------------
 
-//        iExportGuideService.importPermissionGroupInfo();//有问题400
-////????????????????{"message":"invalid user segments"}
-////json======={"message":"invalid user segments"}
-//
 //        iExportSysService.importSupportAddressInfo();//domain有问题
 
 //        iExportGuideService.importThemeInfo();
@@ -382,20 +395,20 @@ public class Execute {
 //
 //        iExportPhoneService.importIVRsInfo();
 
+// //导入话题
+//        // iExportGatherService.importTopicInfo();
 //
-//
-//
-//
-//        iExportTicketService.importSchedules();
-//
-//        iExportTicketService.importAccountAttributes();
+
 //
 //        iExportGuideService.importArticleInfo();
 //
 //        iExportPhoneService.importPhoneNumberInfo();
 //
 //        iExportPhoneService.importGreetingInfo();
-
+//        iExportGuideService.importPermissionGroupInfo();//有问题400
+////????????????????{"message":"invalid user segments"}
+////json======={"message":"invalid user segments"}
+//
 
 //            mongoTemplate.updateFirst(id,status,TaskRecord.class);
 
