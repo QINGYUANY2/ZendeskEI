@@ -282,7 +282,7 @@ public class Execute {
 
         iExportUserService.deleteUserField();
 
-//        iExportUserService.deleteUserInfo();
+        iExportUserService.deleteUserInfo();
 
 
 
@@ -303,7 +303,7 @@ public class Execute {
         //1.组织
         iExportOrgService.importOrgInfo();      //1
         //2.用户
-        //iExportUserService.importUserInfo();
+        iExportUserService.importUserInfo();
         log.info("导入任务执行完成");
     }
 
@@ -333,48 +333,48 @@ public class Execute {
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //--------------------------------第一模块--------------------------------------
-        //1.群组
-        iExportGroupService.importGroupInfo();
-        //2.品牌
-        iExportSysService.importBrandInfo();
-        //3.人员字段
-        iExportUserService.importUserField();
-        //4.工单field
-        iExportTicketService.importTicketFields();
-        //5.工单form
-        iExportFormsService.importTicketForms();
-        //6.视图
-        iExportBusinessService.importViewInfo();
-        //7.导入技能类型
-        iExportTicketService.importAccountAttributes();
-        //8.导入技能类型内容
-        iExportTicketService.importAttributeValue();//还需要绑定关系
-        //9.导入工单
-        iExportTicketService.importTicketInfo();
-        //10.导入人员和组的关系
-        iExportGroupService.importGroupMembershipInfo();
-        //11.导入协助对话
-        iExportSideConversationService.importSideConversationInfo();
-        //12.导入宏
-        iExportBusinessService.importMacroInfo();
-        //13.导入组织字段
-        iExportOrgService.importOrgField();
-        //14.导入动态内容主数据
-        iExportItemService.importItemInfo();    //ok
-        //15.导入触发器类别
-         iExportBusinessService.importTriggerCategoriesInfo(); //ok
-        //16.导入工单状态
-        iExportTicketService.importCustomTicketStatus();
-        //17.导入触发器
-        iExportBusinessService.importTriggerInfo();
-        //18.导入自行程序
-        iExportBusinessService.importAutomationsInfo();
-        //19.导入SLA数据
-        iExportBusinessService.importSLAPoliciesInfo();
-        //20.导入时间表
-        iExportTicketService.importSchedules();//只能导一个
-        //21.导入资源收集
-        iExportTicketService.importResourceCollections(); //ok
+//        //1.群组
+//        iExportGroupService.importGroupInfo();
+//        //2.品牌
+//        iExportSysService.importBrandInfo();
+//        //3.人员字段
+//        iExportUserService.importUserField();
+//        //4.工单field
+//        iExportTicketService.importTicketFields();
+//        //5.工单form
+//        iExportFormsService.importTicketForms();
+//        //6.视图
+//        iExportBusinessService.importViewInfo();
+//        //7.导入技能类型
+//        iExportTicketService.importAccountAttributes();
+//        //8.导入技能类型内容
+//        iExportTicketService.importAttributeValue();//还需要绑定关系
+//        //9.导入工单
+//        iExportTicketService.importTicketInfo();
+//        //10.导入人员和组的关系
+//        iExportGroupService.importGroupMembershipInfo();
+//        //11.导入协助对话
+//        iExportSideConversationService.importSideConversationInfo();
+//        //12.导入宏
+//        iExportBusinessService.importMacroInfo();
+//        //13.导入组织字段
+//        iExportOrgService.importOrgField();
+//        //14.导入动态内容主数据
+//        iExportItemService.importItemInfo();    //ok
+//        //15.导入触发器类别
+//         iExportBusinessService.importTriggerCategoriesInfo(); //ok
+//        //16.导入工单状态
+//        iExportTicketService.importCustomTicketStatus();
+//        //17.导入触发器
+//        iExportBusinessService.importTriggerInfo();
+//        //18.导入自行程序
+//        iExportBusinessService.importAutomationsInfo();
+//        //19.导入SLA数据
+//        iExportBusinessService.importSLAPoliciesInfo();
+//        //20.导入时间表
+//        iExportTicketService.importSchedules();//只能导一个
+//        //21.导入资源收集
+//        iExportTicketService.importResourceCollections(); //ok
 
 
         //暂时不需要的
@@ -384,21 +384,25 @@ public class Execute {
 
 //        iExportTicketService.importTicketRequest(); //不需要
 
+//        iExportSysService.importSupportAddressInfo();//domain有问题
 //--------------------------第一模块结束---------------------------------
 //---------------------------------------------------------------------
 
-//        iExportSysService.importSupportAddressInfo();//domain有问题
 
-//        iExportGuideService.importThemeInfo();
+//=====================================================================
+//===========================第二模块===================================
+        //1.导入主题
+        iExportGuideService.importThemeInfo();
+
+
+
+
+// //导入话题
+//         iExportGatherService.importTopicInfo();
 //
 //        iExportPhoneService.importGreetingInfo();  //422
 //
 //        iExportPhoneService.importIVRsInfo();
-
-// //导入话题
-//        // iExportGatherService.importTopicInfo();
-//
-
 //
 //        iExportGuideService.importArticleInfo();
 //

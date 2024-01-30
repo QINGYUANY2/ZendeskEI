@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.annotation.Resource;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
@@ -3296,6 +3298,25 @@ class ZendeskApplicationTests extends BaseExportService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    void clear_txt() throws IOException {
+        File file = new File("/Users/qingyuanyang/Desktop/Record/Agent_name.txt");
+
+        // 使用FileWriter创建文件写入器，并传入false参数以覆盖原有内容
+        FileWriter fileWriter = new FileWriter(file, false);
+
+        // 使用BufferedWriter包装FileWriter，提高性能
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+        // 清空文件内容
+        bufferedWriter.write("");
+
+        // 关闭写入器
+        bufferedWriter.close();
+
+        System.out.println("文件内容已清空并写入新内容。");
     }
 
 

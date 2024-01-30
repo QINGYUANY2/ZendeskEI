@@ -35,17 +35,21 @@ public class IExportGuideServiceImpl extends BaseExportService implements IExpor
         for (Document document : list) {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(document.toJson());
+                //更新brand_id
+                Long brandId = jsonObject.getLong("brand_id");
+                Document brandDoc = mongoTemplate.findOne(new Query(new Criteria("domain").is(StringSub.getDomain(this.sourceDomain)).and("id").is(brandId)), Document.class, ExportEnum.BRAND.getValue() + "_info");
+                jsonObject.put("brand_id", brandDoc.get("newId"));
                 requestParam.put("job", jsonObject);
-                request = this.doPost("/api/v2/guide/theming/themes/"+document.get("id")+"/publish", requestParam);
+                request = this.doPost(" /api/v2/guide/theming/jobs/themes/imports", requestParam);
                 document.put("newId", request.getJSONObject("job").get("id"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            log.info("importUserField 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
-            saveImportInfo("importUserField", request);
+            log.info("importThemeInfo 执行完毕,请求参数 {},执行结果 {}", requestParam, request);
+            saveImportInfo("importThemeInfo", request);
             mongoTemplate.save(document, ExportEnum.THEMES.getValue() + "_info");
         }
-        log.info("导入Theme_Field成功，一共导入{}条记录", list.size());
+        log.info("导入Theme_Info成功，一共导入{}条记录", list.size());
         endModuleRecord(moduleRecord, System.currentTimeMillis() - startTime);
     }
 

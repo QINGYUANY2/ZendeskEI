@@ -56,6 +56,21 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
     public void importUserInfo() {
         ModuleRecord moduleRecord = beginModuleRecord("importUserInfo");
         long startTime = System.currentTimeMillis();
+        String filePath = "/home/yangqingyuan/Agent_name.txt";
+        try {
+            FileWriter fileWriter = new FileWriter(filePath, false);
+
+            // 使用BufferedWriter包装FileWriter，提高性能
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            // 清空文件内容
+            bufferedWriter.write("");
+
+            // 关闭写入器
+            bufferedWriter.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         Criteria criteria = new Criteria();
         criteria.and("domain").is(StringSub.getDomain(this.sourceDomain));
 //        criteria.and("_id").is("6539dee3245bba4880f86da4");
@@ -113,7 +128,6 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
 
                     // 将用户名写入文件
                     //---------
-                    String filePath = "/Users/qingyuanyang/Desktop/Record/Agent_name.txt";
                     writer = new BufferedWriter(new FileWriter(filePath,true));
 
                     writer.append("User Name: ").append(userName);
