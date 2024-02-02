@@ -17,7 +17,7 @@ public class ZendeskApplicationTest2 {
     //200
     @Test
     void get_theme(){
-        String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/guide/theming/themes")
                 .newBuilder();
@@ -26,7 +26,7 @@ public class ZendeskApplicationTest2 {
                 .url(urlBuilder.build())
                 .method("GET", null)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", Credentials.basic("user1@yzm.de", "1qaz@WSX"))
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
                 .build();
         try {
             Response response = client.newCall(request).execute();
@@ -49,10 +49,59 @@ public class ZendeskApplicationTest2 {
     void demo2111(){
         OkHttpClient client = new OkHttpClient();
         String sourceUrl = "https://jinmutraining.zendesk.com";
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/guide/theming/themes/52d82dc9-c975-4da9-9791-d9898bb22b56/publish")
+                .newBuilder();
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"),
+                "{\n" +
+                        "   \"themes\":[\n" +
+                        "   {\n" +
+                        "      \"updated_at\":\"2023-02-24T02:45:52Z\",\n" +
+                        "      \"author\":\"Zendesk\",\n" +
+                        "      \"domain\":\"pdi-jinmuinfo\",\n" +
+                        "      \"name\":\"Copenhagen\",\n" +
+                        "      \"created_at\":\"2022-07-21T03:01:15Z\",\n" +
+                        "      \"version\":\"2.19.4\",\n" +
+                        "      \"live\":false,\n" +
+                        "      \"brand_id\":10332833146772\n" +
+                        "   }\n" +
+                        "]\n" +
+                        "}");
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", Credentials.basic("user1@nqmo.com", "1qaz@WSX"))
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            System.out.println("==========================");
+            System.out.println(response.body().string());
+            System.out.println(response);
+            System.out.println(response.code());
+            System.out.println("==========================");
+        } catch (Exception e) {
+            e.printStackTrace();
+        };
+    }
+
+
+    //{"job":{"id":"146079c3ccd7145b78e0fe2ee665044b","status":"pending","errors":null,"data":{"theme_id":"240270af-94bd-49d9-a4d0-3fa1d611d16d","upload":{"url":"https://theme.zdassets.com","parameters":{"key":"theme_imports/pod/20/15330352/146079c3ccd7145b78e0fe2ee665044b.zip","Expires":"Tue, 30 Jan 2024 07:44:06 GMT","x-amz-server-side-encryption":"AES256","success_action_status":"201","acl":"private","policy":"eyJleHBpcmF0aW9uIjoiMjAyNC0wMS0zMFQwODo0MzowNloiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJndWlkZS10aGVtaW5nLWNlbnRlci1wcm9kdWN0aW9uIn0seyJrZXkiOiJ0aGVtZV9pbXBvcnRzL3BvZC8yMC8xNTMzMDM1Mi8xNDYwNzljM2NjZDcxNDViNzhlMGZlMmVlNjY1MDQ0Yi56aXAifSx7IkV4cGlyZXMiOiJUdWUsIDMwIEphbiAyMDI0IDA3OjQ0OjA2IEdNVCJ9LHsieC1hbXotc2VydmVyLXNpZGUtZW5jcnlwdGlvbiI6IkFFUzI1NiJ9LFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLDEsMzE0NTcyODBdLHsic3VjY2Vzc19hY3Rpb25fc3RhdHVzIjoiMjAxIn0seyJhY2wiOiJwcml2YXRlIn0seyJ4LWFtei1jcmVkZW50aWFsIjoiQUtJQTQ3RkVZSkRUTVhNVFFNNDQvMjAyNDAxMzAvdXMtd2VzdC0xL3MzL2F3czRfcmVxdWVzdCJ9LHsieC1hbXotYWxnb3JpdGhtIjoiQVdTNC1ITUFDLVNIQTI1NiJ9LHsieC1hbXotZGF0ZSI6IjIwMjQwMTMwVDA3NDMwNloifV19","x-amz-credential":"AKIA47FEYJDTMXMTQM44/20240130/us-west-1/s3/aws4_request","x-amz-algorithm":"AWS4-HMAC-SHA256","x-amz-date":"20240130T074306Z","x-amz-signature":"3c6b2ef1c339e4297e1daab97d6b1a51968c07f9737921ddbf52b6da98adc2da"}}}}}
+    @Test
+    void demotheme(){
+        OkHttpClient client = new OkHttpClient();
+        String sourceUrl = "https://jinmutraining.zendesk.com";
         HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/guide/theming/jobs/themes/imports")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
-                "{ \"job\": { \"attributes\": { \"brand_id\": \"10332833146772\", \"format\":\"zip\" } } }");
+                "{\n" +
+                        "   \"job\":{\n" +
+                        "      \"attributes\":{\n" +
+                        "         \"brand_id\":\"10332833146772\",\n" +
+                        "         \"format\":\"zip\"\n" +
+                        "      }\n" +
+                        "   }\n" +
+                        "}");
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())

@@ -6,6 +6,12 @@ public interface IExportGuideService {
 
     void importThemeInfo();
 
+    void deleteArticleCategory();
+
+    void exportArticleCategory();
+
+    void importArticleCategory();
+
     void exportArticleInfo();
 
     void importArticleInfo();

@@ -56,7 +56,7 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
     public void importUserInfo() {
         ModuleRecord moduleRecord = beginModuleRecord("importUserInfo");
         long startTime = System.currentTimeMillis();
-        String filePath = "/home/yangqingyuan/Agent_name.txt";
+        String filePath = "/Users/qingyuanyang/Desktop/Record/Agent_name.txt";
         try {
             FileWriter fileWriter = new FileWriter(filePath, false);
 
