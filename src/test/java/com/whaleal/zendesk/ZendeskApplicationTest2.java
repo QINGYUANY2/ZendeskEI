@@ -564,7 +564,7 @@ public class ZendeskApplicationTest2 {
     void list_permission_group(){
         String sourceUrl = "https://pdi-jinmuinfo.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/guide/permission_groups\n")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/help_center/user_segments")
                 .newBuilder();
 
         Request request = new Request.Builder()
@@ -665,14 +665,13 @@ public class ZendeskApplicationTest2 {
     void demo21521(){
         OkHttpClient client = new OkHttpClient();
         String sourceUrl = "https://jinmutraining.zendesk.com";
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2//help_center/articles/21976223789332/translations")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/help_center/articles/21976223789332/translations")
                 .newBuilder();
         RequestBody body = RequestBody.create(MediaType.parse("application/json"),
                 "{\n" +
                         "  \"translation\": {\n" +
-                        "    \"id\": 634578,\n" +
                         "    \"locale\": \"ja-jp\",\n" +
-                        "    \"source_id\": 348756,\n" +
+                        "    \"source_id\": 21976223789332,\n" +
                         "    \"source_type\": \"Article\",\n" +
                         "    \"title\": \"How to take pictures in low light\"\n" +
                         "  }\n" +
@@ -817,7 +816,7 @@ public class ZendeskApplicationTest2 {
         //需要拿到所有的community topic信息才能post
         String sourceUrl = "https://jinmutraining.zendesk.com";
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/community/topics")
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(sourceUrl+"/api/v2/locales")
                 .newBuilder();
 
         Request request = new Request.Builder()

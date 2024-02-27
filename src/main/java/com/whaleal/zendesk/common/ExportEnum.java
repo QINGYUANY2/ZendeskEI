@@ -75,7 +75,9 @@ public enum ExportEnum {
     TOPIC("话题", "topic", 5),
     THEMES("题目", "themes", 6),
     POSTS("文章", "posts", 7),
-
+    USER_SEGMENT("社区用户划分", "user_segments", 8),
+    CONTENT_TAG("内容标签", "content_tag", 9),
+    LOCALE("本地化", "locale", 10),
     /**
      * voice
      */

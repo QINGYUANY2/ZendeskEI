@@ -87,6 +87,7 @@ public class IExportUserServiceImpl extends BaseExportService implements IExport
         Document defaultTarget = new Document(nested_target_user);
 
         for (Document users : documentList) {
+
             JSONObject requestParam = new JSONObject();
             JSONObject requestDefaultParam = new JSONObject();
             JSONObject requestIdentityParam = new JSONObject();

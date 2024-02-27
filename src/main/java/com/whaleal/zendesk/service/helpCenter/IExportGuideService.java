@@ -16,6 +16,8 @@ public interface IExportGuideService {
 
     void importArticleInfo();
 
+    void deleteArticleInfo();
+
     void exportArticleSection();
 
     void importArticleSection();
@@ -24,5 +26,14 @@ public interface IExportGuideService {
 
     void importPermissionGroupInfo();
 
-    
+
+    void deletePermissionGroupInfo();
+
+    void exportArticleTranslation();
+
+    void importArticleTranslation();
+
+    void exportLocale();
+
+    void importLocale();
 }

@@ -10,6 +10,18 @@ public interface IExportGatherService {
 
     void importPostsInfo();
 
+    void exportUserSegment();
+
+    void importUserSegment();
+
+    void deleteUserSegment();
+
+    void exportContentTag();
+
+    void importContentTag();
+
+    void deleteContentTag();
+
 
 //    void exportUserSegmentInfo();
 //
