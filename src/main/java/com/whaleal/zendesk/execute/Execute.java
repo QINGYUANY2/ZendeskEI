@@ -214,7 +214,7 @@ public class Execute {
 
 //            iExportGatherService.exportContentTag();
 
-            iExportGuideService.exportArticleTranslation();
+//            iExportGuideService.exportArticleTranslation();
 
 //            iExportGuideService.exportLocale();
 
@@ -255,9 +255,13 @@ public class Execute {
         //-----------------------------------------------------------------
         //第二模块
         iExportGuideService.deleteArticleInfo();
+
         iExportGatherService.deleteContentTag();
+
         iExportGatherService.deleteUserSegment();
+
         iExportGuideService.deletePermissionGroupInfo();
+
         iExportGuideService.deleteArticleCategory();
 
 
@@ -420,21 +424,28 @@ public class Execute {
         //1.导入主题
         //iExportGuideService.importThemeInfo();
 
+        //2.导入文章类别
         iExportGuideService.importArticleCategory();
 //
+        //3.导入文章组别
 //        iExportGuideService.importArticleSection();
-//
+
+//      //4.导入社区用户划分
 //        iExportGatherService.importUserSegment();
-//
+
+//      //5.导入社区用户划分
 //        iExportGuideService.importPermissionGroupInfo();//有问题400
-//
+
+//      //6.导入内容标签
 //        iExportGatherService.importContentTag();
 
+//      //7.导入文章翻译
 //        iExportGuideService.importArticleTranslation();//已被使用"
 
+        //8.导入文章内容
         iExportGuideService.importArticleInfo();
 
-// //导入话题
+//  //导入话题（需要导入community）
 //         iExportGatherService.importTopicInfo();
 //
 //        iExportPhoneService.importGreetingInfo();  //422
@@ -446,9 +457,7 @@ public class Execute {
 //        iExportPhoneService.importPhoneNumberInfo();
 //
 //        iExportPhoneService.importGreetingInfo();
-//        iExportGuideService.importPermissionGroupInfo();//有问题400
-////????????????????{"message":"invalid user segments"}
-////json======={"message":"invalid user segments"}
+//        iExportGuideService.importPermissionGroupInfo();
 //
 
 //            mongoTemplate.updateFirst(id,status,TaskRecord.class);
